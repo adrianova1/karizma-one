@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-08-27T11:54:08.379Z",
+  "inputFile": "/app/applet/data/scenarios.json",
+  "outputFile": "/app/applet/data/scenarios_enriched.json",
+  "totalProcessed": 9553,
+  "addedTriggersCount": 1526,
+  "addedAliasesCount": 115086,
+  "problematicRecordsCount": 0,
+  "averageTriggersPerScenario": "1.16",
+  "averageAliasesPerScenario": "12.05"
+}

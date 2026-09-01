@@ -1,0 +1,2289 @@
+{
+  "auditDate": "2026-08-26T11:04:20.386Z",
+  "totalRecords": 9553,
+  "metrics": {
+    "exactMatchRate": "67.64%",
+    "colloquialRetrievalRate": "67.62%",
+    "fallbackRate": "32.38%",
+    "averageMatchingScore": "98.729"
+  },
+  "topFailedCategories": [
+    {
+      "category": "پوش پول حمایتگری",
+      "total": 162,
+      "fallback": 128,
+      "failRate": "79.0"
+    },
+    {
+      "category": "سرگرمی شخصیت نابی",
+      "total": 912,
+      "fallback": 550,
+      "failRate": "60.3"
+    },
+    {
+      "category": "شوخی دو پهلو",
+      "total": 242,
+      "fallback": 138,
+      "failRate": "57.0"
+    },
+    {
+      "category": "تیکه سبک / بادگیر / نگ",
+      "total": 366,
+      "fallback": 205,
+      "failRate": "56.0"
+    },
+    {
+      "category": "شعر",
+      "total": 124,
+      "fallback": 48,
+      "failRate": "38.7"
+    },
+    {
+      "category": "ریپلای استوری",
+      "total": 615,
+      "fallback": 230,
+      "failRate": "37.4"
+    },
+    {
+      "category": "حاضر جوابی ناب / روزمره",
+      "total": 1236,
+      "fallback": 441,
+      "failRate": "35.7"
+    },
+    {
+      "category": "شیت تست",
+      "total": 3624,
+      "fallback": 1127,
+      "failRate": "31.1"
+    },
+    {
+      "category": "جوک ناب و شوخی با پسر و دختر",
+      "total": 132,
+      "fallback": 34,
+      "failRate": "25.8"
+    },
+    {
+      "category": "استوری تلنگ",
+      "total": 73,
+      "fallback": 15,
+      "failRate": "20.5"
+    },
+    {
+      "category": "جواب و زبون ریختن ترکی",
+      "total": 586,
+      "fallback": 119,
+      "failRate": "20.3"
+    },
+    {
+      "category": "زبون ریختن",
+      "total": 259,
+      "fallback": 40,
+      "failRate": "15.4"
+    },
+    {
+      "category": "زبون ریزی",
+      "total": 38,
+      "fallback": 4,
+      "failRate": "10.5"
+    },
+    {
+      "category": "اشعار",
+      "total": 14,
+      "fallback": 1,
+      "failRate": "7.1"
+    },
+    {
+      "category": "شت تست، مکالمات با دختر",
+      "total": 195,
+      "fallback": 9,
+      "failRate": "4.6"
+    },
+    {
+      "category": "شرایط فارسی",
+      "total": 67,
+      "fallback": 1,
+      "failRate": "1.5"
+    },
+    {
+      "category": "شرایط آلفا",
+      "total": 94,
+      "fallback": 1,
+      "failRate": "1.1"
+    },
+    {
+      "category": "چیستان های جذاب",
+      "total": 149,
+      "fallback": 1,
+      "failRate": "0.7"
+    },
+    {
+      "category": "شرایط ترکی",
+      "total": 324,
+      "fallback": 1,
+      "failRate": "0.3"
+    },
+    {
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "مدیریت ریتم چت و بی محلی",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "مدیریت طعنه و حاضر جوابی",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "پاسخ به شیت‌تست و سنجش اقتدار",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "مدیریت تمجید و جذابیت کلامی",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "مدیریت دعوت و قرار ملاقات",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "حاضرجوابی و پاسخ‌های سنگین",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "پاسخ به سین کردن و جواب ندادن",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "جواب به 'دوستت ندارم'",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "ریپلای خلاقانه استوری",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "قرار اول عاشقانه",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "پاسخ به متلک‌های سنگین",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "جواب به 'الان وقتش نیست'",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "استوری‌های کاریزماتیک",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "مکالمات در محل کار",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "زبان بدن و ارتباط چشمی",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "شوخی‌های موقعیتی",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "حاضرجوابی‌های سنگین",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "واکنش به آنفالو کردن",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "شروع گفتگو حضوری",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "اولین پیام در چت",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "ادامه دادن گفتگو",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "نفوذ در اولین برخورد",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "مذاکره و متقاعدسازی",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "شوخ‌طبعی دوپهلو",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "عطر و استایل کاریزماتیک",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "پاسخ به کنایه و طعنه",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "کنایه‌های مؤدبانه",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "واکنش به بلاک شدن",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "جواب به 'اصلاً تو کی هستی؟'",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "پاسخ به دیر جواب دادن",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "طنز هوشمندانه",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "پاسخ به بی‌محلی و سردی",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "جواب به 'اهل رابطه نیستم'",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "یخ‌شکن‌های مکالمه",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "مکالمه در دانشگاه",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "جواب بی‌احترامی و توهین",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "شروع گفتگو مجازی",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "سرگرمی و شخصیت نابی",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "جواب و زبون‌ریختن ترکی",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "تیکه سبک / بادگیر / نِگ",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "شوخی دوپهلو",
+      "total": 31,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "پوش‌پول / حمایتگری",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "چیستان‌های جذاب",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "جوک و شوخی با پسر و دختر",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "استوری / تلنگر",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "None",
+      "total": 3,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "حاظرجوابی روزمره",
+      "total": 34,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "نگ",
+      "total": 38,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "تیکه های لفظ کل کل",
+      "total": 2,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "لیست جملات",
+      "total": 40,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "جملات سرکاری سرگرم کننده",
+      "total": 13,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "سیاسی، اقتصادی، فرهنگی",
+      "total": 15,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "ضرب المثل",
+      "total": 8,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "استوری تلینگ",
+      "total": 15,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "حاضرجوابی ترکی",
+      "total": 30,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "آداب معاشرت",
+      "total": 50,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "چیستان",
+      "total": 1,
+      "fallback": 0,
+      "failRate": "0.0"
+    },
+    {
+      "category": "جوک",
+      "total": 3,
+      "fallback": 0,
+      "failRate": "0.0"
+    }
+  ],
+  "totalFailuresRecorded": 100,
+  "failureSamples": [
+    {
+      "input": "به شکمت اشاره میکنه میگه این چیه ؟",
+      "expectedScenario": {
+        "id": "scen_sb_3289867965",
+        "title": "به شکمت اشاره میکنه میگه این چیه ؟",
+        "situation": "به شکمت اشاره میکنه میگه این چیه ؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "به شکمت اشاره میکنه میگه این چیه ؟"
+        ],
+        "aliases": [
+          "به شکمت اشاره میکنه میگه این چیه ؟"
+        ]
+      },
+      "matchedScenario": "scen_kb_3fca0083e4",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_3fca0083e4)"
+    },
+    {
+      "input": "رفتین جایی چیزی میخره و به تو میگه توام میخوای؟توام میخوری؟ غذا کیک میوه تعارف میکنن میخوری؟",
+      "expectedScenario": {
+        "id": "scen_sb_2b59632473",
+        "title": "رفتین جایی چیزی میخره و به تو میگه توام میخوای؟توام میخ...",
+        "situation": "رفتین جایی چیزی میخره و به تو میگه توام میخوای؟توام میخوری؟ غذا کیک میوه تعارف میکنن میخوری؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "رفتین جایی چیزی میخره و به تو میگه توام میخوای؟توام میخوری؟ غذا کیک میوه تعارف میکنن میخوری؟"
+        ],
+        "aliases": [
+          "رفتین جایی چیزی میخره و به تو میگه توام میخوای؟توام میخوری؟ غذا کیک میوه تعارف میکنن میخوری؟"
+        ]
+      },
+      "matchedScenario": "scen_kb_aee9c35623",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_aee9c35623)"
+    },
+    {
+      "input": "عکس دختر میبینه یا دخترو میبینه میگه دلم خواست دلم ازاینا خواست",
+      "expectedScenario": {
+        "id": "scen_sb_36cea4dba2",
+        "title": "عکس دختر میبینه یا دخترو میبینه میگه دلم خواست دلم ازای...",
+        "situation": "عکس دختر میبینه یا دخترو میبینه میگه دلم خواست دلم ازاینا خواست",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "عکس دختر میبینه یا دخترو میبینه میگه دلم خواست دلم ازاینا خواست"
+        ],
+        "aliases": [
+          "عکس دختر میبینه یا دخترو میبینه میگه دلم خواست دلم ازاینا خواست"
+        ]
+      },
+      "matchedScenario": "scen_kb_09a7afbf66",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_09a7afbf66)"
+    },
+    {
+      "input": "شوخی و حرف زشت ونابجا میزنه",
+      "expectedScenario": {
+        "id": "scen_sb_30b9638ba3",
+        "title": "شوخی و حرف زشت ونابجا میزنه",
+        "situation": "شوخی و حرف زشت ونابجا میزنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "شوخی و حرف زشت ونابجا میزنه"
+        ],
+        "aliases": [
+          "شوخی و حرف زشت ونابجا میزنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_4d0b5a51b8",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_4d0b5a51b8)"
+    },
+    {
+      "input": "یه خاطره و داستان تخیلی میگه یا یه حرف نامعقول",
+      "expectedScenario": {
+        "id": "scen_sb_d1969e51cb",
+        "title": "یه خاطره و داستان تخیلی میگه یا یه حرف نامعقول",
+        "situation": "یه خاطره و داستان تخیلی میگه یا یه حرف نامعقول",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یه خاطره و داستان تخیلی میگه یا یه حرف نامعقول"
+        ],
+        "aliases": [
+          "یه خاطره و داستان تخیلی میگه یا یه حرف نامعقول"
+        ]
+      },
+      "matchedScenario": "scen_kb_0785c588f3",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_0785c588f3)"
+    },
+    {
+      "input": "عصبی شده و داره با حرص صحبت میکنه",
+      "expectedScenario": {
+        "id": "scen_sb_85b19ad064",
+        "title": "عصبی شده و داره با حرص صحبت میکنه",
+        "situation": "عصبی شده و داره با حرص صحبت میکنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "عصبی شده و داره با حرص صحبت میکنه"
+        ],
+        "aliases": [
+          "عصبی شده و داره با حرص صحبت میکنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_c997bcb6d6",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_c997bcb6d6)"
+    },
+    {
+      "input": "یه چیزیو یکی میزنه میشکنه اتفاقی",
+      "expectedScenario": {
+        "id": "scen_sb_8619fd1e27",
+        "title": "یه چیزیو یکی میزنه میشکنه اتفاقی",
+        "situation": "یه چیزیو یکی میزنه میشکنه اتفاقی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یه چیزیو یکی میزنه میشکنه اتفاقی"
+        ],
+        "aliases": [
+          "یه چیزیو یکی میزنه میشکنه اتفاقی"
+        ]
+      },
+      "matchedScenario": "scen_kb_17408146d1",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_17408146d1)"
+    },
+    {
+      "input": "آدم شوخ ، حرف جدی میزنه",
+      "expectedScenario": {
+        "id": "scen_sb_ed26f11c3a",
+        "title": "آدم شوخ ، حرف جدی میزنه",
+        "situation": "آدم شوخ ، حرف جدی میزنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "آدم شوخ ، حرف جدی میزنه"
+        ],
+        "aliases": [
+          "آدم شوخ ، حرف جدی میزنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_86807c1a63",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_86807c1a63)"
+    },
+    {
+      "input": "یه حرف جنسی سکسی تحریکی میزنه",
+      "expectedScenario": {
+        "id": "scen_sb_dd1456b3d1",
+        "title": "یه حرف جنسی سکسی تحریکی میزنه",
+        "situation": "یه حرف جنسی سکسی تحریکی میزنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یه حرف جنسی سکسی تحریکی میزنه"
+        ],
+        "aliases": [
+          "یه حرف جنسی سکسی تحریکی میزنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_d35a3e1b8d",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_d35a3e1b8d)"
+    },
+    {
+      "input": "حرف و جمله سنگینی میشنوی یا میگه بهت",
+      "expectedScenario": {
+        "id": "scen_sb_ece9adc876",
+        "title": "حرف و جمله سنگینی میشنوی یا میگه بهت",
+        "situation": "حرف و جمله سنگینی میشنوی یا میگه بهت",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "حرف و جمله سنگینی میشنوی یا میگه بهت"
+        ],
+        "aliases": [
+          "حرف و جمله سنگینی میشنوی یا میگه بهت"
+        ]
+      },
+      "matchedScenario": "scen_kb_9c99393959",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_9c99393959)"
+    },
+    {
+      "input": "یه تیکه ای انداختی و طرف ناراحت شد",
+      "expectedScenario": {
+        "id": "scen_sb_238e4bd376",
+        "title": "یه تیکه ای انداختی و طرف ناراحت شد",
+        "situation": "یه تیکه ای انداختی و طرف ناراحت شد",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یه تیکه ای انداختی و طرف ناراحت شد"
+        ],
+        "aliases": [
+          "یه تیکه ای انداختی و طرف ناراحت شد"
+        ]
+      },
+      "matchedScenario": "scen_kb_cce4e440b1",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_cce4e440b1)"
+    },
+    {
+      "input": "تیکه میندازه دوستت بهت",
+      "expectedScenario": {
+        "id": "scen_sb_01ccda60e6",
+        "title": "تیکه میندازه دوستت بهت",
+        "situation": "تیکه میندازه دوستت بهت",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "تیکه میندازه دوستت بهت"
+        ],
+        "aliases": [
+          "تیکه میندازه دوستت بهت"
+        ]
+      },
+      "matchedScenario": "scen_kb_0478fbe8fe",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_0478fbe8fe)"
+    },
+    {
+      "input": "طرف تو جمع سوتی میده ضایع میشه",
+      "expectedScenario": {
+        "id": "scen_sb_7962f23bcd",
+        "title": "طرف تو جمع سوتی میده ضایع میشه",
+        "situation": "طرف تو جمع سوتی میده ضایع میشه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "طرف تو جمع سوتی میده ضایع میشه"
+        ],
+        "aliases": [
+          "طرف تو جمع سوتی میده ضایع میشه"
+        ]
+      },
+      "matchedScenario": "scen_kb_b3b2dac78d",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_b3b2dac78d)"
+    },
+    {
+      "input": "میخونه و صداش بده",
+      "expectedScenario": {
+        "id": "scen_sb_673984e25f",
+        "title": "میخونه و صداش بده",
+        "situation": "میخونه و صداش بده",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "میخونه و صداش بده"
+        ],
+        "aliases": [
+          "میخونه و صداش بده"
+        ]
+      },
+      "matchedScenario": "scen_kb_50d78f1535",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_50d78f1535)"
+    },
+    {
+      "input": "دختر یا کسی دستش صورتش خال داره",
+      "expectedScenario": {
+        "id": "scen_sb_84a94fba8c",
+        "title": "دختر یا کسی دستش صورتش خال داره",
+        "situation": "دختر یا کسی دستش صورتش خال داره",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دختر یا کسی دستش صورتش خال داره"
+        ],
+        "aliases": [
+          "دختر یا کسی دستش صورتش خال داره"
+        ]
+      },
+      "matchedScenario": "scen_kb_b3fee7ea0a",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_b3fee7ea0a)"
+    },
+    {
+      "input": "دوستت بهت میگه این کارو میتونی انجام بدی؟ بلدی اصلا در توانت هست",
+      "expectedScenario": {
+        "id": "scen_sb_45fdf74feb",
+        "title": "دوستت بهت میگه این کارو میتونی انجام بدی؟ بلدی اصلا در ...",
+        "situation": "دوستت بهت میگه این کارو میتونی انجام بدی؟ بلدی اصلا در توانت هست",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دوستت بهت میگه این کارو میتونی انجام بدی؟ بلدی اصلا در توانت هست"
+        ],
+        "aliases": [
+          "دوستت بهت میگه این کارو میتونی انجام بدی؟ بلدی اصلا در توانت هست"
+        ]
+      },
+      "matchedScenario": "scen_kb_14ae3b277f",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_14ae3b277f)"
+    },
+    {
+      "input": "از لباست کفشت تعریف میکنه",
+      "expectedScenario": {
+        "id": "scen_sb_f623f3669b",
+        "title": "از لباست کفشت تعریف میکنه",
+        "situation": "از لباست کفشت تعریف میکنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "از لباست کفشت تعریف میکنه"
+        ],
+        "aliases": [
+          "از لباست کفشت تعریف میکنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_e3c550732f",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_e3c550732f)"
+    },
+    {
+      "input": "رفتیم کبابی ولی پولمون کمه",
+      "expectedScenario": {
+        "id": "scen_sb_14e8a93e2a",
+        "title": "رفتیم کبابی ولی پولمون کمه",
+        "situation": "رفتیم کبابی ولی پولمون کمه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "رفتیم کبابی ولی پولمون کمه"
+        ],
+        "aliases": [
+          "رفتیم کبابی ولی پولمون کمه"
+        ]
+      },
+      "matchedScenario": "scen_kb_5a9fb09aee",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_5a9fb09aee)"
+    },
+    {
+      "input": "لباس جلف ورنگارنگ پوشیده",
+      "expectedScenario": {
+        "id": "scen_sb_b39d165cfc",
+        "title": "لباس جلف ورنگارنگ پوشیده",
+        "situation": "لباس جلف ورنگارنگ پوشیده",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "لباس جلف ورنگارنگ پوشیده"
+        ],
+        "aliases": [
+          "لباس جلف ورنگارنگ پوشیده"
+        ]
+      },
+      "matchedScenario": "scen_kb_8fe3120ca7",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_8fe3120ca7)"
+    },
+    {
+      "input": "مرد خوابیده روی زن و با دوتا دستاش ممه هاشو گرفته",
+      "expectedScenario": {
+        "id": "scen_sb_79d4d0499d",
+        "title": "مرد خوابیده روی زن و با دوتا دستاش ممه هاشو گرفته",
+        "situation": "مرد خوابیده روی زن و با دوتا دستاش ممه هاشو گرفته",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "مرد خوابیده روی زن و با دوتا دستاش ممه هاشو گرفته"
+        ],
+        "aliases": [
+          "مرد خوابیده روی زن و با دوتا دستاش ممه هاشو گرفته"
+        ]
+      },
+      "matchedScenario": "scen_kb_f16593f148",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_f16593f148)"
+    },
+    {
+      "input": "وسط ابروهاش به هم وصله",
+      "expectedScenario": {
+        "id": "scen_sb_4f2d004001",
+        "title": "وسط ابروهاش به هم وصله",
+        "situation": "وسط ابروهاش به هم وصله",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "وسط ابروهاش به هم وصله"
+        ],
+        "aliases": [
+          "وسط ابروهاش به هم وصله"
+        ]
+      },
+      "matchedScenario": "scen_kb_8530266751",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_8530266751)"
+    },
+    {
+      "input": "سوال میپرسن ازت ولی جوابشو نمیدونی",
+      "expectedScenario": {
+        "id": "scen_sb_1132273895",
+        "title": "سوال میپرسن ازت ولی جوابشو نمیدونی",
+        "situation": "سوال میپرسن ازت ولی جوابشو نمیدونی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "سوال میپرسن ازت ولی جوابشو نمیدونی"
+        ],
+        "aliases": [
+          "سوال میپرسن ازت ولی جوابشو نمیدونی"
+        ]
+      },
+      "matchedScenario": "scen_kb_b0cdb97b1c",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_b0cdb97b1c)"
+    },
+    {
+      "input": "طرف بدنش پر موه",
+      "expectedScenario": {
+        "id": "scen_sb_ba9c3b2662",
+        "title": "طرف بدنش پر موه",
+        "situation": "طرف بدنش پر موه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "طرف بدنش پر موه"
+        ],
+        "aliases": [
+          "طرف بدنش پر موه"
+        ]
+      },
+      "matchedScenario": "scen_kb_20a2b78435",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_20a2b78435)"
+    },
+    {
+      "input": "یه شعر و غلط میخونه",
+      "expectedScenario": {
+        "id": "scen_sb_f98a2369b2",
+        "title": "یه شعر و غلط میخونه",
+        "situation": "یه شعر و غلط میخونه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یه شعر و غلط میخونه"
+        ],
+        "aliases": [
+          "یه شعر و غلط میخونه"
+        ]
+      },
+      "matchedScenario": "scen_kb_f8809a1e6a",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_f8809a1e6a)"
+    },
+    {
+      "input": "با یه اکانت دیگه بهم پا داد",
+      "expectedScenario": {
+        "id": "scen_sb_6ee98b04da",
+        "title": "با یه اکانت دیگه بهم پا داد",
+        "situation": "با یه اکانت دیگه بهم پا داد",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "با یه اکانت دیگه بهم پا داد"
+        ],
+        "aliases": [
+          "با یه اکانت دیگه بهم پا داد"
+        ]
+      },
+      "matchedScenario": "scen_kb_026329ad89",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_026329ad89)"
+    },
+    {
+      "input": "وقتی خودت عطسه میکنی",
+      "expectedScenario": {
+        "id": "scen_sb_c3dc9ba1ad",
+        "title": "وقتی خودت عطسه میکنی",
+        "situation": "وقتی خودت عطسه میکنی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "وقتی خودت عطسه میکنی"
+        ],
+        "aliases": [
+          "وقتی خودت عطسه میکنی"
+        ]
+      },
+      "matchedScenario": "scen_kb_e80ebe403e",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_e80ebe403e)"
+    },
+    {
+      "input": "از برگشتن به عشق ورابطه قبلی حرف میزنه",
+      "expectedScenario": {
+        "id": "scen_sb_5b4037e913",
+        "title": "از برگشتن به عشق ورابطه قبلی حرف میزنه",
+        "situation": "از برگشتن به عشق ورابطه قبلی حرف میزنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "از برگشتن به عشق ورابطه قبلی حرف میزنه"
+        ],
+        "aliases": [
+          "از برگشتن به عشق ورابطه قبلی حرف میزنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_182a43643d",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_182a43643d)"
+    },
+    {
+      "input": "من خیلی کار میکنم از بچگی کار میکنم",
+      "expectedScenario": {
+        "id": "scen_sb_424219cf08",
+        "title": "من خیلی کار میکنم از بچگی کار میکنم",
+        "situation": "من خیلی کار میکنم از بچگی کار میکنم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "من خیلی کار میکنم از بچگی کار میکنم"
+        ],
+        "aliases": [
+          "من خیلی کار میکنم از بچگی کار میکنم"
+        ]
+      },
+      "matchedScenario": "scen_kb_91556db1e2",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_91556db1e2)"
+    },
+    {
+      "input": "دوستش هی زرزر میکنه",
+      "expectedScenario": {
+        "id": "scen_sb_0a02467fad",
+        "title": "دوستش هی زرزر میکنه",
+        "situation": "دوستش هی زرزر میکنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دوستش هی زرزر میکنه"
+        ],
+        "aliases": [
+          "دوستش هی زرزر میکنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_3e83e47217",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_3e83e47217)"
+    },
+    {
+      "input": "طرف چاخان میگه وحرفای نامعقول میزنه",
+      "expectedScenario": {
+        "id": "scen_sb_f508c2b731",
+        "title": "طرف چاخان میگه وحرفای نامعقول میزنه",
+        "situation": "طرف چاخان میگه وحرفای نامعقول میزنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "طرف چاخان میگه وحرفای نامعقول میزنه"
+        ],
+        "aliases": [
+          "طرف چاخان میگه وحرفای نامعقول میزنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_ae986f629a",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_ae986f629a)"
+    },
+    {
+      "input": "پدرت روت عصبی میشه",
+      "expectedScenario": {
+        "id": "scen_sb_f217407dd6",
+        "title": "پدرت روت عصبی میشه",
+        "situation": "پدرت روت عصبی میشه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "پدرت روت عصبی میشه"
+        ],
+        "aliases": [
+          "پدرت روت عصبی میشه"
+        ]
+      },
+      "matchedScenario": "scen_kb_01f7ce07e1",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_01f7ce07e1)"
+    },
+    {
+      "input": "سوتین وشورت دیدی زمین یا جایی",
+      "expectedScenario": {
+        "id": "scen_sb_a540af7833",
+        "title": "سوتین وشورت دیدی زمین یا جایی",
+        "situation": "سوتین وشورت دیدی زمین یا جایی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "سوتین وشورت دیدی زمین یا جایی"
+        ],
+        "aliases": [
+          "سوتین وشورت دیدی زمین یا جایی"
+        ]
+      },
+      "matchedScenario": "scen_kb_ff72f857d1",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_ff72f857d1)"
+    },
+    {
+      "input": "دوستت که کم پیداست وخبری ازش نیست",
+      "expectedScenario": {
+        "id": "scen_sb_0639c8f26e",
+        "title": "دوستت که کم پیداست وخبری ازش نیست",
+        "situation": "دوستت که کم پیداست وخبری ازش نیست",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دوستت که کم پیداست وخبری ازش نیست"
+        ],
+        "aliases": [
+          "دوستت که کم پیداست وخبری ازش نیست"
+        ]
+      },
+      "matchedScenario": "scen_kb_cbad32af4c",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_cbad32af4c)"
+    },
+    {
+      "input": "یه معتاد میبینی مواد میکشه",
+      "expectedScenario": {
+        "id": "scen_sb_16307f8b46",
+        "title": "یه معتاد میبینی مواد میکشه",
+        "situation": "یه معتاد میبینی مواد میکشه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یه معتاد میبینی مواد میکشه"
+        ],
+        "aliases": [
+          "یه معتاد میبینی مواد میکشه"
+        ]
+      },
+      "matchedScenario": "scen_kb_cb31493083",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_cb31493083)"
+    },
+    {
+      "input": "چایی میریزه رو شلوارت، چای وشیلنگ داغ میریزن روشلوارت",
+      "expectedScenario": {
+        "id": "scen_sb_04127c4500",
+        "title": "چایی میریزه رو شلوارت، چای وشیلنگ داغ میریزن روشلوارت",
+        "situation": "چایی میریزه رو شلوارت، چای وشیلنگ داغ میریزن روشلوارت",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "چایی میریزه رو شلوارت، چای وشیلنگ داغ میریزن روشلوارت"
+        ],
+        "aliases": [
+          "چایی میریزه رو شلوارت، چای وشیلنگ داغ میریزن روشلوارت"
+        ]
+      },
+      "matchedScenario": "scen_kb_1b86cbace6",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_1b86cbace6)"
+    },
+    {
+      "input": "یکی میرقصه",
+      "expectedScenario": {
+        "id": "scen_sb_633199cd3c",
+        "title": "یکی میرقصه",
+        "situation": "یکی میرقصه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یکی میرقصه"
+        ],
+        "aliases": [
+          "یکی میرقصه"
+        ]
+      },
+      "matchedScenario": "scen_kb_d00c74689f",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_d00c74689f)"
+    },
+    {
+      "input": "کشتی وفوتبال برنده میشه تیم یا یه چیز سنگین بلند میکنه طرف",
+      "expectedScenario": {
+        "id": "scen_sb_c8fb8e9634",
+        "title": "کشتی وفوتبال برنده میشه تیم یا یه چیز سنگین بلند میکنه ...",
+        "situation": "کشتی وفوتبال برنده میشه تیم یا یه چیز سنگین بلند میکنه طرف",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "کشتی وفوتبال برنده میشه تیم یا یه چیز سنگین بلند میکنه طرف"
+        ],
+        "aliases": [
+          "کشتی وفوتبال برنده میشه تیم یا یه چیز سنگین بلند میکنه طرف"
+        ]
+      },
+      "matchedScenario": null,
+      "score": 75,
+      "reason": "FALLBACK_TRIGGERED"
+    },
+    {
+      "input": "دختر پسریو خراب میکنه تو جمع بدم خراب میکنه",
+      "expectedScenario": {
+        "id": "scen_sb_8b122fbb93",
+        "title": "دختر پسریو خراب میکنه تو جمع بدم خراب میکنه",
+        "situation": "دختر پسریو خراب میکنه تو جمع بدم خراب میکنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دختر پسریو خراب میکنه تو جمع بدم خراب میکنه"
+        ],
+        "aliases": [
+          "دختر پسریو خراب میکنه تو جمع بدم خراب میکنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_f04fab457d",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_f04fab457d)"
+    },
+    {
+      "input": "طرف همسرش بارها بهش خیانت کرده ولی باز بهش فرصت میده نمیتونم بدونم زندگی کنم",
+      "expectedScenario": {
+        "id": "scen_sb_8bfb06d014",
+        "title": "طرف همسرش بارها بهش خیانت کرده ولی باز بهش فرصت میده نم...",
+        "situation": "طرف همسرش بارها بهش خیانت کرده ولی باز بهش فرصت میده نمیتونم بدونم زندگی کنم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "طرف همسرش بارها بهش خیانت کرده ولی باز بهش فرصت میده نمیتونم بدونم زندگی کنم"
+        ],
+        "aliases": [
+          "طرف همسرش بارها بهش خیانت کرده ولی باز بهش فرصت میده نمیتونم بدونم زندگی کنم"
+        ]
+      },
+      "matchedScenario": null,
+      "score": 75,
+      "reason": "FALLBACK_TRIGGERED"
+    },
+    {
+      "input": "از پول وپولدارا ثروت بحث شده",
+      "expectedScenario": {
+        "id": "scen_sb_c5a8a451ee",
+        "title": "از پول وپولدارا ثروت بحث شده",
+        "situation": "از پول وپولدارا ثروت بحث شده",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "از پول وپولدارا ثروت بحث شده"
+        ],
+        "aliases": [
+          "از پول وپولدارا ثروت بحث شده"
+        ]
+      },
+      "matchedScenario": "scen_kb_e87a6b5d83",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_e87a6b5d83)"
+    },
+    {
+      "input": "گیج بازی درمیاره یا چیزای ساده رو بلد نیست",
+      "expectedScenario": {
+        "id": "scen_sb_ab5b6fdc06",
+        "title": "گیج بازی درمیاره یا چیزای ساده رو بلد نیست",
+        "situation": "گیج بازی درمیاره یا چیزای ساده رو بلد نیست",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "گیج بازی درمیاره یا چیزای ساده رو بلد نیست"
+        ],
+        "aliases": [
+          "گیج بازی درمیاره یا چیزای ساده رو بلد نیست"
+        ]
+      },
+      "matchedScenario": "scen_kb_e33632e467",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_e33632e467)"
+    },
+    {
+      "input": "بهت گیر میدن میگن این چه حرف وکار زشتی بود که زدی تو بزرگ شدی",
+      "expectedScenario": {
+        "id": "scen_sb_80f6706968",
+        "title": "بهت گیر میدن میگن این چه حرف وکار زشتی بود که زدی تو بز...",
+        "situation": "بهت گیر میدن میگن این چه حرف وکار زشتی بود که زدی تو بزرگ شدی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "بهت گیر میدن میگن این چه حرف وکار زشتی بود که زدی تو بزرگ شدی"
+        ],
+        "aliases": [
+          "بهت گیر میدن میگن این چه حرف وکار زشتی بود که زدی تو بزرگ شدی"
+        ]
+      },
+      "matchedScenario": "scen_kb_18411d0ee3",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_18411d0ee3)"
+    },
+    {
+      "input": "تو طبیعت یا کوچه دسشوییت میگیره و درمیاری جیش میکنی",
+      "expectedScenario": {
+        "id": "scen_sb_305cb450d7",
+        "title": "تو طبیعت یا کوچه دسشوییت میگیره و درمیاری جیش میکنی",
+        "situation": "تو طبیعت یا کوچه دسشوییت میگیره و درمیاری جیش میکنی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "تو طبیعت یا کوچه دسشوییت میگیره و درمیاری جیش میکنی"
+        ],
+        "aliases": [
+          "تو طبیعت یا کوچه دسشوییت میگیره و درمیاری جیش میکنی"
+        ]
+      },
+      "matchedScenario": "scen_kb_ba5e6ccf46",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_ba5e6ccf46)"
+    },
+    {
+      "input": "فنجون ولیوان چای و آب زیبایی میبینی",
+      "expectedScenario": {
+        "id": "scen_sb_065b4aea99",
+        "title": "فنجون ولیوان چای و آب زیبایی میبینی",
+        "situation": "فنجون ولیوان چای و آب زیبایی میبینی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "فنجون ولیوان چای و آب زیبایی میبینی"
+        ],
+        "aliases": [
+          "فنجون ولیوان چای و آب زیبایی میبینی"
+        ]
+      },
+      "matchedScenario": "scen_kb_efb8cd9aa5",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_efb8cd9aa5)"
+    },
+    {
+      "input": "عجله میکنه",
+      "expectedScenario": {
+        "id": "scen_sb_20aafe2045",
+        "title": "عجله میکنه",
+        "situation": "عجله میکنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "عجله میکنه"
+        ],
+        "aliases": [
+          "عجله میکنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_65e8ebd2d1",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_65e8ebd2d1)"
+    },
+    {
+      "input": "قورمه سبزی میخوره، یا تعارف میکنن میارن",
+      "expectedScenario": {
+        "id": "scen_sb_73e03f31e4",
+        "title": "قورمه سبزی میخوره، یا تعارف میکنن میارن",
+        "situation": "قورمه سبزی میخوره، یا تعارف میکنن میارن",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "قورمه سبزی میخوره، یا تعارف میکنن میارن"
+        ],
+        "aliases": [
+          "قورمه سبزی میخوره، یا تعارف میکنن میارن"
+        ]
+      },
+      "matchedScenario": null,
+      "score": 75,
+      "reason": "FALLBACK_TRIGGERED"
+    },
+    {
+      "input": "گودزیلاهای دهه نودی ومیبینی",
+      "expectedScenario": {
+        "id": "scen_sb_df771c2c16",
+        "title": "گودزیلاهای دهه نودی ومیبینی",
+        "situation": "گودزیلاهای دهه نودی ومیبینی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "گودزیلاهای دهه نودی ومیبینی"
+        ],
+        "aliases": [
+          "گودزیلاهای دهه نودی ومیبینی"
+        ]
+      },
+      "matchedScenario": "scen_kb_a0dbbc63de",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_a0dbbc63de)"
+    },
+    {
+      "input": "یه صحنه عجیب میبینی یا حرف عجیب و نادر میزنه، من میرم مریخ، من آقازادم،که شاخ درمیاری",
+      "expectedScenario": {
+        "id": "scen_sb_1615264b7b",
+        "title": "یه صحنه عجیب میبینی یا حرف عجیب و نادر میزنه، من میرم م...",
+        "situation": "یه صحنه عجیب میبینی یا حرف عجیب و نادر میزنه، من میرم مریخ، من آقازادم،که شاخ درمیاری",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یه صحنه عجیب میبینی یا حرف عجیب و نادر میزنه، من میرم مریخ، من آقازادم،که شاخ درمیاری"
+        ],
+        "aliases": [
+          "یه صحنه عجیب میبینی یا حرف عجیب و نادر میزنه، من میرم مریخ، من آقازادم،که شاخ درمیاری"
+        ]
+      },
+      "matchedScenario": "scen_kb_6d91cc5adc",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_6d91cc5adc)"
+    },
+    {
+      "input": "یکی یه سیلی بدی میزنه",
+      "expectedScenario": {
+        "id": "scen_sb_09f0bad1c3",
+        "title": "یکی یه سیلی بدی میزنه",
+        "situation": "یکی یه سیلی بدی میزنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یکی یه سیلی بدی میزنه"
+        ],
+        "aliases": [
+          "یکی یه سیلی بدی میزنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_4cddff64da",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_4cddff64da)"
+    },
+    {
+      "input": "بعد چندماه زنگ بزنه پیام بده بهت که میخاد برگرده",
+      "expectedScenario": {
+        "id": "scen_sb_88acceb8cb",
+        "title": "بعد چندماه زنگ بزنه پیام بده بهت که میخاد برگرده",
+        "situation": "بعد چندماه زنگ بزنه پیام بده بهت که میخاد برگرده",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "بعد چندماه زنگ بزنه پیام بده بهت که میخاد برگرده"
+        ],
+        "aliases": [
+          "بعد چندماه زنگ بزنه پیام بده بهت که میخاد برگرده"
+        ]
+      },
+      "matchedScenario": "scen_kb_00b1b43046",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_00b1b43046)"
+    },
+    {
+      "input": "بهش گفتی بچه ،کودک و ناراحت شده و میگه من بچه نیستم و نگو ناراحت میشم و ...",
+      "expectedScenario": {
+        "id": "scen_sb_74bd8697d7",
+        "title": "بهش گفتی بچه ،کودک و ناراحت شده و میگه من بچه نیستم و ن...",
+        "situation": "بهش گفتی بچه ،کودک و ناراحت شده و میگه من بچه نیستم و نگو ناراحت میشم و ...",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "بهش گفتی بچه ،کودک و ناراحت شده و میگه من بچه نیستم و نگو ناراحت میشم و ..."
+        ],
+        "aliases": [
+          "بهش گفتی بچه ،کودک و ناراحت شده و میگه من بچه نیستم و نگو ناراحت میشم و ..."
+        ]
+      },
+      "matchedScenario": "scen_kb_fa2bed7902",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_fa2bed7902)"
+    },
+    {
+      "input": "دوستت تو جمع میگه ببخشید معذرت میخوام",
+      "expectedScenario": {
+        "id": "scen_sb_188ed474de",
+        "title": "دوستت تو جمع میگه ببخشید معذرت میخوام",
+        "situation": "دوستت تو جمع میگه ببخشید معذرت میخوام",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دوستت تو جمع میگه ببخشید معذرت میخوام"
+        ],
+        "aliases": [
+          "دوستت تو جمع میگه ببخشید معذرت میخوام"
+        ]
+      },
+      "matchedScenario": "scen_kb_cca2989025",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_cca2989025)"
+    },
+    {
+      "input": "دختر فوتبال بازی میکنه",
+      "expectedScenario": {
+        "id": "scen_sb_297e788115",
+        "title": "دختر فوتبال بازی میکنه",
+        "situation": "دختر فوتبال بازی میکنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دختر فوتبال بازی میکنه"
+        ],
+        "aliases": [
+          "دختر فوتبال بازی میکنه"
+        ]
+      },
+      "matchedScenario": null,
+      "score": 75,
+      "reason": "FALLBACK_TRIGGERED"
+    },
+    {
+      "input": "شربت آبمیوه درست کردی آوردی براشون",
+      "expectedScenario": {
+        "id": "scen_sb_98ffdca79f",
+        "title": "شربت آبمیوه درست کردی آوردی براشون",
+        "situation": "شربت آبمیوه درست کردی آوردی براشون",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "شربت آبمیوه درست کردی آوردی براشون"
+        ],
+        "aliases": [
+          "شربت آبمیوه درست کردی آوردی براشون"
+        ]
+      },
+      "matchedScenario": "scen_kb_b5413d430b",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_b5413d430b)"
+    },
+    {
+      "input": "دونفر باهم دعوا میکنند دست به یقه شدن، یا به هم پرخاش میکنند",
+      "expectedScenario": {
+        "id": "scen_sb_d85c43a9ff",
+        "title": "دونفر باهم دعوا میکنند دست به یقه شدن، یا به هم پرخاش م...",
+        "situation": "دونفر باهم دعوا میکنند دست به یقه شدن، یا به هم پرخاش میکنند",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دونفر باهم دعوا میکنند دست به یقه شدن، یا به هم پرخاش میکنند"
+        ],
+        "aliases": [
+          "دونفر باهم دعوا میکنند دست به یقه شدن، یا به هم پرخاش میکنند"
+        ]
+      },
+      "matchedScenario": "scen_kb_547a820dc2",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_547a820dc2)"
+    },
+    {
+      "input": "وقتی دوستت آشغال میریزه زمین",
+      "expectedScenario": {
+        "id": "scen_sb_fdc0cc1c10",
+        "title": "وقتی دوستت آشغال میریزه زمین",
+        "situation": "وقتی دوستت آشغال میریزه زمین",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "وقتی دوستت آشغال میریزه زمین"
+        ],
+        "aliases": [
+          "وقتی دوستت آشغال میریزه زمین"
+        ]
+      },
+      "matchedScenario": "scen_kb_4dc4b30211",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_4dc4b30211)"
+    },
+    {
+      "input": "وقتی بندری میخوری یه چیزیکه فلفل توشه میخوری",
+      "expectedScenario": {
+        "id": "scen_sb_9eabe5b1c7",
+        "title": "وقتی بندری میخوری یه چیزیکه فلفل توشه میخوری",
+        "situation": "وقتی بندری میخوری یه چیزیکه فلفل توشه میخوری",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "وقتی بندری میخوری یه چیزیکه فلفل توشه میخوری"
+        ],
+        "aliases": [
+          "وقتی بندری میخوری یه چیزیکه فلفل توشه میخوری"
+        ]
+      },
+      "matchedScenario": "scen_kb_b9ad99b19c",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_b9ad99b19c)"
+    },
+    {
+      "input": "لباس جدید پوشیده میگه قشنگ شدم؟",
+      "expectedScenario": {
+        "id": "scen_sb_5227b06590",
+        "title": "لباس جدید پوشیده میگه قشنگ شدم؟",
+        "situation": "لباس جدید پوشیده میگه قشنگ شدم؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "لباس جدید پوشیده میگه قشنگ شدم؟"
+        ],
+        "aliases": [
+          "لباس جدید پوشیده میگه قشنگ شدم؟"
+        ]
+      },
+      "matchedScenario": "scen_kb_5dd4c435d6",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_5dd4c435d6)"
+    },
+    {
+      "input": "دختر پررویی میکنه",
+      "expectedScenario": {
+        "id": "scen_sb_7744959dc9",
+        "title": "دختر پررویی میکنه",
+        "situation": "دختر پررویی میکنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دختر پررویی میکنه"
+        ],
+        "aliases": [
+          "دختر پررویی میکنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_b3123b63bd",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_b3123b63bd)"
+    },
+    {
+      "input": "جواب فامیل فضول کی ازدواج میکنی؟ کجا کار میکنی درامدت چقدره رتبه کنکورت چندشد",
+      "expectedScenario": {
+        "id": "scen_sb_4aa266e728",
+        "title": "جواب فامیل فضول کی ازدواج میکنی؟ کجا کار میکنی درامدت چ...",
+        "situation": "جواب فامیل فضول کی ازدواج میکنی؟ کجا کار میکنی درامدت چقدره رتبه کنکورت چندشد",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "جواب فامیل فضول کی ازدواج میکنی؟ کجا کار میکنی درامدت چقدره رتبه کنکورت چندشد"
+        ],
+        "aliases": [
+          "جواب فامیل فضول کی ازدواج میکنی؟ کجا کار میکنی درامدت چقدره رتبه کنکورت چندشد"
+        ]
+      },
+      "matchedScenario": "scen_kb_acb9de0673",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_acb9de0673)"
+    },
+    {
+      "input": "تو دسشویی هستی و میگه زود باش بیا بیرون",
+      "expectedScenario": {
+        "id": "scen_sb_d3b8efa402",
+        "title": "تو دسشویی هستی و میگه زود باش بیا بیرون",
+        "situation": "تو دسشویی هستی و میگه زود باش بیا بیرون",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "تو دسشویی هستی و میگه زود باش بیا بیرون"
+        ],
+        "aliases": [
+          "تو دسشویی هستی و میگه زود باش بیا بیرون"
+        ]
+      },
+      "matchedScenario": "scen_kb_44853007ab",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_44853007ab)"
+    },
+    {
+      "input": "رستوران پیتزا میخورین",
+      "expectedScenario": {
+        "id": "scen_sb_581869b375",
+        "title": "رستوران پیتزا میخورین",
+        "situation": "رستوران پیتزا میخورین",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "رستوران پیتزا میخورین"
+        ],
+        "aliases": [
+          "رستوران پیتزا میخورین"
+        ]
+      },
+      "matchedScenario": "scen_kb_33a3da4229",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_33a3da4229)"
+    },
+    {
+      "input": "یه کچل میبینی",
+      "expectedScenario": {
+        "id": "scen_sb_8a44727698",
+        "title": "یه کچل میبینی",
+        "situation": "یه کچل میبینی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یه کچل میبینی"
+        ],
+        "aliases": [
+          "یه کچل میبینی"
+        ]
+      },
+      "matchedScenario": "scen_kb_1bca21de73",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_1bca21de73)"
+    },
+    {
+      "input": "زده فرشو سوزونده و نوشته این چجوری پاک میشه؟",
+      "expectedScenario": {
+        "id": "scen_sb_2210814976",
+        "title": "زده فرشو سوزونده و نوشته این چجوری پاک میشه؟",
+        "situation": "زده فرشو سوزونده و نوشته این چجوری پاک میشه؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "زده فرشو سوزونده و نوشته این چجوری پاک میشه؟"
+        ],
+        "aliases": [
+          "زده فرشو سوزونده و نوشته این چجوری پاک میشه؟"
+        ]
+      },
+      "matchedScenario": "scen_kb_b5ec189528",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_b5ec189528)"
+    },
+    {
+      "input": "خوابالوئه",
+      "expectedScenario": {
+        "id": "scen_sb_107905133c",
+        "title": "خوابالوئه",
+        "situation": "خوابالوئه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "خوابالوئه"
+        ],
+        "aliases": [
+          "خوابالوئه"
+        ]
+      },
+      "matchedScenario": "scen_kb_3d05867f94",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_3d05867f94)"
+    },
+    {
+      "input": "تو مغازه و بوتیک",
+      "expectedScenario": {
+        "id": "scen_sb_49783432f3",
+        "title": "تو مغازه و بوتیک",
+        "situation": "تو مغازه و بوتیک",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "تو مغازه و بوتیک"
+        ],
+        "aliases": [
+          "تو مغازه و بوتیک"
+        ]
+      },
+      "matchedScenario": "scen_kb_e8fcd5d448",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_e8fcd5d448)"
+    },
+    {
+      "input": "دوستت نشسته به جات رو صندلیت",
+      "expectedScenario": {
+        "id": "scen_sb_c940d26268",
+        "title": "دوستت نشسته به جات رو صندلیت",
+        "situation": "دوستت نشسته به جات رو صندلیت",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دوستت نشسته به جات رو صندلیت"
+        ],
+        "aliases": [
+          "دوستت نشسته به جات رو صندلیت"
+        ]
+      },
+      "matchedScenario": "scen_kb_84da9f8933",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_84da9f8933)"
+    },
+    {
+      "input": "دختر سوت میزنه",
+      "expectedScenario": {
+        "id": "scen_sb_8242ce887e",
+        "title": "دختر سوت میزنه",
+        "situation": "دختر سوت میزنه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "دختر سوت میزنه"
+        ],
+        "aliases": [
+          "دختر سوت میزنه"
+        ]
+      },
+      "matchedScenario": "scen_kb_c90faa4540",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_c90faa4540)"
+    },
+    {
+      "input": "آستین لباسشو میکشه بالا",
+      "expectedScenario": {
+        "id": "scen_sb_c68bebe624",
+        "title": "آستین لباسشو میکشه بالا",
+        "situation": "آستین لباسشو میکشه بالا",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "آستین لباسشو میکشه بالا"
+        ],
+        "aliases": [
+          "آستین لباسشو میکشه بالا"
+        ]
+      },
+      "matchedScenario": "scen_kb_b27bc0e8d6",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_b27bc0e8d6)"
+    },
+    {
+      "input": "الان به من تیکه میندازی ؟ با من بودی؟ ، تیکه ننداز",
+      "expectedScenario": {
+        "id": "scen_sb_27b95ce1eb",
+        "title": "الان به من تیکه میندازی ؟ با من بودی؟ ، تیکه ننداز",
+        "situation": "الان به من تیکه میندازی ؟ با من بودی؟ ، تیکه ننداز",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "الان به من تیکه میندازی ؟ با من بودی؟ ، تیکه ننداز"
+        ],
+        "aliases": [
+          "الان به من تیکه میندازی ؟ با من بودی؟ ، تیکه ننداز"
+        ]
+      },
+      "matchedScenario": "scen_kb_f83675b88d",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_f83675b88d)"
+    },
+    {
+      "input": "کیرمو دیدی مگه",
+      "expectedScenario": {
+        "id": "scen_sb_a7631bf2a8",
+        "title": "کیرمو دیدی مگه",
+        "situation": "کیرمو دیدی مگه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "کیرمو دیدی مگه"
+        ],
+        "aliases": [
+          "کیرمو دیدی مگه"
+        ]
+      },
+      "matchedScenario": "scen_kb_b174f800cc",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_b174f800cc)"
+    },
+    {
+      "input": "بازی رو چطور دیدی؟",
+      "expectedScenario": {
+        "id": "scen_sb_90263b8541",
+        "title": "بازی رو چطور دیدی؟",
+        "situation": "بازی رو چطور دیدی؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "بازی رو چطور دیدی؟"
+        ],
+        "aliases": [
+          "بازی رو چطور دیدی؟"
+        ]
+      },
+      "matchedScenario": "scen_kb_fdcfd2ce5b",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_fdcfd2ce5b)"
+    },
+    {
+      "input": "چه خبر، چه خبرا",
+      "expectedScenario": {
+        "id": "scen_sb_dc02d6005a",
+        "title": "چه خبر، چه خبرا",
+        "situation": "چه خبر، چه خبرا",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "چه خبر، چه خبرا"
+        ],
+        "aliases": [
+          "چه خبر، چه خبرا"
+        ]
+      },
+      "matchedScenario": "scen_kb_e6e6bcab9a",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_e6e6bcab9a)"
+    },
+    {
+      "input": "تو فکر کن من زشتم چاقال کونی الاغ",
+      "expectedScenario": {
+        "id": "scen_sb_9c5a4fe4f5",
+        "title": "تو فکر کن من زشتم چاقال کونی الاغ",
+        "situation": "تو فکر کن من زشتم چاقال کونی الاغ",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "تو فکر کن من زشتم چاقال کونی الاغ"
+        ],
+        "aliases": [
+          "تو فکر کن من زشتم چاقال کونی الاغ"
+        ]
+      },
+      "matchedScenario": "scen_kb_1a59f766a2",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_1a59f766a2)"
+    },
+    {
+      "input": "چاک دهنتو ببند",
+      "expectedScenario": {
+        "id": "scen_sb_4f54254cee",
+        "title": "چاک دهنتو ببند",
+        "situation": "چاک دهنتو ببند",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "چاک دهنتو ببند"
+        ],
+        "aliases": [
+          "چاک دهنتو ببند"
+        ]
+      },
+      "matchedScenario": "scen_kb_3b5b8d6201",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_3b5b8d6201)"
+    },
+    {
+      "input": "خیلی چاقی",
+      "expectedScenario": {
+        "id": "scen_sb_b8fb5d5f11",
+        "title": "خیلی چاقی",
+        "situation": "خیلی چاقی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "خیلی چاقی"
+        ],
+        "aliases": [
+          "خیلی چاقی"
+        ]
+      },
+      "matchedScenario": "scen_kb_eb6e76cdeb",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_eb6e76cdeb)"
+    },
+    {
+      "input": "صبرکن",
+      "expectedScenario": {
+        "id": "scen_sb_70cb89ee18",
+        "title": "صبرکن",
+        "situation": "صبرکن",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "صبرکن"
+        ],
+        "aliases": [
+          "صبرکن"
+        ]
+      },
+      "matchedScenario": "scen_kb_93bb514333",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_93bb514333)"
+    },
+    {
+      "input": "درجریانم",
+      "expectedScenario": {
+        "id": "scen_sb_01d7de70aa",
+        "title": "درجریانم",
+        "situation": "درجریانم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "درجریانم"
+        ],
+        "aliases": [
+          "درجریانم"
+        ]
+      },
+      "matchedScenario": "scen_kb_9613758a8d",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_9613758a8d)"
+    },
+    {
+      "input": "سرده سردمه",
+      "expectedScenario": {
+        "id": "scen_sb_a0c8938776",
+        "title": "سرده سردمه",
+        "situation": "سرده سردمه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "سرده سردمه"
+        ],
+        "aliases": [
+          "سرده سردمه"
+        ]
+      },
+      "matchedScenario": "scen_kb_dd1bd4fd83",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_dd1bd4fd83)"
+    },
+    {
+      "input": "کامنت اول",
+      "expectedScenario": {
+        "id": "scen_sb_e3e15efd8b",
+        "title": "کامنت اول",
+        "situation": "کامنت اول",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "کامنت اول"
+        ],
+        "aliases": [
+          "کامنت اول"
+        ]
+      },
+      "matchedScenario": "scen_kb_2474245ed8",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_2474245ed8)"
+    },
+    {
+      "input": "استرس داری",
+      "expectedScenario": {
+        "id": "scen_sb_4792c1dd42",
+        "title": "استرس داری",
+        "situation": "استرس داری",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "استرس داری"
+        ],
+        "aliases": [
+          "استرس داری"
+        ]
+      },
+      "matchedScenario": "scen_kb_eabd815e68",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_eabd815e68)"
+    },
+    {
+      "input": "درد دارم، مشکل دارم ،سختی میکشم",
+      "expectedScenario": {
+        "id": "scen_sb_ced995b99f",
+        "title": "درد دارم، مشکل دارم ،سختی میکشم",
+        "situation": "درد دارم، مشکل دارم ،سختی میکشم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "درد دارم، مشکل دارم ،سختی میکشم"
+        ],
+        "aliases": [
+          "درد دارم، مشکل دارم ،سختی میکشم"
+        ]
+      },
+      "matchedScenario": "scen_kb_2869efdb13",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_2869efdb13)"
+    },
+    {
+      "input": "حوصلم سرریده",
+      "expectedScenario": {
+        "id": "scen_sb_3a68b68b53",
+        "title": "حوصلم سرریده",
+        "situation": "حوصلم سرریده",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "حوصلم سرریده"
+        ],
+        "aliases": [
+          "حوصلم سرریده"
+        ]
+      },
+      "matchedScenario": "scen_kb_450cc356e3",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_450cc356e3)"
+    },
+    {
+      "input": "شما همیشه سرت تو گوشی اینو اونه؟",
+      "expectedScenario": {
+        "id": "scen_sb_a0fb0d33bf",
+        "title": "شما همیشه سرت تو گوشی اینو اونه؟",
+        "situation": "شما همیشه سرت تو گوشی اینو اونه؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "شما همیشه سرت تو گوشی اینو اونه؟"
+        ],
+        "aliases": [
+          "شما همیشه سرت تو گوشی اینو اونه؟"
+        ]
+      },
+      "matchedScenario": "scen_kb_0decdbd734",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_0decdbd734)"
+    },
+    {
+      "input": "💩",
+      "expectedScenario": {
+        "id": "scen_sb_992faa113f",
+        "title": "💩",
+        "situation": "💩",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "💩"
+        ],
+        "aliases": [
+          "💩"
+        ]
+      },
+      "matchedScenario": null,
+      "score": 75,
+      "reason": "FALLBACK_TRIGGERED"
+    },
+    {
+      "input": "کیرت کوچیکه",
+      "expectedScenario": {
+        "id": "scen_sb_f1883d7cb6",
+        "title": "کیرت کوچیکه",
+        "situation": "کیرت کوچیکه",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "کیرت کوچیکه"
+        ],
+        "aliases": [
+          "کیرت کوچیکه"
+        ]
+      },
+      "matchedScenario": "scen_kb_4c66ce56dd",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_4c66ce56dd)"
+    },
+    {
+      "input": "یه مرد باید منو به خاطر زیبایی درونیم شخصیت درونیم بخاد نه ظاهر",
+      "expectedScenario": {
+        "id": "scen_sb_36a160f971",
+        "title": "یه مرد باید منو به خاطر زیبایی درونیم شخصیت درونیم بخاد...",
+        "situation": "یه مرد باید منو به خاطر زیبایی درونیم شخصیت درونیم بخاد نه ظاهر",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "یه مرد باید منو به خاطر زیبایی درونیم شخصیت درونیم بخاد نه ظاهر"
+        ],
+        "aliases": [
+          "یه مرد باید منو به خاطر زیبایی درونیم شخصیت درونیم بخاد نه ظاهر"
+        ]
+      },
+      "matchedScenario": "scen_kb_938d91dd2a",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_938d91dd2a)"
+    },
+    {
+      "input": "من اوپن مایندم، روشن فکرم",
+      "expectedScenario": {
+        "id": "scen_sb_aaae6aa219",
+        "title": "من اوپن مایندم، روشن فکرم",
+        "situation": "من اوپن مایندم، روشن فکرم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "من اوپن مایندم، روشن فکرم"
+        ],
+        "aliases": [
+          "من اوپن مایندم، روشن فکرم"
+        ]
+      },
+      "matchedScenario": "scen_kb_3a4adbd604",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_3a4adbd604)"
+    },
+    {
+      "input": "سرما خوردم",
+      "expectedScenario": {
+        "id": "scen_sb_467db568de",
+        "title": "سرما خوردم",
+        "situation": "سرما خوردم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "سرما خوردم"
+        ],
+        "aliases": [
+          "سرما خوردم"
+        ]
+      },
+      "matchedScenario": "scen_kb_88a6c49329",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_88a6c49329)"
+    },
+    {
+      "input": "شیاف",
+      "expectedScenario": {
+        "id": "scen_sb_e399822bd3",
+        "title": "شیاف",
+        "situation": "شیاف",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "شیاف"
+        ],
+        "aliases": [
+          "شیاف"
+        ]
+      },
+      "matchedScenario": "scen_kb_19e2c58ac5",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_19e2c58ac5)"
+    },
+    {
+      "input": "ینی دارم دروغ میگم؟ حرفامو باور نداری؟من دروغ نمیگم",
+      "expectedScenario": {
+        "id": "scen_sb_719b194236",
+        "title": "ینی دارم دروغ میگم؟ حرفامو باور نداری؟من دروغ نمیگم",
+        "situation": "ینی دارم دروغ میگم؟ حرفامو باور نداری؟من دروغ نمیگم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "ینی دارم دروغ میگم؟ حرفامو باور نداری؟من دروغ نمیگم"
+        ],
+        "aliases": [
+          "ینی دارم دروغ میگم؟ حرفامو باور نداری؟من دروغ نمیگم"
+        ]
+      },
+      "matchedScenario": "scen_kb_429892f99d",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_kb_429892f99d)"
+    },
+    {
+      "input": "آب کرفس بخوریم",
+      "expectedScenario": {
+        "id": "scen_sb_c16a917d38",
+        "title": "آب کرفس بخوریم",
+        "situation": "آب کرفس بخوریم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "آب کرفس بخوریم"
+        ],
+        "aliases": [
+          "آب کرفس بخوریم"
+        ]
+      },
+      "matchedScenario": "scen_sb_56aec211d8",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_sb_56aec211d8)"
+    },
+    {
+      "input": "به عشق تو نگاه اول اعتقاد داری؟",
+      "expectedScenario": {
+        "id": "scen_sb_577b2edcd7",
+        "title": "به عشق تو نگاه اول اعتقاد داری؟",
+        "situation": "به عشق تو نگاه اول اعتقاد داری؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "به عشق تو نگاه اول اعتقاد داری؟"
+        ],
+        "aliases": [
+          "به عشق تو نگاه اول اعتقاد داری؟"
+        ]
+      },
+      "matchedScenario": "scen_sb_e4abddb34e",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_sb_e4abddb34e)"
+    },
+    {
+      "input": "آشپزیم بلدی؟",
+      "expectedScenario": {
+        "id": "scen_sb_d444a7b89c",
+        "title": "آشپزیم بلدی؟",
+        "situation": "آشپزیم بلدی؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "آشپزیم بلدی؟"
+        ],
+        "aliases": [
+          "آشپزیم بلدی؟"
+        ]
+      },
+      "matchedScenario": null,
+      "score": 75,
+      "reason": "FALLBACK_TRIGGERED"
+    },
+    {
+      "input": "خیلی بدشانسم",
+      "expectedScenario": {
+        "id": "scen_sb_68dff01a8d",
+        "title": "خیلی بدشانسم",
+        "situation": "خیلی بدشانسم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "خیلی بدشانسم"
+        ],
+        "aliases": [
+          "خیلی بدشانسم"
+        ]
+      },
+      "matchedScenario": "scen_sb_f87e82522a",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_sb_f87e82522a)"
+    },
+    {
+      "input": "چه رنگیه؟",
+      "expectedScenario": {
+        "id": "scen_sb_d51ee3734f",
+        "title": "چه رنگیه؟",
+        "situation": "چه رنگیه؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "چه رنگیه؟"
+        ],
+        "aliases": [
+          "چه رنگیه؟"
+        ]
+      },
+      "matchedScenario": "scen_sb_8550a6442b",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_sb_8550a6442b)"
+    },
+    {
+      "input": "آدم ندیدی؟",
+      "expectedScenario": {
+        "id": "scen_sb_1a3eb5df6e",
+        "title": "آدم ندیدی؟",
+        "situation": "آدم ندیدی؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "آدم ندیدی؟"
+        ],
+        "aliases": [
+          "آدم ندیدی؟"
+        ]
+      },
+      "matchedScenario": "scen_sb_b7c6740342",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_sb_b7c6740342)"
+    },
+    {
+      "input": "داری کچل میشی",
+      "expectedScenario": {
+        "id": "scen_sb_00b87e28b2",
+        "title": "داری کچل میشی",
+        "situation": "داری کچل میشی",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "داری کچل میشی"
+        ],
+        "aliases": [
+          "داری کچل میشی"
+        ]
+      },
+      "matchedScenario": "scen_sb_ad6de3a592",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_sb_ad6de3a592)"
+    },
+    {
+      "input": "من ۲تا بچه دارم",
+      "expectedScenario": {
+        "id": "scen_sb_cce8149dec",
+        "title": "من ۲تا بچه دارم",
+        "situation": "من ۲تا بچه دارم",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "من ۲تا بچه دارم"
+        ],
+        "aliases": [
+          "من ۲تا بچه دارم"
+        ]
+      },
+      "matchedScenario": "scen_sb_309b76f490",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_sb_309b76f490)"
+    },
+    {
+      "input": "خارج رفتی؟",
+      "expectedScenario": {
+        "id": "scen_sb_71fe5fb334",
+        "title": "خارج رفتی؟",
+        "situation": "خارج رفتی؟",
+        "category": "حاضر جوابی ناب / روزمره",
+        "triggers": [
+          "خارج رفتی؟"
+        ],
+        "aliases": [
+          "خارج رفتی؟"
+        ]
+      },
+      "matchedScenario": "scen_sb_0bdfe19e90",
+      "score": 99,
+      "reason": "MISMATCH_TO_OTHER_SCENARIO (Matched: scen_sb_0bdfe19e90)"
+    }
+  ]
+}

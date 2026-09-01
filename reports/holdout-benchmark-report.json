@@ -1,0 +1,299 @@
+{
+  "timestamp": "2026-08-26T10:25:32.930Z",
+  "status": "FAIL",
+  "totalDatasetSize": 324,
+  "coldStartMs": 14.323,
+  "overallAccuracy": 97.53,
+  "scenarioAccuracy": 96.88,
+  "fallbackAccuracy": 99,
+  "falsePositiveRate": 1,
+  "falseNegativeRate": 1.34,
+  "fiveToneCompleteness": 100,
+  "latency": {
+    "p50": 22.352,
+    "p95": 27.65,
+    "p99": 30.682,
+    "avg": 19.541
+  },
+  "categoryStats": {
+    "پاسخ به مرزبندی و احتیاط": {
+      "total": 28,
+      "pass": 28
+    },
+    "مدیریت ریتم چت و بی محلی": {
+      "total": 28,
+      "pass": 28
+    },
+    "شروع گفتگو و یخ‌شکنی حضوری": {
+      "total": 28,
+      "pass": 27
+    },
+    "پاسخ به کنایه و تست اعتمادبه‌نفس": {
+      "total": 28,
+      "pass": 27
+    },
+    "ریپلای استوری و ارتباطات آنلاین": {
+      "total": 28,
+      "pass": 26
+    },
+    "پذیرش و پاسخ به تعریف و تمجید": {
+      "total": 28,
+      "pass": 28
+    },
+    "پیشنهاد قرار و دعوت به بیرون": {
+      "total": 28,
+      "pass": 26
+    },
+    "مدیریت پاسخ‌های سرد و کوتاه": {
+      "total": 28,
+      "pass": 27
+    },
+    "خارج از دامنه - برنامه‌نویسی": {
+      "total": 2,
+      "pass": 2
+    },
+    "خارج از دامنه - سرور و شبکه": {
+      "total": 1,
+      "pass": 1
+    },
+    "خارج از دامنه - گیت": {
+      "total": 1,
+      "pass": 1
+    },
+    "خارج از دامنه - دیتابیس": {
+      "total": 1,
+      "pass": 1
+    },
+    "خارج از دامنه - آشپزی": {
+      "total": 4,
+      "pass": 4
+    },
+    "خارج از دامنه - ورزش": {
+      "total": 4,
+      "pass": 4
+    },
+    "خارج از دامنه - مالی و کریپتو": {
+      "total": 1,
+      "pass": 1
+    },
+    "خارج از دامنه - مالی و ترید": {
+      "total": 1,
+      "pass": 1
+    },
+    "خارج از دامنه - مالی": {
+      "total": 1,
+      "pass": 1
+    },
+    "خارج از دامنه - پزشکی": {
+      "total": 2,
+      "pass": 2
+    },
+    "خارج از دامنه - مهاجرت": {
+      "total": 1,
+      "pass": 1
+    },
+    "خارج از دامنه - سفارت": {
+      "total": 1,
+      "pass": 1
+    },
+    "سؤال عمومی کلی - ارتباطات": {
+      "total": 2,
+      "pass": 2
+    },
+    "سؤال عمومی کلی - چت": {
+      "total": 1,
+      "pass": 1
+    },
+    "سؤال عمومی کلی - زبان بدن": {
+      "total": 1,
+      "pass": 1
+    },
+    "سؤال عمومی کلی - فن بیان": {
+      "total": 2,
+      "pass": 2
+    },
+    "سؤال عمومی کلی - اعتماد به نفس": {
+      "total": 1,
+      "pass": 1
+    },
+    "سؤال عمومی کلی - استراتژی": {
+      "total": 1,
+      "pass": 1
+    },
+    "سؤال عمومی کلی - راهنما": {
+      "total": 1,
+      "pass": 0
+    },
+    "سؤال عمومی کلی - پیام دادن": {
+      "total": 1,
+      "pass": 1
+    },
+    "احوالپرسی عمومی": {
+      "total": 1,
+      "pass": 1
+    },
+    "تشکر عمومی": {
+      "total": 1,
+      "pass": 1
+    },
+    "ابهام کامل": {
+      "total": 2,
+      "pass": 2
+    },
+    "درخواست کلی": {
+      "total": 2,
+      "pass": 2
+    },
+    "پرسش کلی تئوری": {
+      "total": 1,
+      "pass": 1
+    },
+    "راهنمایی کلی": {
+      "total": 1,
+      "pass": 1
+    },
+    "خیانت و کات کردن": {
+      "total": 1,
+      "pass": 1
+    },
+    "شکست عشقی و فراموشی": {
+      "total": 1,
+      "pass": 1
+    },
+    "خرید کادو تولد": {
+      "total": 1,
+      "pass": 1
+    },
+    "اختلاف خانوادگی": {
+      "total": 1,
+      "pass": 1
+    },
+    "عذرخواهی و دلجویی": {
+      "total": 1,
+      "pass": 1
+    },
+    "شکاکی و بدبینی": {
+      "total": 1,
+      "pass": 1
+    },
+    "مسائل حقوقی ازدواج": {
+      "total": 1,
+      "pass": 1
+    },
+    "خواستگاری سنتی": {
+      "total": 1,
+      "pass": 1
+    },
+    "تشریفات عروسی": {
+      "total": 1,
+      "pass": 1
+    },
+    "مدیریت خشم پارتنر": {
+      "total": 1,
+      "pass": 1
+    },
+    "روانشناسی روابط": {
+      "total": 1,
+      "pass": 1
+    },
+    "مشاوره زناشویی": {
+      "total": 1,
+      "pass": 1
+    },
+    "خارج از دامنه - سوالات عمومی و متفرقه": {
+      "total": 50,
+      "pass": 50
+    }
+  },
+  "failuresCount": 8,
+  "failures": [
+    {
+      "id": "holdout_scen3_23",
+      "query": "توی کافه نشستم و میخوام با دختری که پشت میز کناریه باب آشنایی بذارم",
+      "expected": "scen_3",
+      "actual": null,
+      "topCandidate": "fb (date_invite)",
+      "topScore": 75,
+      "secondCandidate": "None",
+      "secondScore": 0,
+      "reason": "False Negative: Expected scenario scen_3 but triggered fallback."
+    },
+    {
+      "id": "holdout_scen4_02",
+      "query": "بهم تیکه انداخت و گفت تو رو چه به این حرفای گنده هنوز بچه ای",
+      "expected": "scen_4",
+      "actual": "scen_5",
+      "topCandidate": "scen_5 (پاسخ به سوالات تهاجمی: 'اصلاً تو کی هستی؟' / سنجش اقتدار)",
+      "topScore": 100,
+      "secondCandidate": "None",
+      "secondScore": 0,
+      "reason": "Scenario Mismatch: Expected scen_4, got scen_5"
+    },
+    {
+      "id": "holdout_scen5_01",
+      "query": "کراشم یه استوری از غروب دریا گذاشته چی ریپلای بزنم که سر صحبت باز بشه؟",
+      "expected": "scen_5",
+      "actual": "scen_3",
+      "topCandidate": "scen_3 (شروع صحبت و یخ‌شکنی در مهمانی، کافه یا رویداد اجتماعی (Opener))",
+      "topScore": 84,
+      "secondCandidate": "None",
+      "secondScore": 0,
+      "reason": "Scenario Mismatch: Expected scen_5, got scen_3"
+    },
+    {
+      "id": "holdout_scen5_07",
+      "query": "یه استوری از سگ بامزه اش گذاشته چطور ریپلای استوری بدم که فان باشه؟",
+      "expected": "scen_5",
+      "actual": "scen_15",
+      "topCandidate": "scen_15 (وقتی استوری شما را ریپلای می‌کند و می‌نویسد: 'چقدر خوش می‌گذره!')",
+      "topScore": 91,
+      "secondCandidate": "None",
+      "secondScore": 0,
+      "reason": "Scenario Mismatch: Expected scen_5, got scen_15"
+    },
+    {
+      "id": "holdout_scen7_10",
+      "query": "میخوام بگم دوست دارم ببینمت کی وقتت آزاده؟",
+      "expected": "scen_7",
+      "actual": null,
+      "topCandidate": "fb (general_default)",
+      "topScore": 75,
+      "secondCandidate": "None",
+      "secondScore": 0,
+      "reason": "False Negative: Expected scenario scen_7 but triggered fallback."
+    },
+    {
+      "id": "holdout_scen7_26",
+      "query": "چطوری دعوتش کنم به تماشای تئاتر در تئاتر شهر؟",
+      "expected": "scen_7",
+      "actual": null,
+      "topCandidate": "fb (date_invite)",
+      "topScore": 75,
+      "secondCandidate": "None",
+      "secondScore": 0,
+      "reason": "False Negative: Expected scenario scen_7 but triggered fallback."
+    },
+    {
+      "id": "holdout_scen8_23",
+      "query": "پیام داده ممنون بدون هیچ ادامه ای چطور سر صحبت رو دوباره گرم کنم؟",
+      "expected": "scen_8",
+      "actual": "scen_3",
+      "topCandidate": "scen_3 (شروع صحبت و یخ‌شکنی در مهمانی، کافه یا رویداد اجتماعی (Opener))",
+      "topScore": 100,
+      "secondCandidate": "None",
+      "secondScore": 0,
+      "reason": "Scenario Mismatch: Expected scen_8, got scen_3"
+    },
+    {
+      "id": "holdout_fb_meta_09",
+      "query": "راهنمایی کلی برای جذابیت در پیام دادن به کراش",
+      "expected": null,
+      "actual": "scen_6",
+      "topCandidate": "scen_6 (پاسخ کاریزماتیک به تعریف و تمجید (Compliment Response))",
+      "topScore": 80,
+      "secondCandidate": "None",
+      "secondScore": 0,
+      "reason": "False Positive: Expected fallback but matched scen_6 with confidence 80%"
+    }
+  ]
+}

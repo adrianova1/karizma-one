@@ -1,0 +1,101 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-08-31T14:23:01.663Z",
+  "locked": true,
+  "description": "Immutable Canonical Base Dataset extracted strictly from authentic repository source files with deterministic deduplication.",
+  "baseFile": "data/production/base_9k.json",
+  "sha256": "71306ce9d9c78c1b34cd33a45a9b7ea6423970ed40d12adb7e0e29838ade66dc",
+  "finalBaseCount": 9374,
+  "sourceAudits": {
+    "sourceA_ScenarioBank": {
+      "sourceName": "Scenario_Bank.txt",
+      "filePath": "Scenario_Bank.txt",
+      "rawCount": 8711,
+      "invalidOrEmptyCount": 4,
+      "validCount": 8707,
+      "internalDuplicateCount": 486,
+      "uniqueCount": 8221
+    },
+    "sourceB_Karizma": {
+      "sourceName": "karizma_scenario_bank_import.txt",
+      "filePath": "karizma_scenario_bank_import.txt",
+      "rawCount": 4367,
+      "invalidOrEmptyCount": 3,
+      "validCount": 4364,
+      "internalDuplicateCount": 0,
+      "uniqueCount": 4364
+    },
+    "source51_Backup": {
+      "sourceName": "data/scenarios.backup.json",
+      "filePath": "data/scenarios.backup.json",
+      "rawCount": 0,
+      "invalidOrEmptyCount": 0,
+      "validCount": 0,
+      "internalDuplicateCount": 0,
+      "uniqueCount": 0
+    }
+  },
+  "rawStats": {
+    "rawA": 8711,
+    "rawB": 4367,
+    "raw51": 0,
+    "totalRaw": 13078
+  },
+  "invalidOrEmpty": {
+    "sourceA": 4,
+    "sourceB": 3,
+    "source51": 0,
+    "totalInvalidOrEmpty": 7
+  },
+  "internalDuplicates": {
+    "sourceA": 486,
+    "sourceB": 0,
+    "source51": 0,
+    "totalInternalDuplicates": 486
+  },
+  "crossSourceDuplicates": 3211,
+  "totalDuplicatesRemoved": 3697,
+  "deduplicationRule": "Deterministic exact-match on normalized Persian signature: normalizePersianText(situation) + '|' + normalizePersianText(charismaticResponse). Removes zero-width spaces, punctuation, Arabic characters, and collapses whitespace.",
+  "categoryDistribution": {
+    "حاضر جوابی ناب / روزمره": 1221,
+    "سرگرمی و شخصیت نابی": 1,
+    "سرگرمی شخصیت نابی": 912,
+    "جواب و زبون‌ریختن ترکی": 1,
+    "جواب و زبون ریختن ترکی": 586,
+    "ریپلای استوری": 611,
+    "تیکه سبک / بادگیر / نِگ": 1,
+    "تیکه سبک / بادگیر / نگ": 366,
+    "زبون ریختن": 259,
+    "شوخی دوپهلو": 29,
+    "شوخی دو پهلو": 242,
+    "پوش‌پول / حمایتگری": 1,
+    "پوش پول حمایتگری": 151,
+    "چیستان‌های جذاب": 1,
+    "چیستان های جذاب": 149,
+    "جوک و شوخی با پسر و دختر": 1,
+    "جوک ناب و شوخی با پسر و دختر": 132,
+    "شعر": 124,
+    "استوری / تلنگر": 1,
+    "استوری تلنگ": 73,
+    "شیت تست": 3623,
+    "شت تست، مکالمات با دختر": 136,
+    "None": 3,
+    "شرایط فارسی": 66,
+    "شرایط آلفا": 90,
+    "زبون ریزی": 23,
+    "حاظرجوابی روزمره": 30,
+    "نگ": 38,
+    "تیکه های لفظ کل کل": 2,
+    "لیست جملات": 40,
+    "جملات سرکاری سرگرم کننده": 13,
+    "اشعار": 13,
+    "سیاسی، اقتصادی، فرهنگی": 14,
+    "ضرب المثل": 8,
+    "استوری تلینگ": 9,
+    "حاضرجوابی ترکی": 27,
+    "آداب معاشرت": 50,
+    "شرایط ترکی": 324,
+    "چیستان": 1,
+    "جوک": 2
+  }
+}

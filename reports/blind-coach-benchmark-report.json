@@ -1,0 +1,773 @@
+{
+  "timestamp": "2026-08-27T14:05:38.733Z",
+  "benchmarkType": "BLIND_ADVERSARIAL_GENERALIZATION",
+  "datasetMetrics": {
+    "totalTests": 330,
+    "scenarioTests": 230,
+    "fallbackTests": 100,
+    "unseenTests": 330,
+    "rejectedDuplicates": 0
+  },
+  "accuracyMetrics": {
+    "overallAccuracy": 76.67,
+    "scenarioAccuracy": 66.52,
+    "fallbackAccuracy": 100,
+    "falsePositiveRate": 0,
+    "falseNegativeRate": 25.65,
+    "fiveToneCompletenessRate": 0
+  },
+  "performanceMetrics": {
+    "coldStartMs": 78.305,
+    "sequentialRuns": 1000,
+    "avgLatencyMs": 72.291,
+    "p50LatencyMs": 43.196,
+    "p95LatencyMs": 205.052,
+    "p99LatencyMs": 269.517,
+    "maxLatencyMs": 356.47,
+    "minLatencyMs": 0.107,
+    "concurrent50DurationMs": 3764.75,
+    "concurrentThroughputPerOpMs": 75.295
+  },
+  "typeDistribution": {
+    "natural_conversational": {
+      "total": 80,
+      "passed": 53,
+      "accuracy": 66.25
+    },
+    "informal_typographical": {
+      "total": 50,
+      "passed": 29,
+      "accuracy": 57.99999999999999
+    },
+    "long_conversational": {
+      "total": 50,
+      "passed": 42,
+      "accuracy": 84
+    },
+    "ambiguous_query": {
+      "total": 50,
+      "passed": 50,
+      "accuracy": 100
+    },
+    "adversarial_false_positive": {
+      "total": 50,
+      "passed": 50,
+      "accuracy": 100
+    },
+    "paraphrase_generalization": {
+      "total": 50,
+      "passed": 29,
+      "accuracy": 57.99999999999999
+    }
+  },
+  "confidenceBuckets": {
+    "high_90_100": {
+      "total": 120,
+      "correct": 108
+    },
+    "medium_70_89": {
+      "total": 206,
+      "correct": 144
+    },
+    "low_50_69": {
+      "total": 4,
+      "correct": 1
+    }
+  },
+  "failureCount": 77,
+  "failures": [
+    {
+      "id": "blind_016",
+      "query": "همش تیک دوم میخوره ولی بازش نمیکنه ببینه",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_2",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_2, but engine returned fallback."
+    },
+    {
+      "id": "blind_020",
+      "query": "مدام انلاین و افلاین میشه ولی پی وی من باز نمیشه",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_2",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_2, but engine returned fallback."
+    },
+    {
+      "id": "blind_022",
+      "query": "تو کتابخونه نشسته بودم چطور با بغل دستیم حرف بزنم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_3",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_3, but engine returned fallback."
+    },
+    {
+      "id": "blind_028",
+      "query": "توی نمایشگاه کتاب چطور به یه نفر نزدیک بشم و حرف بزنم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_3",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_3, but engine returned fallback."
+    },
+    {
+      "id": "blind_041",
+      "query": "استوری از منظره غروب گذاشته با یه موزیک ملایم چی بنویسم براش",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_042",
+      "query": "عکس از کتابی که میخونه استوری کرده چی دایرکت بدم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_043",
+      "query": "استوری از ورزش صبحگاهیش گذاشته چطور ریپلای کنم ضایع نباشه",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": "scen_15",
+      "confidenceScore": 69,
+      "reason": "Scenario mismatch: expected scen_5, got scen_15."
+    },
+    {
+      "id": "blind_044",
+      "query": "عکس از گربه بامزش استوری کرده چی پیام بدم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_045",
+      "query": "استوری از قهوه و لپ تاپ تو فضای باز گذاشته چی بگم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_047",
+      "query": "عکس سفرش به کویر رو گذاشته چی بنویسم دایرکت",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_048",
+      "query": "استوری ماشینش رو گذاشته چطوری سر صحبت رو باز کنم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_049",
+      "query": "استوری یه نمایش تئاتر گذاشته چی بگم متوجه سلیقم بشه",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_050",
+      "query": "پست جدید گذاشته تو صفحه شخصیش چطور کامنت یا دایرکت بدم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_055",
+      "query": "تعریف کرد از نحوه فن بیان و صحبتم تو جلسه",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_6",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_6, but engine returned fallback."
+    },
+    {
+      "id": "blind_059",
+      "query": "تعریف کرد از عطری که زدم چی بگم باکلاس باشه",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_6",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_6, but engine returned fallback."
+    },
+    {
+      "id": "blind_062",
+      "query": "میخوام پیشنهاد سینما رفتن بدم چطور بگم نه نیاره",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_064",
+      "query": "چطوری بگم دوست دارم ببینمت که حس فشار بهش دست نده",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_065",
+      "query": "پیشنهاد صرف ناهار یا شام در رستوران چطور بدم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_066",
+      "query": "میخوام قرار بذارم واسه اخر هفته چی پیام بدم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_067",
+      "query": "چطوری مکالمه تو تلگرام رو تبدیل به قرار حضوری کنم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_068",
+      "query": "بهترین شیوه برای دعوت کردن کراش به یه قرار دوستانه",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_7",
+      "actualScenario": "scen_50",
+      "confidenceScore": 66,
+      "reason": "Scenario mismatch: expected scen_7, got scen_50."
+    },
+    {
+      "id": "blind_075",
+      "query": "حس میکنم لحن پیاماش خیلی خشک و بی تفاوته",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_076",
+      "query": "به سوال بااحساسم فقط با کلمه باشه جواب داد",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_077",
+      "query": "پاسخ تک کلمه ای میده چطور ری اکشن نشون بدم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_078",
+      "query": "چرا انقدر چتش بی روحه چطور فضا رو عوض کنم",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_079",
+      "query": "طرف هیچی برای ادامه دادن بحث نمیگه فقط تایید میکنه",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_080",
+      "query": "وقتی مینویسه اوکی چطور جواب بدم که ارزش خودم حفظ بشه",
+      "type": "natural_conversational",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_088",
+      "query": "بعد چن سااعت ج دااد",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_2",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_2, but engine returned fallback."
+    },
+    {
+      "id": "blind_097",
+      "query": "ریییپلای به استوووری عککس",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_5",
+      "actualScenario": "scen_11",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_5, got scen_11."
+    },
+    {
+      "id": "blind_098",
+      "query": "استورییی کاافه گذاشته چے بگم",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_099",
+      "query": "ریپـلای اسـتوری اینـستا",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_5",
+      "actualScenario": "scen_11",
+      "confidenceScore": 90,
+      "reason": "Scenario mismatch: expected scen_5, got scen_11."
+    },
+    {
+      "id": "blind_100",
+      "query": "عاااکس گذاشته تو پپیجش چے بگم",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_102",
+      "query": "تعرییف از استااایل و تیییپ",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_6",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_6, but engine returned fallback."
+    },
+    {
+      "id": "blind_104",
+      "query": "دعوووت به کااافه و قـرار",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_105",
+      "query": "چطوور پیشششنهاد بییرون رفتن بدم",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_106",
+      "query": "پیشـنهاد قـرار عاشـقانه",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_110",
+      "query": "تک کلمه ایی جووواب داد",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_111",
+      "query": "سـرد شـده چـتـش بـاهـام",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_113",
+      "query": "قصصصد ازدوااج نـدارم فعـلا",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_1",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_1, but engine returned fallback."
+    },
+    {
+      "id": "blind_117",
+      "query": "تیکـه سـنگین زددد بم",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_4",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_4, but engine returned fallback."
+    },
+    {
+      "id": "blind_118",
+      "query": "تعریییف کرددد از عطرررم",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_6",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_6, but engine returned fallback."
+    },
+    {
+      "id": "blind_119",
+      "query": "دعوووت به قهووه دااخل کافه",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_120",
+      "query": "چطوووری شماااره بگـیرم ازش",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_121",
+      "query": "جوواب سررد داده چییی بفرستم",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_124",
+      "query": "ریییپلای به اسـتوری غـذا",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_5",
+      "actualScenario": "scen_11",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_5, got scen_11."
+    },
+    {
+      "id": "blind_128",
+      "query": "طـاقـچه بـالا گـذاشـته",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_4",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_4, but engine returned fallback."
+    },
+    {
+      "id": "blind_129",
+      "query": "تـعریف از هـیکل و فـیتنس",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_6",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_6, but engine returned fallback."
+    },
+    {
+      "id": "blind_130",
+      "query": "پیـشنهاد دیـدار اولـیه",
+      "type": "informal_typographical",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_133",
+      "query": "چند روزه با یه نفر آشنا شدم خیلی گرم صحبت میکردیم اما دیشب یهو پیام داد قصد رابطه ندارم منم نمیدونم چی بگم",
+      "type": "long_conversational",
+      "expectedScenario": "scen_1",
+      "actualScenario": "scen_2",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_1, got scen_2."
+    },
+    {
+      "id": "blind_143",
+      "query": "دختره یه استوری خیلی قشنگ از کافه ای که رفته گذاشته بود میخوام یه ریپلای استوری کافه بزنم که ادامه‌دار بشه",
+      "type": "long_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": "scen_11",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_5, got scen_11."
+    },
+    {
+      "id": "blind_145",
+      "query": "امروز یه استوری عکس شخصی جذاب گذاشته میخوام بدون تعریف مستقیم ریپلای بدم چی پیشنهاد میکنی؟",
+      "type": "long_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": "scen_6",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_5, got scen_6."
+    },
+    {
+      "id": "blind_146",
+      "query": "سر کار بودم همکارم با خنده بهم گفت چقدر خوشتیپی چی بگم که مغرور به نظر نرسم ولی باکلاس باشه؟",
+      "type": "long_conversational",
+      "expectedScenario": "scen_6",
+      "actualScenario": "scen_4",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_6, got scen_4."
+    },
+    {
+      "id": "blind_148",
+      "query": "یکی از فالوورام دایرکت داد و گفت از تیپ و لباست خیلی خوشم اومده چطور تشکر کنم که جذاب باشه؟",
+      "type": "long_conversational",
+      "expectedScenario": "scen_6",
+      "actualScenario": "scen_8",
+      "confidenceScore": 80,
+      "reason": "Scenario mismatch: expected scen_6, got scen_8."
+    },
+    {
+      "id": "blind_153",
+      "query": "وقتی یه نفر توی چت هی جواب سرد میده و فقط میگه باشه یا اها بهترین واکنش کاریزماتیک چیه؟",
+      "type": "long_conversational",
+      "expectedScenario": "scen_8",
+      "actualScenario": "scen_20",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_8, got scen_20."
+    },
+    {
+      "id": "blind_165",
+      "query": "استوری یه کتاب جالب گذاشته بود خواستم ریپلای استوری بدم که شروع یه گپ عمیق بشه چی بفرستم",
+      "type": "long_conversational",
+      "expectedScenario": "scen_5",
+      "actualScenario": "scen_15",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_5, got scen_15."
+    },
+    {
+      "id": "blind_169",
+      "query": "میخوام به بهانه تست کردن یه قهوه جدید توی یه کافه معروف پیشنهاد قرار حضوری بدم چه متنی خوبه",
+      "type": "long_conversational",
+      "expectedScenario": "scen_7",
+      "actualScenario": "scen_14",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_7, got scen_14."
+    },
+    {
+      "id": "blind_282",
+      "query": "بهتره مرز بینمون فقط در حد دوستی عادی بمونه",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_1",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_1, but engine returned fallback."
+    },
+    {
+      "id": "blind_284",
+      "query": "قصد جدی شدن این ارتباط و ازدواج رو ندارم",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_1",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_1, but engine returned fallback."
+    },
+    {
+      "id": "blind_288",
+      "query": "انلاین بودنت رو دیدم اما جوابی نفرستادی",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_2",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_2, but engine returned fallback."
+    },
+    {
+      "id": "blind_293",
+      "query": "اولین جمله برای سخن گفتن با هم کلاسی دختر",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_3",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_3, but engine returned fallback."
+    },
+    {
+      "id": "blind_294",
+      "query": "شکستن سکوت و یخ ارتباط در اولین برخورد اجتماعی",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_3",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_3, but engine returned fallback."
+    },
+    {
+      "id": "blind_301",
+      "query": "تصویری از کافه در استوری منتشر کرده چی بنویسم",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_302",
+      "query": "ارسال دایرکت مناسب برای عکس استوری شده در اینستا",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_303",
+      "query": "نحوه ریپلای زدن به استوری های خاص و هنری",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_5",
+      "actualScenario": "scen_11",
+      "confidenceScore": 88,
+      "reason": "Scenario mismatch: expected scen_5, got scen_11."
+    },
+    {
+      "id": "blind_304",
+      "query": "عکس جدید از خودش استوری کرده چه پیامی بفرستم",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_305",
+      "query": "پاسخ دادن به استوری اینستاگرام بدون لحن کلیشه ای",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_5",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_5, but engine returned fallback."
+    },
+    {
+      "id": "blind_306",
+      "query": "از تیپ و پوشش من تحسین کرد چه پاسخی دهم",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_6",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_6, but engine returned fallback."
+    },
+    {
+      "id": "blind_308",
+      "query": "تمجید از اندام و هیکل ورزشی چی جواب بدم",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_6",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_6, but engine returned fallback."
+    },
+    {
+      "id": "blind_309",
+      "query": "تعریف از استایل شیک و ادکلن در ملاقات",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_6",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_6, but engine returned fallback."
+    },
+    {
+      "id": "blind_311",
+      "query": "چگونه طرف مقابل را به نوشیدن قهوه در کافه دعوت کنم",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_312",
+      "query": "پیشنهاد ملاقات حضوری و بیرون رفتن برای دیدار اول",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_7",
+      "actualScenario": "scen_14",
+      "confidenceScore": 61,
+      "reason": "Scenario mismatch: expected scen_7, got scen_14."
+    },
+    {
+      "id": "blind_314",
+      "query": "روش درخواست شماره تماس و هماهنگی برای قرار ملاقات",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_7",
+      "actualScenario": "scen_44",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_7, got scen_44."
+    },
+    {
+      "id": "blind_315",
+      "query": "دعوت صمیمانه برای صرف چای یا عصرانه بیرون از منزل",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    },
+    {
+      "id": "blind_318",
+      "query": "وقتی تنها با کلمه باشه واکنش نشان میدهد چه کنم",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_8",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_8, but engine returned fallback."
+    },
+    {
+      "id": "blind_320",
+      "query": "پاسخ به سردی مفرط و پیام های تک کلمه ای در گفتگو",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_8",
+      "actualScenario": "scen_6",
+      "confidenceScore": 100,
+      "reason": "Scenario mismatch: expected scen_8, got scen_6."
+    },
+    {
+      "id": "blind_326",
+      "query": "واکنش متواضعانه اما کاریزماتیک به تحسین ظاهر",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_6",
+      "actualScenario": "scen_20",
+      "confidenceScore": 86,
+      "reason": "Scenario mismatch: expected scen_6, got scen_20."
+    },
+    {
+      "id": "blind_327",
+      "query": "تنظیم قرار حضوری در کافی شاپ برای آشنایی بیشتر",
+      "type": "paraphrase_generalization",
+      "expectedScenario": "scen_7",
+      "actualScenario": null,
+      "confidenceScore": 75,
+      "reason": "Expected scenario scen_7, but engine returned fallback."
+    }
+  ]
+}

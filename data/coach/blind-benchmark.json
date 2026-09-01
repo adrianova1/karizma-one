@@ -1,0 +1,2642 @@
+[
+  {
+    "id": "blind_001",
+    "query": "طرف تو چت گفت هنوز به مرحله‌ای نرسیدم که تعهد بدم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_002",
+    "query": "گفت من کلا روحیه تنهایی رو به رابطه ترجیح میدم الان",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_003",
+    "query": "بهم گفت من ادم رابطه نیستم بیشتر دنبال ارامشم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_004",
+    "query": "وسط حرفامون گفت ترجیح میدم صرفا دوست معمولی بمونیم و تعهد نباشه",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "hard",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_005",
+    "query": "طرف پیام داد که از رابطه عاطفی قبلیش هنوز آسیب دیده و قصد رابطه نداره",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_006",
+    "query": "میگه شرایط روحیم طوری نیست که بخوام رل بزنم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_007",
+    "query": "گفت من اصلا فاز رل زدن و رابطه جدی ندارم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_008",
+    "query": "پیام داده من فعلا تمرکزم روی درسمه و وقت رابطه ندارم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_009",
+    "query": "بهم میگه من ادم موندگاری تو رابطه نیستم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_010",
+    "query": "نوشته بود من اهل رابطه و این داستانا نیستم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_011",
+    "query": "پیامم رو ساعت ۹ صبح دید ولی ۶ عصر جواب داد",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_012",
+    "query": "دیروز عصر پیام دادم الان تازه اومده روی خط",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_013",
+    "query": "استوری جدید گذاشته ولی جواب پیام دیشب منو نداده",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_014",
+    "query": "چرا وقتی انلاین میشه پیام منو سین نمیکنه",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_015",
+    "query": "طرف پنج ساعت بعد از سوالم فقط نوشته ببخشید ندیدم",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_016",
+    "query": "همش تیک دوم میخوره ولی بازش نمیکنه ببینه",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_017",
+    "query": "یه روز در میون جواب چت رو میده کلافه شدم",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "hard",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_018",
+    "query": "پیام دیشبم رو بی پاسخ گذاشت و صبح سلام فرستاد",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_019",
+    "query": "سین زد اما هیچی ننوشت چی بهش بگم",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_020",
+    "query": "مدام انلاین و افلاین میشه ولی پی وی من باز نمیشه",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_021",
+    "query": "توی ورکشاپ کنار یه نفر نشستم چطور مکالمه رو کلید بزنم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_022",
+    "query": "تو کتابخونه نشسته بودم چطور با بغل دستیم حرف بزنم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_023",
+    "query": "تو پرواز کنار یه نفر باکلاس نشستم چی بگم سر صحبت باز بشه",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_024",
+    "query": "چطور مکالمه رو با کسی که نمیشناسم تو ایونت شروع کنم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_025",
+    "query": "تو سالن انتظار فرودگاه چطور با یه نفر باب اشنایی رو باز کنم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_026",
+    "query": "توی کافه نشستم یه نفر نظرمو جلب کرده چی بگم بهش",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_027",
+    "query": "جمله اول برای شروع صحبت با همکلاسی جدید تو دانشگاه",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_028",
+    "query": "توی نمایشگاه کتاب چطور به یه نفر نزدیک بشم و حرف بزنم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_029",
+    "query": "وقتی تو یه جمع غریبه ام چطور مکالمه رو اغاز کنم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_030",
+    "query": "جمله پیشنهادی برای شکستن یخ رابطه تو قرار اول",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_031",
+    "query": "بهم گفت حس میکنم خیلی ادعات میشه",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_032",
+    "query": "برگشت گفت تو همیشه فکر میکنی از بقیه بهتری",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_033",
+    "query": "وسط جمع بهم تیکه انداخت که اعتماد به نفست کاذبه",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_034",
+    "query": "گفت سنت کمه و رفتارات خیلی بچگونست",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_035",
+    "query": "تیکه انداخت که چقدر قیافه میگیری برای ما",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_036",
+    "query": "گفت فکر نکن چون خوش لباسی کسی تحویلت میگیره",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_037",
+    "query": "مسخره کرد گفت تو رو چه به این حرفای گنده",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_038",
+    "query": "بهم گفت تو کلا بچه سالی و هنوز بزرگ نشدی",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_039",
+    "query": "توی گروه کنایه زد که فلانی همش خودشو میندازه وسط",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_040",
+    "query": "گفت شوخی کردم ولی لحنش کاملا تیکه دار بود",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_041",
+    "query": "استوری از منظره غروب گذاشته با یه موزیک ملایم چی بنویسم براش",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_042",
+    "query": "عکس از کتابی که میخونه استوری کرده چی دایرکت بدم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_043",
+    "query": "استوری از ورزش صبحگاهیش گذاشته چطور ریپلای کنم ضایع نباشه",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_044",
+    "query": "عکس از گربه بامزش استوری کرده چی پیام بدم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_045",
+    "query": "استوری از قهوه و لپ تاپ تو فضای باز گذاشته چی بگم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_046",
+    "query": "یه کوئسشن باکس اینستا گذاشته چطور جواب جذاب بفرستم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_047",
+    "query": "عکس سفرش به کویر رو گذاشته چی بنویسم دایرکت",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_048",
+    "query": "استوری ماشینش رو گذاشته چطوری سر صحبت رو باز کنم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_049",
+    "query": "استوری یه نمایش تئاتر گذاشته چی بگم متوجه سلیقم بشه",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_050",
+    "query": "پست جدید گذاشته تو صفحه شخصیش چطور کامنت یا دایرکت بدم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_051",
+    "query": "بهم گفت صدات خیلی ارامش بخش و خاصه",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_052",
+    "query": "گفت ساعت مچیت خیلی باکلاسه از کجا خریدی",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_053",
+    "query": "پیام داد چقدر توی عکس پروفایلت موهات قشنگ شده",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_054",
+    "query": "بهم گفت هوش و طرز تفکرت خیلی جذابه برام",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_055",
+    "query": "تعریف کرد از نحوه فن بیان و صحبتم تو جلسه",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_056",
+    "query": "گفت رنگ لباست خیلی به چهره و چشمات میاد",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_057",
+    "query": "بهم گفت انرژی مثبتی که داری حال ادمو خوب میکنه",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_058",
+    "query": "گفت خیلی خوش هیکلی باشگاه میری",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_059",
+    "query": "تعریف کرد از عطری که زدم چی بگم باکلاس باشه",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_060",
+    "query": "گفت سلیقه ات تو انتخاب موزیک فوق العاده است",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_061",
+    "query": "چطور بهش پیشنهاد بدم بریم نمایشگاه عکاسی",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_062",
+    "query": "میخوام پیشنهاد سینما رفتن بدم چطور بگم نه نیاره",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_063",
+    "query": "چند وقته چت میکنیم چطور دعوتش کنم به پیاده روی عصرگاهی",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_064",
+    "query": "چطوری بگم دوست دارم ببینمت که حس فشار بهش دست نده",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_065",
+    "query": "پیشنهاد صرف ناهار یا شام در رستوران چطور بدم",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_066",
+    "query": "میخوام قرار بذارم واسه اخر هفته چی پیام بدم",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_067",
+    "query": "چطوری مکالمه تو تلگرام رو تبدیل به قرار حضوری کنم",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_068",
+    "query": "بهترین شیوه برای دعوت کردن کراش به یه قرار دوستانه",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_069",
+    "query": "میخوام بگم بریم بام تهران قدم بزنیم چی بفرستم",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_070",
+    "query": "چطور دعوتش کنم بیاد گالری نقاشی باهام",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_071",
+    "query": "هر چی میگم فقط یه استیکر لایک میفرسته",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_072",
+    "query": "بعد از کلی توضیح فقط نوشت اها چی بگم بهش",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_073",
+    "query": "طرف توی چت فقط مینویسه هوم یا اره",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_074",
+    "query": "متن طولانی دادم فقط نوشت اوکی مرسی",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_075",
+    "query": "حس میکنم لحن پیاماش خیلی خشک و بی تفاوته",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_076",
+    "query": "به سوال بااحساسم فقط با کلمه باشه جواب داد",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_077",
+    "query": "پاسخ تک کلمه ای میده چطور ری اکشن نشون بدم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_078",
+    "query": "چرا انقدر چتش بی روحه چطور فضا رو عوض کنم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_079",
+    "query": "طرف هیچی برای ادامه دادن بحث نمیگه فقط تایید میکنه",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_080",
+    "query": "وقتی مینویسه اوکی چطور جواب بدم که ارزش خودم حفظ بشه",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "natural_conversational"
+  },
+  {
+    "id": "blind_081",
+    "query": "مـیـگـه مـن اهـل رل زدن نـیـسـتـم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_082",
+    "query": "طرف قـــصد رااابطه نداره چے بگم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "hard",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_083",
+    "query": "نمیخوام واردِ رابـطه بـشم گفـت",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_084",
+    "query": "نمیییخوام رل بزننم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_085",
+    "query": "دییییر جووواب داد پیاممووو",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_086",
+    "query": "سیییین زده ولی جووواب نداددد",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_087",
+    "query": "آنلاااین بود جوووواب نـداد",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_088",
+    "query": "بعد چن سااعت ج دااد",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_089",
+    "query": "چطووور سر صحببت رو بااز کنم تو کااافه",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_090",
+    "query": "یخخخ شکنی تو مهموونی با دختتر",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_091",
+    "query": "چطوری سرِ صحبت رو باز کنـم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_092",
+    "query": "گف چقد پرویی خدایییی",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_093",
+    "query": "بهم مییگه تو خیلییی بچههه ایی",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_094",
+    "query": "کللل کلل کررد چی ج بدم",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_095",
+    "query": "تیکه انـداخـت بچـه شـدی",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_096",
+    "query": "چقد خودتو تحوییییل میگیریییی",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_097",
+    "query": "ریییپلای به استوووری عککس",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_098",
+    "query": "استورییی کاافه گذاشته چے بگم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_099",
+    "query": "ریپـلای اسـتوری اینـستا",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_100",
+    "query": "عاااکس گذاشته تو پپیجش چے بگم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_101",
+    "query": "گفففت خوشششتیپی چے بگم",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_102",
+    "query": "تعرییف از استااایل و تیییپ",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_103",
+    "query": "گـفت چـقدر جـذابی شـما",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_104",
+    "query": "دعوووت به کااافه و قـرار",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_105",
+    "query": "چطوور پیشششنهاد بییرون رفتن بدم",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_106",
+    "query": "پیشـنهاد قـرار عاشـقانه",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_107",
+    "query": "پیـام سـرد داد چی بگـم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_108",
+    "query": "فقططط مییگه اوووکی چے بگم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_109",
+    "query": "گفت بااشه چے ج بدم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_110",
+    "query": "تک کلمه ایی جووواب داد",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_111",
+    "query": "سـرد شـده چـتـش بـاهـام",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_112",
+    "query": "طرففف میییگه اهههل رل نیییستم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_113",
+    "query": "قصصصد ازدوااج نـدارم فعـلا",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_114",
+    "query": "دیـر سـین زد پـیامـم رو",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_115",
+    "query": "سر صحبتتت با دختتر تو کلااس",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_116",
+    "query": "گفتتت بچـه بااازی درنـیار",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_117",
+    "query": "تیکـه سـنگین زددد بم",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_118",
+    "query": "تعریییف کرددد از عطرررم",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_119",
+    "query": "دعوووت به قهووه دااخل کافه",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_120",
+    "query": "چطوووری شماااره بگـیرم ازش",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_121",
+    "query": "جوواب سررد داده چییی بفرستم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_122",
+    "query": "فقطط استیکککر میفرستته چتت خشککه",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_123",
+    "query": "گفـت چـقـدر نـازی شـما",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_124",
+    "query": "ریییپلای به اسـتوری غـذا",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_125",
+    "query": "یخخخ شـکنی در مهـمونی",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_126",
+    "query": "انـلاین بـود پـیام نـداد",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_127",
+    "query": "قـصد رابـطه نـدارم گـفت",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_128",
+    "query": "طـاقـچه بـالا گـذاشـته",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_129",
+    "query": "تـعریف از هـیکل و فـیتنس",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_130",
+    "query": "پیـشنهاد دیـدار اولـیه",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "informal_typographical"
+  },
+  {
+    "id": "blind_131",
+    "query": "سلام داداش، دیروز با یه خانمی چت میکردم همه چیز عالی بود ولی اخر شب برگشت گفت اهل رابطه نیستم چی جواب بدم ضایع نشم؟",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_132",
+    "query": "داشتم با همکارم پیام میدادم یهو گفت من کلا دنبال رل زدن با همکار نیستم چی بگم که فضا حفظ بشه؟",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_133",
+    "query": "چند روزه با یه نفر آشنا شدم خیلی گرم صحبت میکردیم اما دیشب یهو پیام داد قصد رابطه ندارم منم نمیدونم چی بگم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_134",
+    "query": "سلام وقت بخیر، صبح ساعت ده یه پیام مهم بهش دادم ولی ساعت نه شب جواب داد چطور جوابشو بدم که سبک نشم؟",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_135",
+    "query": "طرف استوری های منو درجا نگاه میکنه ولی چت خصوصی رو بعد چند ساعت جواب میده چی براش بفرستم؟",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_136",
+    "query": "دیروز بعد از ظهر براش پیام فرستادم انلاینم بود ولی سین زده جواب نداده تا الان که دوباره انلاین شده",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_137",
+    "query": "رفتم توی یه کافه دنج نشستم یه نفر میز روبرویی نشسته چطور برم جلو و با ادب سر صحبت رو باز کنم؟",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_138",
+    "query": "امشب یه دورهمی دوستانه دعوت شدم که اکثرا غریبه هستن، بهترین روش برای شروع صحبت در مهمانی چیه؟",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_139",
+    "query": "توی سمینار کاری کنار یه نفر نشستم میخوام بدون اینکه حس بدی بگیره اولین پیام چت یا مکالمه رو شروع کنم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_140",
+    "query": "توی گروه دانشگاهی داشتیم صحبت میکردیم یکی برگشت گفت چقدر خودتو تحویل میگیری چطور حاضر جوابی کنم؟",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_141",
+    "query": "وسط شوخی ها یکی از دوستام بهم تیکه انداخت که خیلی بچه ای و ادای آدم بزرگا رو درمیاری چی بگم بهش؟",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_142",
+    "query": "داشتم با یه دختر چت میکردم یهو گفت بچه بازی درنیار و مسخره بازی نکن میخوام محکم و جذاب جواب بدم",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_143",
+    "query": "دختره یه استوری خیلی قشنگ از کافه ای که رفته گذاشته بود میخوام یه ریپلای استوری کافه بزنم که ادامه‌دار بشه",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_144",
+    "query": "طرف عکس از سفرش به شمال استوری کرده و موزیک قشنگی گذاشته، چی بگم زیر استوریش که نظرش جلب بشه؟",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_145",
+    "query": "امروز یه استوری عکس شخصی جذاب گذاشته میخوام بدون تعریف مستقیم ریپلای بدم چی پیشنهاد میکنی؟",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_146",
+    "query": "سر کار بودم همکارم با خنده بهم گفت چقدر خوشتیپی چی بگم که مغرور به نظر نرسم ولی باکلاس باشه؟",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_147",
+    "query": "تو چت عکسمو فرستادم برگشت گفت چقدر جذابی و چشمات خاصه، بهترین پاسخ به تعریف و تمجید چیه؟",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_148",
+    "query": "یکی از فالوورام دایرکت داد و گفت از تیپ و لباست خیلی خوشم اومده چطور تشکر کنم که جذاب باشه؟",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_149",
+    "query": "الان حدود ده روزه داریم روزانه چت میکنیم و حس میکنم زمانشه چطور پیشنهاد قرار بدم که تمایل نشون بده؟",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_150",
+    "query": "مکالمه خیلی گرم شده و میخوام برای پنجشنبه دعوت به کافه کنم چطور پیام بدم که خیلی راحت قبول کنه؟",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_151",
+    "query": "میخوام بعد از یه شوخی بامزه بگم بریم بیرون قهوه بخوریم چه متنی برای پیشنهاد دیدار حضوری خوبه؟",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_152",
+    "query": "من یه متن سه خطی با انرژی دادم ولی اون فقط با یه کلمه گفت اوکی چی بگم که فضا سردتر نشه؟",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_153",
+    "query": "وقتی یه نفر توی چت هی جواب سرد میده و فقط میگه باشه یا اها بهترین واکنش کاریزماتیک چیه؟",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_154",
+    "query": "طرف پیام داده اوکی و دیگه هیچی ننوشته منم نمیخوام پیگیری الکی کنم چطور جمعش کنم؟",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_155",
+    "query": "سلام، دیشب به طرف گفتم فلان فیلمو دیدی؟ گفت نه، گفتم دوست داری ببینی؟ گفت اوکی، الان چت سرد شده چی بگم؟",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_156",
+    "query": "یکی توی تلگرام بهم پیام داده بود کلی حرف زدیم بعد گفت من واقعا اهل رل زدن نیستم فقط چت",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_157",
+    "query": "بهش پیشنهاد دادم با هم پروژه برداریم گفت من فعلا قصد ازدواج یا رابطه با کسی ندارم ربطی نداشت ولی چی بگم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_158",
+    "query": "طرف پیام فرستاده میگه بعد چند روز پیام داده بودم چون سرم شلوغ بود ولی تابلوئه دروغ میگه چی جواب بدم",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_159",
+    "query": "پنج تا پیام پشت سر هم دادم بعد چند ساعت یه کلمه جواب داده چطور برخورد کنم که بی محلی نشه",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_160",
+    "query": "توی افتتاحیه یه گالری هنری چطور سر صحبت رو با هنرمند یا بقیه باز کنم جمله شروع چی باشه",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_161",
+    "query": "سلام من خیلی آدم خجالتی ای هستم و نمیدونم چطور با دختری که نمیشناسم توی مهمانی حرف بزنم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_162",
+    "query": "توی جمع فامیلی یکی برگشت گفت چقدر پرو هستی که این حرفو زدی چطور جواب تیکه شوخی سنگین رو بدم",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_163",
+    "query": "به دوستم گفتم میخوام بیزینس جدید بزنم مسخره کرد گفت تو هنوز بچه ای چه جوابی بدم بسوزه",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_164",
+    "query": "یه پیج عمومی از یه بلاگر دیدم استوری گذاشته بود از یه منظره عالی چطور دایرکت بدم که جواب بده",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_165",
+    "query": "استوری یه کتاب جالب گذاشته بود خواستم ریپلای استوری بدم که شروع یه گپ عمیق بشه چی بفرستم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_166",
+    "query": "یه نفر توی مهمونی اومد سمتم و گفت چقدر عطر و استایلت جذابه چطور با متانت جواب تعریفشو بدم",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_167",
+    "query": "طرف بهم گفت خیلی ادم خوش برخورد و نازی هستی چه جوابی بدم که مغرور نشون نده ولی پرستیژ داشته باشه",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_168",
+    "query": "چت ما توی اینستاگرام خیلی طولانی شده و میخوام دعوت به کافه کنم چطور شماره بگیرم و قرار بذارم",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_169",
+    "query": "میخوام به بهانه تست کردن یه قهوه جدید توی یه کافه معروف پیشنهاد قرار حضوری بدم چه متنی خوبه",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_170",
+    "query": "هر وقت من با اشتیاق صحبت میکنم اون فقط میگه اوکی یا باشه و کلا چت سرد شده چطور رفتار کنم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_171",
+    "query": "سلام مربی، طرف بعد سه روز برگشته میگه ببخشید گرفتار بودم، من چطور جواب پیام بعد چند روز رو بدم؟",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_172",
+    "query": "داشتم از اهدافم صحبت میکردم یهو گفت طاقچه بالا گذاشتی چی بگم که فضا تلطیف بشه؟",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_173",
+    "query": "توی اینستاگرام برام استوری عکس گذاشته بود ریپلای کردم اونم با ایموجی جواب داد الان چی بگم؟",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_174",
+    "query": "بهش گفتم موهات چقدر خوشگله اونم گفت تو هم خیلی جذابی حالا جواب تعریف رو چی بدم؟",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_175",
+    "query": "چطور بعد از یه هفته چت کردن به طرف بگم موافقی بریم یه قهوه با هم بخوریم و صحبت کنیم؟",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_176",
+    "query": "دختره بعد از کلی وویس دادن فقط یه استیکر سرد و بی احساس فرستاد چی بهش بگم؟",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_177",
+    "query": "طرف دیشب پیام داد گفت ببخشید ولی من واقعا قصد رل ندارم و نمیخوام به کسی وابسته بشم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_178",
+    "query": "صبح پیام دادم ظهر آنلاین شد پیاممو خوند ولی جواب نداد تا الان که عصر شده چطور برخورد کنم؟",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_179",
+    "query": "توی یه جشن تولد چطور با فردی که تنها ایستاده سر صحبت باز کردن رو شروع کنم؟",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_180",
+    "query": "توی چت گفت بچه شدی و هی غر میزنی چطور شوخی کنایه آمیز رو مدیریت کنم؟",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "long_conversational"
+  },
+  {
+    "id": "blind_181",
+    "query": "الان چی بگم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_182",
+    "query": "چی جواب بدم بهش؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_183",
+    "query": "نمیدونم چی بفرستم",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_184",
+    "query": "چطور رفتار کنم باهاش؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_185",
+    "query": "یه راهنمایی کلی میخوام واسه چت",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_186",
+    "query": "چیکار کنم بهتره؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_187",
+    "query": "به نظرت الان وقتشه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_188",
+    "query": "چطور باکلاس باشم توی صحبت؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_189",
+    "query": "یه متن جذاب بهم بده",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_190",
+    "query": "چطوری کاریزماتیک حرف بزنم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_191",
+    "query": "چطور جذاب تر به نظر برسم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_192",
+    "query": "اصول چت کردن چیه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_193",
+    "query": "چطور اعتماد به نفس داشته باشم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_194",
+    "query": "مشکل در برقراری ارتباط",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_195",
+    "query": "چگونه مکالمه بهتری داشته باشم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_196",
+    "query": "راهکار برای جذابیت کلامی",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_197",
+    "query": "چطور توی چت سوتی ندم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_198",
+    "query": "پیشنهاد شما چیه در این مورد؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_199",
+    "query": "بهترین استراتژی برای مکالمه چیه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_200",
+    "query": "چطور طرف رو جذب خودم کنم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_201",
+    "query": "چه متنی بفرستم که خوب باشه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_202",
+    "query": "چطوری صحبت کنم که خوشش بیاد؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_203",
+    "query": "میخوام یه پیام با انرژی بفرستم",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_204",
+    "query": "بهترین لحن برای صحبت چیست؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_205",
+    "query": "چگونه حرف بزنیم که تاثیرگذار باشد؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_206",
+    "query": "الان پیام بدم یا صبر کنم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_207",
+    "query": "چطور پیام شروع بفرستم بدون هیچ دلیلی؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_208",
+    "query": "چیکار کنم فضا صمیمی تر بشه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_209",
+    "query": "چطور از حالت رسمی دربیایم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_210",
+    "query": "چی بگم که خوشش بیاد؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_211",
+    "query": "راهنمای کلی جذابیت در پیام دادن",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_212",
+    "query": "چطور لحن خودم رو باحال تر کنم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_213",
+    "query": "چگونه پیام بدیم که جواب بده؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_214",
+    "query": "چطور در نگاه اول خوب به نظر برسیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_215",
+    "query": "توصیه مربی برای این موقعیت چیه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_216",
+    "query": "چه جوابی مناسبه الان؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_217",
+    "query": "چطور واکنش نشون بدم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_218",
+    "query": "تکنیک برای بهبود چت",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_219",
+    "query": "چگونه زبان بدن خوبی داشته باشیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_220",
+    "query": "چطور در مهمانی کاریزماتیک باشیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_221",
+    "query": "چگونه جذاب صحبت کنیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_222",
+    "query": "اصول پیام دادن به جنس مخالف",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_223",
+    "query": "چیکار کنم دوستم داشته باشه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_224",
+    "query": "چطور بدون استرس حرف بزنم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_225",
+    "query": "راهنمایی برای ارتباط موثر",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_226",
+    "query": "چطور صحبت رو ادامه بدم وقتی تموم شده؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_227",
+    "query": "روش های مکالمه جذاب",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_228",
+    "query": "چیکار کنم رابطمون خراب نشه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_229",
+    "query": "پیام بعدی من چی باشه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_230",
+    "query": "چطور یه جواب خیلی خفن بدم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "medium",
+    "type": "ambiguous_query"
+  },
+  {
+    "id": "blind_231",
+    "query": "نتیجه مسابقه فوتبال بارسلونا و رئال مادرید چی شد؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_232",
+    "query": "برای مهمانی امشب چه غذایی بپزم که خوشمزه باشه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_233",
+    "query": "چطور پایتون و جنگو رو روی اوبونتو نصب کنم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_234",
+    "query": "قیمت دلار و بیت کوین در بازار امروز چنده؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_235",
+    "query": "بهترین کافه در سعادت آباد برای کار کردن با لپ تاپ کجاست؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_236",
+    "query": "طرز تهیه قورمه سبزی جا افتاده با گوشت گوسفندی",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_237",
+    "query": "روش تعویض روغن موتور ماشین پژو ۲۰۶",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_238",
+    "query": "آب و هوای تهران در روزهای پنجشنبه و جمعه چطوره؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_239",
+    "query": "چطور ویزای تحصیلی آلمان بگیرم و مدارک چیه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_240",
+    "query": "بازی کامپیوتری جی تی ای وی کی منتشر میشه؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_241",
+    "query": "کتاب های هری پاتر چند جلد هستن؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_242",
+    "query": "چطور مشکل داغ شدن گوشی سامسونگ رو حل کنم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_243",
+    "query": "جدول رده بندی لیگ برتر انگلیس",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_244",
+    "query": "طریقه استفاده از هوش مصنوعی برای کدنویسی ری اکت",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_245",
+    "query": "بهترین فیلم های سینمایی نولان در سال های اخیر",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_246",
+    "query": "روش یادگیری زبان انگلیسی در خانه بدون کلاس",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_247",
+    "query": "ساعت کار متروی تهران در روزهای تعطیل",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_248",
+    "query": "چگونه پیج اینستاگرام را دی اکتیو یا حذف کنیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_249",
+    "query": "درمان خانگی برای سرماخوردگی و گلودرد شدید",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_250",
+    "query": "نحوه اتصال دسته پلی استیشن به کامپیوتر با بلوتوث",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_251",
+    "query": "کالری یک بشقاب برنج و خورش قیمه چقدر است؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_252",
+    "query": "سفارت کانادا در استانبول کجاست و چطور وقت بگیریم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_253",
+    "query": "نحوه کانفیگ سرور لینوکس برای پروژه نود جی اس",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_254",
+    "query": "بهترین برنامه تمرینی برای افزایش حجم عضلانی در بدنسازی",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_255",
+    "query": "تاریخ برگزاری کنکور سراسری کارشناسی ارشد",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_256",
+    "query": "چطور پسورد فراموش شده جیمیل را بازیابی کنیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_257",
+    "query": "علت روشن نشدن لپ تاپ ایسوس بعد از آپدیت ویندوز",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_258",
+    "query": "طرز تهیه دسر تیرامیسو خانگی بدون تخم مرغ",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_259",
+    "query": "خواص درمانی دمنوش بابونه و گل گاوزبان برای خواب",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_260",
+    "query": "آموزش طراحی لوگو در ایلوستریتور برای مبتدیان",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_261",
+    "query": "نرخ سود سپرده بانکی در سال جدید چقدر است؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_262",
+    "query": "چطور سرعت اینترنت وای فای خانه را افزایش دهیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_263",
+    "query": "کتاب های رمان پرفروش نیویورک تایمز",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_264",
+    "query": "روش کاشت و نگهداری گل سانسوریا و زاموفیلیا در اپارتمان",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_265",
+    "query": "بازی دیشب استقلال و پرسپولیس چند چند شد؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_266",
+    "query": "آدرس شعب مرکزی بانک ملی در مرکز شهر",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_267",
+    "query": "بهترین زمان تعویض لنت ترمز خودرو سمند",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_268",
+    "query": "نحوه ساخت حساب پایپال در ایران وریفای شده",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_269",
+    "query": "راهنمای خرید کارت گرافیک آر تی ایکس انویدیا",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_270",
+    "query": "طرز پخت کیک اسفنجی ساده بدون فر در قابلمه",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_271",
+    "query": "چطور حافظه کش تلگرام را در گوشی آیفون پاک کنیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_272",
+    "query": "قیمت بلیط هواپیما تهران به استانبول برای هفته آینده",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_273",
+    "query": "آموزش ثبت نام در آزمون آیلتس آکادمیک",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_274",
+    "query": "تفاوت بین رم دی دی آر ۴ و دی دی آر ۵ چیست؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_275",
+    "query": "چطور لکه چربی را از روی لباس نخی پاک کنیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_276",
+    "query": "بهترین تنظیمات دوربین برای عکاسی پرتره در شب",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_277",
+    "query": "تاریخ انقضای گذرنامه برای سفر خارجی چند ماه باید باشد؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_278",
+    "query": "روش فعال سازی تایید دو مرحله ای تلگرام و واتساپ",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_279",
+    "query": "علائم خرابی باتری ماشین و روش تست دینام",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_280",
+    "query": "چگونه در اکسل فرمول نویسی پیشرفته انجام دهیم؟",
+    "expectedScenario": null,
+    "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+    "difficulty": "easy",
+    "type": "adversarial_false_positive"
+  },
+  {
+    "id": "blind_281",
+    "query": "ترجیح میدم بدون تعهد باشم و وارد رابطه نشم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_282",
+    "query": "بهتره مرز بینمون فقط در حد دوستی عادی بمونه",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "hard",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_283",
+    "query": "من روحیه وابستگی عاطفی و رابطه ندارم فعلا",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_284",
+    "query": "قصد جدی شدن این ارتباط و ازدواج رو ندارم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_285",
+    "query": "نمیخوام درگیر احساسات و تعهد رابطه ای بشم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_286",
+    "query": "پاسخ دادن به پیامت این همه ساعت طول کشید",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_287",
+    "query": "پیامم رو دیدی ولی چرا بی پاسخ رها کردی",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_288",
+    "query": "انلاین بودنت رو دیدم اما جوابی نفرستادی",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_289",
+    "query": "فاصله بین پیام هات خیلی زیاد شده و دیر جواب میدی",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_290",
+    "query": "بعد از یک شبانه روز بی خبری اومدی سلام دادی",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_291",
+    "query": "چطور باب گفتگو را با فرد ناشناس در مهمانی باز کنم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_292",
+    "query": "راهکار شروع مکالمه در فضای عمومی و کافه ها",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_293",
+    "query": "اولین جمله برای سخن گفتن با هم کلاسی دختر",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_294",
+    "query": "شکستن سکوت و یخ ارتباط در اولین برخورد اجتماعی",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_295",
+    "query": "چگونه سر سخن را با فردی جذاب باز نمایم",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_296",
+    "query": "کنایه زد که خودت رو مرکز عالم میدونی",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_297",
+    "query": "شوخی زننده کرد و گفت ادای ادمای مغرور رو درنیار",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_298",
+    "query": "تیکه کلام انداخت که چرا انقدر خودتو تحویل میگیری",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_299",
+    "query": "توی کل کل گفت رفتارت مثل بچه های پیش دبستانیه",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_300",
+    "query": "مسخره ام کرد و گفت اعتماد به نفس کاذب داری",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_301",
+    "query": "تصویری از کافه در استوری منتشر کرده چی بنویسم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_302",
+    "query": "ارسال دایرکت مناسب برای عکس استوری شده در اینستا",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_303",
+    "query": "نحوه ریپلای زدن به استوری های خاص و هنری",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_304",
+    "query": "عکس جدید از خودش استوری کرده چه پیامی بفرستم",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_305",
+    "query": "پاسخ دادن به استوری اینستاگرام بدون لحن کلیشه ای",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_306",
+    "query": "از تیپ و پوشش من تحسین کرد چه پاسخی دهم",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_307",
+    "query": "گفت چقدر باوقار و خوشتیپ هستی",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_308",
+    "query": "تمجید از اندام و هیکل ورزشی چی جواب بدم",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_309",
+    "query": "تعریف از استایل شیک و ادکلن در ملاقات",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_310",
+    "query": "گفت چه چهره معصوم و نازی داری",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_311",
+    "query": "چگونه طرف مقابل را به نوشیدن قهوه در کافه دعوت کنم",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_312",
+    "query": "پیشنهاد ملاقات حضوری و بیرون رفتن برای دیدار اول",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_313",
+    "query": "چطور از فضای چت به دیدار واقعی در کافه پل بزنم",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_314",
+    "query": "روش درخواست شماره تماس و هماهنگی برای قرار ملاقات",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_315",
+    "query": "دعوت صمیمانه برای صرف چای یا عصرانه بیرون از منزل",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_316",
+    "query": "ارسال پاسخ های تک سیلابی و بی احساس مانند اوکی",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_317",
+    "query": "پیام های بسیار کوتاه و سرد در پاسخ به صحبت هایم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_318",
+    "query": "وقتی تنها با کلمه باشه واکنش نشان میدهد چه کنم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_319",
+    "query": "مدیریت چت خشک و بی روح با مخاطب بی تفاوت",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_320",
+    "query": "پاسخ به سردی مفرط و پیام های تک کلمه ای در گفتگو",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_321",
+    "query": "طرف پیام داد نمیخوام هیچ تعهدی توی رابطه داشته باشم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_322",
+    "query": "ساعت ها پیام بدون پاسخ مانده و سین زده است",
+    "expectedScenario": "scen_2",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_323",
+    "query": "جمله ای برای گشودن باب مکالمه در رویدادهای گروهی",
+    "expectedScenario": "scen_3",
+    "category": "شروع ارتباط و یخ‌شکنی",
+    "difficulty": "medium",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_324",
+    "query": "پاسخ مقتدرانه به طعنه و کنایه اطرافیان در جمع",
+    "expectedScenario": "scen_4",
+    "category": "حاضرجوابی و مدیریت کل‌کل",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_325",
+    "query": "ارسال واکنش به تصویر استوری اینستاگرام مخاطب",
+    "expectedScenario": "scen_5",
+    "category": "شبکه‌های اجتماعی و چت",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_326",
+    "query": "واکنش متواضعانه اما کاریزماتیک به تحسین ظاهر",
+    "expectedScenario": "scen_6",
+    "category": "پاسخ به تعریف و تمجید",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_327",
+    "query": "تنظیم قرار حضوری در کافی شاپ برای آشنایی بیشتر",
+    "expectedScenario": "scen_7",
+    "category": "هدایت چت به قرار ملاقات",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_328",
+    "query": "واکنش مناسب در برابر جواب های خشک و تک کلمه ای مخاطب",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_329",
+    "query": "وقتی در چت فقط می نویسد باشه چطور برخورد کنیم",
+    "expectedScenario": "scen_8",
+    "category": "مدیریت ریتم چت و بی محلی",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  },
+  {
+    "id": "blind_330",
+    "query": "طرف گفت به این زودی ها قصد ورود به رابطه عاطفی ندارم",
+    "expectedScenario": "scen_1",
+    "category": "پاسخ به مرزبندی و احتیاط",
+    "difficulty": "easy",
+    "type": "paraphrase_generalization"
+  }
+]

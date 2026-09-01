@@ -1,0 +1,22 @@
+[
+  {
+    "id": "sub_admin_vip",
+    "userId": "u_1001",
+    "planId": "p3",
+    "startDate": "2026-08-28T19:57:06.786Z",
+    "endDate": "2026-09-27T19:57:06.786Z",
+    "status": "active",
+    "queryCount": 0,
+    "createdAt": "2026-08-28T19:57:06.786Z"
+  },
+  {
+    "id": "sub_user_gold",
+    "userId": "u_1002",
+    "planId": "p3",
+    "startDate": "2026-08-28T19:57:06.786Z",
+    "endDate": "2026-09-27T19:57:06.786Z",
+    "status": "active",
+    "queryCount": 1,
+    "createdAt": "2026-08-28T19:57:06.786Z"
+  }
+]

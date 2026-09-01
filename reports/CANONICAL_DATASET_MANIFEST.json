@@ -1,0 +1,20 @@
+{
+  "dataset_version": "2.0.0_CLEAN_BASE_9K",
+  "generated_at": "2026-08-30T16:53:14.705Z",
+  "total_unique_scenarios": 9027,
+  "duplicates_filtered": 3987,
+  "files_updated": [
+    "data/scenarios.json",
+    "data/coach/scenarios.json",
+    "data/production/master_base_bank.json",
+    "data/production/base_9k.json"
+  ],
+  "tone_coverage": {
+    "charismatic": 9027,
+    "funny": 9027,
+    "confident": 9027,
+    "mysterious": 9027,
+    "mature": 9027
+  },
+  "status": "ACTIVE_CANONICAL_CORE"
+}

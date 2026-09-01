@@ -1,0 +1,28 @@
+[
+  {
+    "id": "u_1001",
+    "username": "admin",
+    "passwordHash": "4caf927c528b77c6b2067abdae5e6638434764072609ff794250023e5dea54b5",
+    "role": "admin",
+    "phoneNumber": "09123456789",
+    "preferences": {
+      "autoCopy": true,
+      "gender": "unspecified"
+    },
+    "createdAt": "2026-08-21T06:59:41.004Z",
+    "updatedAt": "2026-08-21T06:59:41.005Z"
+  },
+  {
+    "id": "u_1002",
+    "username": "user",
+    "passwordHash": "4caf927c528b77c6b2067abdae5e6638434764072609ff794250023e5dea54b5",
+    "role": "user",
+    "phoneNumber": "09120000000",
+    "preferences": {
+      "autoCopy": true,
+      "gender": "unspecified"
+    },
+    "createdAt": "2026-08-21T06:59:41.005Z",
+    "updatedAt": "2026-08-21T06:59:41.005Z"
+  }
+]

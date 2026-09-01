@@ -1,0 +1,1344 @@
+[
+  {
+    "id": "bench_001",
+    "input": "اہل رابطه نیستم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_002",
+    "input": "اهل رابطه نیستم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_003",
+    "input": "قصد رابطه ندارم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_004",
+    "input": "دنبال رابطه نیستم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_005",
+    "input": "نمیخوام وارد رابطه بشم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_006",
+    "input": "دیر جواب داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_007",
+    "input": "دیر جواب میده",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_008",
+    "input": "سین زده جواب نداده",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_009",
+    "input": "آنلاین بود جواب نداد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_010",
+    "input": "چطور سر صحبت رو باز کنم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_011",
+    "input": "شروع صحبت در کافه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_012",
+    "input": "چی بگم سر صحبت باز بشه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_013",
+    "input": "اولین پیام چت",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_014",
+    "input": "جواب تیکه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_015",
+    "input": "کنایه زد چی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_016",
+    "input": "چقدر خودتو تحویل میگیری",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_017",
+    "input": "گفت چقدر پرو هستی",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_018",
+    "input": "چی ریپلای بدم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_5",
+      "category": "شبکه‌های اجتماعی و چت",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_019",
+    "input": "ریپلای استوری",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_5",
+      "category": "شبکه‌های اجتماعی و چت",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_020",
+    "input": "پاسخ به استوری عکس",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_5",
+      "category": "شبکه‌های اجتماعی و چت",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_021",
+    "input": "تعریف کرد چی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_6",
+      "category": "پاسخ به تعریف و تمجید",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_022",
+    "input": "گفت خوشتیپی چی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_6",
+      "category": "پاسخ به تعریف و تمجید",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_023",
+    "input": "گفت چقدر جذابی",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_6",
+      "category": "پاسخ به تعریف و تمجید",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_024",
+    "input": "چطور پیشنهاد قرار بدم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_025",
+    "input": "دعوت به کافه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_026",
+    "input": "چطور بگم بریم بیرون",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_027",
+    "input": "جواب سرد داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_028",
+    "input": "گفت اوکی چی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_029",
+    "input": "گفت باشه چی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_030",
+    "input": "تک کلمه‌ای جواب داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_031",
+    "input": "رد کردن پیشنهاد رابطه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_032",
+    "input": "تعیین مرز صمیمیت در چت",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_033",
+    "input": "دیر سین زدن",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_034",
+    "input": "بی محلی در چت",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_035",
+    "input": "باز کردن سر صحبت",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_036",
+    "input": "یخ شکنی مکالمه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_037",
+    "input": "پاسخ به تیکه و کنایه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_038",
+    "input": "حاضرجوابی در کل کل",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_039",
+    "input": "ریپلای استوری اینستاگرام",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_5",
+      "category": "شبکه‌های اجتماعی و چت",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_040",
+    "input": "پاسخ به تمجید ظاهر",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_6",
+      "category": "پاسخ به تعریف و تمجید",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_041",
+    "input": "دعوت به قرار ملاقات",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_042",
+    "input": "مدیریت چت سرد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 60
+    },
+    "type": "alias"
+  },
+  {
+    "id": "bench_043",
+    "input": "قصد رابطه ندارم و فعلا نمیتونم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 60
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_044",
+    "input": "طرف پیام داده میگه فعلا قصد رل زدن ندارم چی جواب بدم؟",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 50
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_045",
+    "input": "طرف دیر جواب داد بعد ۳ ساعت اومده میگه سلام",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 50
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_046",
+    "input": "سین زده جواب نداده چی بهش بگم؟",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 60
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_047",
+    "input": "توی مهمونی چطور با دختر سر صحبت رو باز کنم؟",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 50
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_048",
+    "input": "بهم کنایه زده و تیکه انداخته یه جواب دندان شکن میخوام",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 50
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_049",
+    "input": "استوری گذاشته از یه کافه شیک، چی ریپلای کنم؟",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_5",
+      "category": "شبکه‌های اجتماعی و چت",
+      "minConfidence": 50
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_050",
+    "input": "از تیپ و لباسم تعریف کرده گفته خیلی خوشتیپی چی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_6",
+      "category": "پاسخ به تعریف و تمجید",
+      "minConfidence": 50
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_051",
+    "input": "میخوام بهش پیشنهاد بدم بریم بیرون کافه قهوه بخوریم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 50
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_052",
+    "input": "پیام داده فقط نوشته اوکی، چت خیلی سرد شده",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 50
+    },
+    "type": "conversational_variation"
+  },
+  {
+    "id": "bench_053",
+    "input": "دير جواب داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "persian_arabic_normalization"
+  },
+  {
+    "id": "bench_054",
+    "input": "دیر جواب داد؟؟؟!!!",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "punctuation_normalization"
+  },
+  {
+    "id": "bench_055",
+    "input": "دیر    جواب     داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "whitespace_normalization"
+  },
+  {
+    "id": "bench_056",
+    "input": "دیر جواب داد 🤦‍♂️🤦‍♀️",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "emoji_normalization"
+  },
+  {
+    "id": "bench_057",
+    "input": "كنايه زد چي بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "persian_arabic_normalization"
+  },
+  {
+    "id": "bench_058",
+    "input": "كافه رفتن و شروع صحبت",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 50
+    },
+    "type": "persian_arabic_normalization"
+  },
+  {
+    "id": "bench_059",
+    "input": "چطور پیشنهاد قرار بدم؟ ☕",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 70
+    },
+    "type": "emoji_normalization"
+  },
+  {
+    "id": "bench_060",
+    "input": "تک کلمه ای جواب داد...",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "zwnj_normalization"
+  },
+  {
+    "id": "bench_061",
+    "input": "تک‌کلمه‌ای جواب داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "zwnj_normalization"
+  },
+  {
+    "id": "bench_062",
+    "input": "اہل رابطه نیستم و وقت ندارم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 60
+    },
+    "type": "persian_arabic_normalization"
+  },
+  {
+    "id": "bench_063",
+    "input": "رابطه قصد تعهد فرندزون",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 40
+    },
+    "type": "keyword"
+  },
+  {
+    "id": "bench_064",
+    "input": "سین آنلاین کبوتر پیام",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 40
+    },
+    "type": "keyword"
+  },
+  {
+    "id": "bench_065",
+    "input": "سر صحبت شروع کافه مهمانی یخ شکنی",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 40
+    },
+    "type": "keyword"
+  },
+  {
+    "id": "bench_066",
+    "input": "تیکه کنایه کل کل پرو حاضرجوابی",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 40
+    },
+    "type": "keyword"
+  },
+  {
+    "id": "bench_067",
+    "input": "استوری ریپلای اینستا لوکیشن پست",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_5",
+      "category": "شبکه‌های اجتماعی و چت",
+      "minConfidence": 40
+    },
+    "type": "keyword"
+  },
+  {
+    "id": "bench_068",
+    "input": "تعریف تمجید جذاب خوشتیپ هیکل استایل",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_6",
+      "category": "پاسخ به تعریف و تمجید",
+      "minConfidence": 40
+    },
+    "type": "keyword"
+  },
+  {
+    "id": "bench_069",
+    "input": "قرار کافه بیرون قهوه دیدار دعوت",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 40
+    },
+    "type": "keyword"
+  },
+  {
+    "id": "bench_070",
+    "input": "سرد اوکی باشه تک کلمه بی احساس",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 40
+    },
+    "type": "keyword"
+  },
+  {
+    "id": "bench_071",
+    "input": "اهل رابته نیستم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 50
+    },
+    "type": "fuzzy"
+  },
+  {
+    "id": "bench_072",
+    "input": "دیر جفاب داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 50
+    },
+    "type": "fuzzy"
+  },
+  {
+    "id": "bench_073",
+    "input": "شروع سحبت در کافه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 50
+    },
+    "type": "fuzzy"
+  },
+  {
+    "id": "bench_074",
+    "input": "جوااب تییکه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 50
+    },
+    "type": "fuzzy"
+  },
+  {
+    "id": "bench_075",
+    "input": "ریپلای استووری",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_5",
+      "category": "شبکه‌های اجتماعی و چت",
+      "minConfidence": 50
+    },
+    "type": "fuzzy"
+  },
+  {
+    "id": "bench_076",
+    "input": "تعریف کرد چچی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_6",
+      "category": "پاسخ به تعریف و تمجید",
+      "minConfidence": 50
+    },
+    "type": "fuzzy"
+  },
+  {
+    "id": "bench_077",
+    "input": "دعوت به کاافه قهوه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 50
+    },
+    "type": "fuzzy"
+  },
+  {
+    "id": "bench_078",
+    "input": "جواب سررد داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 50
+    },
+    "type": "fuzzy"
+  },
+  {
+    "id": "bench_079",
+    "input": "توی کافه نشسته بودیم و دیر جواب پیام داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 40
+    },
+    "type": "overlap_disambiguation"
+  },
+  {
+    "id": "bench_080",
+    "input": "استوری کافه گذاشته بود خواستم دعوت به کافه کنم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 40
+    },
+    "type": "overlap_disambiguation"
+  },
+  {
+    "id": "bench_081",
+    "input": "تیکه انداخت که خیلی خوشتیپی",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 40
+    },
+    "type": "overlap_disambiguation"
+  },
+  {
+    "id": "bench_082",
+    "input": "امروز هوا بارونیه و خیابونا شلوغه",
+    "expected": {
+      "match": false,
+      "scenarioId": null,
+      "category": "fallback",
+      "minConfidence": 0
+    },
+    "type": "unrelated_query"
+  },
+  {
+    "id": "bench_083",
+    "input": "قیمت بیت کوین و دلار چنده الان؟",
+    "expected": {
+      "match": false,
+      "scenarioId": null,
+      "category": "fallback",
+      "minConfidence": 0
+    },
+    "type": "unrelated_query"
+  },
+  {
+    "id": "bench_084",
+    "input": "دستور پخت قورمه سبزی با لوبیا چیتی",
+    "expected": {
+      "match": false,
+      "scenarioId": null,
+      "category": "fallback",
+      "minConfidence": 0
+    },
+    "type": "unrelated_query"
+  },
+  {
+    "id": "bench_085",
+    "input": "چطور پایتون و جنگو رو روی لینوکس نصب کنم؟",
+    "expected": {
+      "match": false,
+      "scenarioId": null,
+      "category": "fallback",
+      "minConfidence": 0
+    },
+    "type": "unrelated_query"
+  },
+  {
+    "id": "bench_086",
+    "input": "نتایج بازی فوتبال دیشب رئال مادرید چی شد؟",
+    "expected": {
+      "match": false,
+      "scenarioId": null,
+      "category": "fallback",
+      "minConfidence": 0
+    },
+    "type": "unrelated_query"
+  },
+  {
+    "id": "bench_087",
+    "input": "دیر به دیر پیام فرستادن و سین نزدن",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 50
+    },
+    "type": "fallback_topic_routing"
+  },
+  {
+    "id": "bench_088",
+    "input": "دایرکت اینستاگرام و عکس استوری جدید",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_5",
+      "category": "شبکه‌های اجتماعی و چت",
+      "minConfidence": 50
+    },
+    "type": "fallback_topic_routing"
+  },
+  {
+    "id": "bench_089",
+    "input": "تمجید از استایل و خوشتیپی من",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_6",
+      "category": "پاسخ به تعریف و تمجید",
+      "minConfidence": 50
+    },
+    "type": "fallback_topic_routing"
+  },
+  {
+    "id": "bench_090",
+    "input": "کل کل و شوخی و کنایه زدن در جمع",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 50
+    },
+    "type": "fallback_topic_routing"
+  },
+  {
+    "id": "bench_091",
+    "input": "دیدار حضوری و دعوت به کافه برای قهوه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 50
+    },
+    "type": "fallback_topic_routing"
+  },
+  {
+    "id": "bench_092",
+    "input": "بچه ای",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 30
+    },
+    "type": "teasing_variation"
+  },
+  {
+    "id": "bench_093",
+    "input": "بچه‌ای",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 30
+    },
+    "type": "teasing_variation"
+  },
+  {
+    "id": "bench_094",
+    "input": "خیلی بچه‌ای",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 30
+    },
+    "type": "teasing_variation"
+  },
+  {
+    "id": "bench_095",
+    "input": "چقدر بچه‌ای",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 30
+    },
+    "type": "teasing_variation"
+  },
+  {
+    "id": "bench_096",
+    "input": "بچه ایی",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 30
+    },
+    "type": "teasing_variation"
+  },
+  {
+    "id": "bench_097",
+    "input": "بچهایی",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 30
+    },
+    "type": "teasing_variation"
+  },
+  {
+    "id": "bench_098",
+    "input": "میگه تو بچه‌ای",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 30
+    },
+    "type": "teasing_variation"
+  },
+  {
+    "id": "bench_099",
+    "input": "گفت بچه بازی درنیار",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 30
+    },
+    "type": "teasing_variation"
+  },
+  {
+    "id": "bench_100",
+    "input": "بچه بازی درمیاری",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 30
+    },
+    "type": "teasing_variation"
+  },
+  {
+    "id": "bench_101",
+    "input": "بعد چند ساعت جواب داد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_102",
+    "input": "بعد چند روز پیام داده",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_103",
+    "input": "سین کرده جواب نداد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_104",
+    "input": "چند ساعت طول کشید جواب بده",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_2",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_105",
+    "input": "سر صحبت باز کردن در مهمانی",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_106",
+    "input": "یخ شکنی در کافه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_3",
+      "category": "شروع ارتباط و یخ‌شکنی",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_107",
+    "input": "مسخره کرد چی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_108",
+    "input": "طاقچه بالا گذاشت چی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_109",
+    "input": "شوخی سنگین کرد",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_110",
+    "input": "ریپلای استوری کافه",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_5",
+      "category": "شبکه‌های اجتماعی و چت",
+      "minConfidence": 70
+    },
+    "type": "exact_trigger"
+  },
+  {
+    "id": "bench_111",
+    "input": "بچه اي",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "persian_variation"
+  },
+  {
+    "id": "bench_112",
+    "input": "بچهای",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "persian_variation"
+  },
+  {
+    "id": "bench_113",
+    "input": "خیلی بچهای",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "persian_variation"
+  },
+  {
+    "id": "bench_114",
+    "input": "میگه تو بچهای",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "persian_variation"
+  },
+  {
+    "id": "bench_115",
+    "input": "امروز هوا بارونیه و خیابونا شلوغه",
+    "expected": {
+      "match": false,
+      "scenarioId": null,
+      "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+      "minConfidence": 50
+    },
+    "type": "unrelated_false_positive_guard"
+  },
+  {
+    "id": "bench_116",
+    "input": "دستور پخت قورمه سبزی با لوبیا چیتی",
+    "expected": {
+      "match": false,
+      "scenarioId": null,
+      "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+      "minConfidence": 50
+    },
+    "type": "unrelated_false_positive_guard"
+  },
+  {
+    "id": "bench_117",
+    "input": "قیمت بیت کوین و اتریوم چنده الان؟",
+    "expected": {
+      "match": false,
+      "scenarioId": null,
+      "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+      "minConfidence": 50
+    },
+    "type": "unrelated_false_positive_guard"
+  },
+  {
+    "id": "bench_118",
+    "input": "چطور پایتون رو روی لینوکس نصب کنم؟",
+    "expected": {
+      "match": false,
+      "scenarioId": null,
+      "category": "پاسخ عمومی / راهنمایی چارچوب مکالمه",
+      "minConfidence": 50
+    },
+    "type": "unrelated_false_positive_guard"
+  },
+  {
+    "id": "bench_119",
+    "input": "سلام داداش طرف بعد از کلی چت دیشب گفت قصد رابطه ندارم چی بگم به نظرت",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_1",
+      "category": "پاسخ به مرزبندی و احتیاط",
+      "minConfidence": 70
+    },
+    "type": "conversational_containment"
+  },
+  {
+    "id": "bench_120",
+    "input": "دوستم توی جمع برگشت گفت خیلی خودتو تحویل میگیری چی جواب بدم ضایع نشم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_4",
+      "category": "حاضرجوابی و مدیریت کل‌کل",
+      "minConfidence": 70
+    },
+    "type": "conversational_containment"
+  },
+  {
+    "id": "bench_121",
+    "input": "استوری کافه گذاشته بود خواستم دعوت به کافه کنم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_7",
+      "category": "هدایت چت به قرار ملاقات",
+      "minConfidence": 70
+    },
+    "type": "overlapping_keywords"
+  },
+  {
+    "id": "bench_122",
+    "input": "طرف بعد چند ساعت پیام داده میگه اوکی چی بگم",
+    "expected": {
+      "match": true,
+      "scenarioId": "scen_8",
+      "category": "مدیریت ریتم چت و بی محلی",
+      "minConfidence": 70
+    },
+    "type": "overlapping_keywords"
+  }
+]

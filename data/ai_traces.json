@@ -1,0 +1,82 @@
+[
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 240,
+    "status": "success",
+    "id": "tr_kqyji3b",
+    "createdAt": "2026-08-27T17:46:53.005Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 326,
+    "status": "success",
+    "id": "tr_wiyswhz",
+    "createdAt": "2026-08-29T18:16:23.254Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 291,
+    "status": "success",
+    "id": "tr_i10mbva",
+    "createdAt": "2026-08-29T18:16:32.176Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 383,
+    "status": "success",
+    "id": "tr_74z5uo9",
+    "createdAt": "2026-08-29T18:26:00.379Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 622,
+    "status": "success",
+    "id": "tr_p6kkgce",
+    "createdAt": "2026-08-29T18:28:03.296Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 21,
+    "status": "success",
+    "id": "tr_zle953v",
+    "createdAt": "2026-08-30T14:26:54.169Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 17,
+    "status": "success",
+    "id": "tr_fisy3uh",
+    "createdAt": "2026-08-30T14:27:28.829Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 18,
+    "status": "success",
+    "id": "tr_whexvkf",
+    "createdAt": "2026-08-30T16:12:14.033Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 136,
+    "status": "success",
+    "id": "tr_zl8gq2t",
+    "createdAt": "2026-08-30T18:48:13.838Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 23,
+    "status": "success",
+    "id": "tr_crcz4eb",
+    "createdAt": "2026-08-31T14:26:36.819Z"
+  }
+]

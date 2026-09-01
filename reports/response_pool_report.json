@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-08-27T14:03:34.974Z",
+  "totalScenarios": 51,
+  "totalPoolResponses": 816,
+  "avgResponsesPerScenario": "16.00",
+  "toneDistribution": {
+    "direct": 179,
+    "funny": 167,
+    "charismatic": 164,
+    "emotional": 153,
+    "psychology": 153
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "مرکز کاریزما",
+  "description": "بزرگترین مرجع تخصصی فارسی کاریزما، مهارت گفتگو، جذابیت فردی و موتور هوشمند سناریوهای ارتباطی",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

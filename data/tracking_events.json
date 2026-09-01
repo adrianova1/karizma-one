@@ -1,0 +1,106 @@
+[
+  {
+    "id": "evt_jo1o8bcpe",
+    "eventName": "coach_response_generation",
+    "category": "coach",
+    "metadata": {
+      "mode": "reply_generator",
+      "tone": "all"
+    },
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-08-29T18:16:23.973Z"
+  },
+  {
+    "id": "evt_gqgqqph2d",
+    "eventName": "coach_response_generation",
+    "category": "coach",
+    "metadata": {
+      "mode": "reply_generator",
+      "tone": "all"
+    },
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-08-29T18:16:32.781Z"
+  },
+  {
+    "id": "evt_g9sblahz7",
+    "eventName": "coach_response_generation",
+    "category": "coach",
+    "metadata": {
+      "mode": "reply_generator",
+      "tone": "all"
+    },
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-08-29T18:26:00.890Z"
+  },
+  {
+    "id": "evt_wv8nwe57c",
+    "eventName": "coach_response_generation",
+    "category": "coach",
+    "metadata": {
+      "mode": "reply_generator",
+      "tone": "all"
+    },
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-08-29T18:28:03.976Z"
+  },
+  {
+    "id": "evt_hyg2fcv3l",
+    "eventName": "user_login_success",
+    "category": "auth",
+    "metadata": {},
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-08-31T14:48:33.072Z"
+  },
+  {
+    "id": "evt_tclbw3421",
+    "eventName": "coach_response_generation",
+    "category": "coach",
+    "metadata": {
+      "mode": "reply_generator",
+      "tone": "all"
+    },
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-08-31T14:52:14.344Z"
+  },
+  {
+    "id": "evt_8aggqdjls",
+    "eventName": "coach_response_generation",
+    "category": "coach",
+    "metadata": {
+      "mode": "reply_generator",
+      "tone": "all"
+    },
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-08-31T14:52:39.482Z"
+  },
+  {
+    "id": "evt_thkod24iy",
+    "eventName": "coach_response_generation",
+    "category": "coach",
+    "metadata": {
+      "mode": "reply_generator",
+      "tone": "all"
+    },
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-08-31T14:53:09.173Z"
+  },
+  {
+    "id": "evt_zhqp3g8mh",
+    "eventName": "coach_response_generation",
+    "category": "coach",
+    "metadata": {
+      "mode": "reply_generator",
+      "tone": "all"
+    },
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-08-31T14:53:20.960Z"
+  },
+  {
+    "id": "evt_sz4stdoch",
+    "eventName": "test",
+    "category": "general",
+    "metadata": {},
+    "userId": "anon_rojvw",
+    "timestamp": "2026-08-31T14:55:52.383Z"
+  }
+]

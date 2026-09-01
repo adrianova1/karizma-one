@@ -1,0 +1,16 @@
+{
+  "dataset_version": "2.0.0_PRODUCTION_60K_CLEAN",
+  "generated_at": "2026-08-31T14:23:51.543Z",
+  "total_unique_scenarios": 60000,
+  "base_scenarios": 9374,
+  "expanded_scenarios": 50626,
+  "chunks_count": 12,
+  "tone_coverage": {
+    "charismatic": 60000,
+    "funny": 60000,
+    "confident": 60000,
+    "mysterious": 60000,
+    "mature": 60000
+  },
+  "status": "PRODUCTION_60K_COMPLETE"
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "st_1",
+    "key": "admin_card_number",
+    "value": "۶۰۳۷-۹۹۷۵-۱۲۳۴-۵۶۷۸",
+    "description": "شماره کارت بانکی واریز وجه",
+    "updatedAt": "2026-08-21T06:59:41.007Z"
+  },
+  {
+    "id": "st_2",
+    "key": "admin_card_holder",
+    "value": "مدیریت مرکز کاریزما",
+    "description": "نام صاحب حساب بانکی",
+    "updatedAt": "2026-08-21T06:59:41.007Z"
+  },
+  {
+    "id": "st_3",
+    "key": "admin_card_bank",
+    "value": "بانک ملی ایران",
+    "description": "نام بانک",
+    "updatedAt": "2026-08-21T06:59:41.007Z"
+  },
+  {
+    "id": "st_4",
+    "key": "educational_channel_primary_url",
+    "value": "https://t.me/karizma_center",
+    "description": "لینک کانال آموزشی تلگرام",
+    "updatedAt": "2026-08-21T06:59:41.007Z"
+  },
+  {
+    "id": "st_5",
+    "key": "educational_channel_title",
+    "value": "کانال VIP آموزش کاریزما و نفوذ کلام",
+    "description": "عنوان کانال آموزشی",
+    "updatedAt": "2026-08-21T06:59:41.007Z"
+  }
+]
