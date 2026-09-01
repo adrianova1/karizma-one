@@ -78,5 +78,13 @@
     "status": "success",
     "id": "tr_crcz4eb",
     "createdAt": "2026-08-31T14:26:36.819Z"
+  },
+  {
+    "provider": "fallback",
+    "model": "local-coach-engine-v1",
+    "latencyMs": 260,
+    "status": "success",
+    "id": "tr_4h3amnh",
+    "createdAt": "2026-09-01T15:58:32.291Z"
   }
 ]
