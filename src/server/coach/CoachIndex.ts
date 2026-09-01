@@ -18,6 +18,21 @@ export class CoachIndex {
   private scenarioMap: Map<string, CoachScenario> = new Map(); // scenarioId -> CoachScenario
 
   /**
+   * Helper to ensure only substantive phrases (not stop-words or generic question frames) are indexed for containment
+   */
+  private static isSubstantivePhrase(phrase: string): boolean {
+    const norm = PersianNormalizer.normalize(phrase).trim();
+    if (!norm || norm.length < 4) return false;
+    if (PersianNormalizer.GENERIC_CARRIER_PHRASES.has(norm)) return false;
+    const words = norm.split(' ').filter(Boolean);
+    if (words.length === 1) {
+      return norm.length >= 4;
+    }
+    const nonGenericWords = words.filter(w => !PersianNormalizer.GENERIC_CARRIER_PHRASES.has(w));
+    return nonGenericWords.length > 0;
+  }
+
+  /**
    * Build in-memory index from scenario list
    */
   buildIndex(scenarios: CoachScenario[]): void {
@@ -34,17 +49,23 @@ export class CoachIndex {
       for (const trigger of scenario.triggers || []) {
         const normTrigger = PersianNormalizer.normalize(trigger);
         if (normTrigger) {
-          this.exactTriggerMap.set(normTrigger, scenario.id);
-          const words = normTrigger.split(' ').filter(Boolean);
-          const item: IndexedPhrase = {
-            phrase: normTrigger,
-            scenarioId: scenario.id,
-            wordCount: words.length,
-            length: normTrigger.length,
-            isTrigger: true
-          };
-          if (!this.phraseMap.has(normTrigger) || item.wordCount > this.phraseMap.get(normTrigger)!.wordCount) {
-            this.phraseMap.set(normTrigger, item);
+          const isCanonical = scenario.id.startsWith('scen_');
+          if (!this.exactTriggerMap.has(normTrigger) || isCanonical) {
+            this.exactTriggerMap.set(normTrigger, scenario.id);
+          }
+          if (CoachIndex.isSubstantivePhrase(normTrigger)) {
+            const words = normTrigger.split(' ').filter(Boolean);
+            const item: IndexedPhrase = {
+              phrase: normTrigger,
+              scenarioId: scenario.id,
+              wordCount: words.length,
+              length: normTrigger.length,
+              isTrigger: true
+            };
+            const existing = this.phraseMap.get(normTrigger);
+            if (!existing || isCanonical || item.wordCount > existing.wordCount) {
+              this.phraseMap.set(normTrigger, item);
+            }
           }
         }
       }
@@ -54,16 +75,18 @@ export class CoachIndex {
         const normAlias = PersianNormalizer.normalize(alias);
         if (normAlias) {
           this.exactAliasMap.set(normAlias, scenario.id);
-          const words = normAlias.split(' ').filter(Boolean);
-          const item: IndexedPhrase = {
-            phrase: normAlias,
-            scenarioId: scenario.id,
-            wordCount: words.length,
-            length: normAlias.length,
-            isTrigger: false
-          };
-          if (!this.phraseMap.has(normAlias)) {
-            this.phraseMap.set(normAlias, item);
+          if (CoachIndex.isSubstantivePhrase(normAlias)) {
+            const words = normAlias.split(' ').filter(Boolean);
+            const item: IndexedPhrase = {
+              phrase: normAlias,
+              scenarioId: scenario.id,
+              wordCount: words.length,
+              length: normAlias.length,
+              isTrigger: false
+            };
+            if (!this.phraseMap.has(normAlias)) {
+              this.phraseMap.set(normAlias, item);
+            }
           }
         }
       }
@@ -129,7 +152,7 @@ export class CoachIndex {
     for (let len = maxLen; len >= 1; len--) {
       for (let i = 0; i <= words.length - len; i++) {
         const sub = words.slice(i, i + len).join(' ');
-        if (sub.length < 3) continue;
+        if (sub.length < 3 || !CoachIndex.isSubstantivePhrase(sub)) continue;
         const matchedItem = this.phraseMap.get(sub);
         if (matchedItem) {
           const sc = this.scenarioMap.get(matchedItem.scenarioId);

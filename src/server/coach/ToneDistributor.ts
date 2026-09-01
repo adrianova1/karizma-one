@@ -1,4 +1,5 @@
 import { CoachScenario, CoachFallbackItem } from './CoachTypes.js';
+import { PersonaGenerator } from './PersonaGenerator.js';
 
 export interface DistributedToneResult {
   charismaticReply: string;
@@ -37,30 +38,88 @@ export class ToneDistributor {
   ];
 
   /**
-   * Cleans a dialogue string removing quotes, boundary markers, and formatting
+   * Known synthetic prefix wrappers from legacy build templates
+   */
+  private static SYNTHETIC_PREFIX_PATTERNS = [
+    /^همیشه بخش جذاب‌تر ماجرا همونیه که ناگفته می‌مونه[.:\s…]*/u,
+    /^شاید فکر کنی جواب رو می‌دونی، ولی واقعیت ممکنه غافلگیرت کنه[.:;\s…]*/u,
+    /^بعضی ناگفته‌ها کشش بیشتری ایجاد می‌کنن[.:;\s…]*/u,
+    /^اجازه بده زمان حقیقت ماجرا رو روشن کنه[.:\s…]*/u,
+    /^من موضعم رو شفاف و محکم میگم[.:\s…]*/u,
+    /^روی اصول و چارچوب خودم ایستادم[.:;\s…]*/u,
+    /^با قاطعیت و بدون تردید[.:\s…]*/u,
+    /^وقتی پای استانداردهای من وسط باشه، نظرم مشخصه[.:\s…]*/u,
+    /^درک متقابل و حفظ احترام بهترین پاسخ است[.:\s…]*/u,
+    /^با متانت و بلوغ فکری[.:\s…]*/u,
+    /^احترام به دیدگاه طرف مقابل در عین حفظ وقار[.:\s…]*/u,
+    /^صبر و سنجش عمیق موقعیت نشان‌دهنده اصالت است[.:\s…]*/u,
+    /^با وقار و پرستیژ شخصی[.:\s…]*/u,
+    /^خیلی شیک و مجلسی[.:\s…]*/u,
+    /^اگه اینقدر جدی باشی باید از دفعه بعد با وکیل مکاتبه کنیم[!\.\s]*/u
+  ];
+
+  /**
+   * Known synthetic suffix wrappers from legacy build templates
+   */
+  private static SYNTHETIC_SUFFIX_PATTERNS = [
+    /—\s*البته نسخه آزمایشی بود تا بازخورد بگیریم!?/u,
+    /\(البته اگر پای عواقبش بمونیم!?\)/u,
+    /\(البته اگر پای عواقبش بمونیم!?/u,
+    /،?\s*فقط نمره بد ندین بهمون!?/u
+  ];
+
+  /**
+   * Cleans a dialogue string removing quotes, boundary markers, emojis and formatting
    */
   static cleanDialogue(s: string): string {
     if (!s || typeof s !== 'string') return '';
     return s
       .replace(/^[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '') // remove surrogate emojis at start
       .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]$/g, '') // remove surrogate emojis at end
-      .replace(/^[«"'"“‘⚡🎈🔹♦•\-–\d\.\s()👧👦👨👩🧔👱‍♂️👱‍♀️]+/gu, '')
-      .replace(/[»"'"”’()⚡🎈🔹♦•\-–\s]+$/gu, '')
+      .replace(/^[«"'"“‘⚡🎈🔹♦•\-–\d\.\s()👧👦👨👩🧔👱‍♂️👱‍♀️:]+/gu, '')
+      .replace(/[»"'"”’()⚡🎈🔹♦•\-–\s:]+$/gu, '')
       .trim();
   }
 
   /**
-   * Extracts dialogue text safely from a scenario or fallback pool
+   * Strips synthetic prefix & suffix wrappers to reveal the pure authentic dialogue core
+   */
+  static stripToneWrappers(raw: string): string {
+    if (!raw || typeof raw !== 'string') return '';
+    let text = raw.trim();
+
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const pattern of this.SYNTHETIC_PREFIX_PATTERNS) {
+        if (pattern.test(text)) {
+          text = text.replace(pattern, '').trim();
+          changed = true;
+        }
+      }
+      for (const pattern of this.SYNTHETIC_SUFFIX_PATTERNS) {
+        if (pattern.test(text)) {
+          text = text.replace(pattern, '').trim();
+          changed = true;
+        }
+      }
+    }
+
+    return this.cleanDialogue(text);
+  }
+
+  /**
+   * Extracts dialogue text safely from a scenario or fallback pool and strips wrappers
    */
   private static extractToneText(pool: any): string {
     if (!pool) return '';
     if (typeof pool === 'string') {
-      return this.cleanDialogue(pool);
+      return this.stripToneWrappers(pool);
     }
     if (Array.isArray(pool)) {
       for (const item of pool) {
         if (typeof item === 'string' && item.trim().length > 0) {
-          return this.cleanDialogue(item);
+          return this.stripToneWrappers(item);
         }
       }
     }
@@ -81,7 +140,7 @@ export class ToneDistributor {
       if (!raw || typeof raw !== 'string') return;
       const parts = raw
         .split(/🎈|\n[🔹♦•\-–\*\d\.]+|\n{2,}/)
-        .map(s => this.cleanDialogue(s))
+        .map(s => this.stripToneWrappers(s))
         .filter(s => s.length >= 2);
 
       for (const part of parts) {
@@ -137,20 +196,36 @@ export class ToneDistributor {
     if (isScenario && scenario!.responses) {
       const res = scenario!.responses;
 
-      // Direct 1-to-1 extraction strictly from selected scenario responses
+      // Direct 1-to-1 extraction strictly from selected scenario responses with wrapper stripping
       charismaticReply = this.extractToneText(res.charismatic);
       funnyReply = this.extractToneText(res.funny);
       confidentReply = this.extractToneText(res.confident);
       mysteriousReply = this.extractToneText(res.mysterious);
       matureReply = this.extractToneText(res.mature);
 
-      // If a specific tone was missing from the scenario record, fallback to another tone from the SAME scenario
-      const fallbackSameScenario = charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || this.cleanDialogue(scenario!.situation || scenario!.title);
-      if (!charismaticReply) charismaticReply = fallbackSameScenario;
-      if (!funnyReply) funnyReply = fallbackSameScenario;
-      if (!confidentReply) confidentReply = fallbackSameScenario;
-      if (!mysteriousReply) mysteriousReply = fallbackSameScenario;
-      if (!matureReply) matureReply = fallbackSameScenario;
+      // Check if all extracted replies are identical or empty (legacy single-reply scenarios)
+      const baseClean = this.cleanDialogue(charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || scenario!.situation || scenario!.title);
+      const isSingleReplyRecord = 
+        (!funnyReply || funnyReply === charismaticReply) &&
+        (!confidentReply || confidentReply === charismaticReply) &&
+        (!mysteriousReply || mysteriousReply === charismaticReply) &&
+        (!matureReply || matureReply === charismaticReply);
+
+      if (isSingleReplyRecord) {
+        const variations = PersonaGenerator.generateVariations(baseClean, scenario, userQuery || '');
+        charismaticReply = variations.charismatic;
+        funnyReply = variations.funny;
+        confidentReply = variations.confident;
+        mysteriousReply = variations.mysterious;
+        matureReply = variations.mature;
+      } else {
+        const fallbackSameScenario = charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || baseClean;
+        if (!charismaticReply) charismaticReply = fallbackSameScenario;
+        if (!funnyReply) funnyReply = fallbackSameScenario;
+        if (!confidentReply) confidentReply = fallbackSameScenario;
+        if (!mysteriousReply) mysteriousReply = fallbackSameScenario;
+        if (!matureReply) matureReply = fallbackSameScenario;
+      }
     } else if (fallback && fallback.responses) {
       const res = fallback.responses;
       charismaticReply = this.extractToneText(res.charismatic);
@@ -159,12 +234,27 @@ export class ToneDistributor {
       mysteriousReply = this.extractToneText(res.mysterious);
       matureReply = this.extractToneText(res.mature);
 
-      const fallbackSame = charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || 'با وقار و کنترل فریم پاسخ دهید.';
-      if (!charismaticReply) charismaticReply = fallbackSame;
-      if (!funnyReply) funnyReply = fallbackSame;
-      if (!confidentReply) confidentReply = fallbackSame;
-      if (!mysteriousReply) mysteriousReply = fallbackSame;
-      if (!matureReply) matureReply = fallbackSame;
+      const baseClean = this.cleanDialogue(charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || 'با وقار و کنترل فریم پاسخ دهید.');
+      const isSingleReplyRecord = 
+        (!funnyReply || funnyReply === charismaticReply) &&
+        (!confidentReply || confidentReply === charismaticReply) &&
+        (!mysteriousReply || mysteriousReply === charismaticReply) &&
+        (!matureReply || matureReply === charismaticReply);
+
+      if (isSingleReplyRecord) {
+        const variations = PersonaGenerator.generateVariations(baseClean, null, userQuery || '');
+        charismaticReply = variations.charismatic;
+        funnyReply = variations.funny;
+        confidentReply = variations.confident;
+        mysteriousReply = variations.mysterious;
+        matureReply = variations.mature;
+      } else {
+        if (!charismaticReply) charismaticReply = baseClean;
+        if (!funnyReply) funnyReply = baseClean;
+        if (!confidentReply) confidentReply = baseClean;
+        if (!mysteriousReply) mysteriousReply = baseClean;
+        if (!matureReply) matureReply = baseClean;
+      }
     }
 
     const allCandidates = this.extractAllCandidates(scenario, fallback);

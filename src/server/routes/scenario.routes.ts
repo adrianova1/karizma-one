@@ -347,11 +347,11 @@ router.post('/import-excel', authenticateToken, requireRole([Role.ADMIN]), async
         const mappedCategory = getMasterCategoryTitle(rawCat);
 
         // Extract Responses
-        const charismatic = (row.charismatic || row.tone_charismatic || row['پاسخ کاریزماتیک'] || row['کاریزماتیک'] || row['قاطع'] || row['آلفا'] || '').toString().trim();
-        const funny = (row.funny || row.tone_funny || row['پاسخ شوخ‌طبع'] || row['شوخ طبع'] || row['طنز'] || row['فان'] || '').toString().trim();
-        const confident = (row.confident || row.tone_confident || row['پاسخ صمیمی'] || row['صمیمی'] || row['دوستانه'] || row['گرم'] || '').toString().trim();
-        const mysterious = (row.mysterious || row.tone_mysterious || row['پاسخ مرموز'] || row['مرموز'] || row['تحلیلی'] || row['عاطفی'] || '').toString().trim();
-        const mature = (row.mature || row.tone_mature || row['پاسخ متین'] || row['متین'] || row['سنگین'] || row['دیپلماتیک'] || '').toString().trim();
+        const charismatic = (row.charismatic || row.tone_charismatic || row['پاسخ کاریزماتیک'] || row['کاریزماتیک'] || row['باکلاس'] || '').toString().trim();
+        const funny = (row.funny || row.tone_funny || row['پاسخ شوخ‌طبع'] || row['شوخ طبع'] || row['شوخ‌طبع'] || row['طنز'] || row['فان'] || row['رندانه'] || '').toString().trim();
+        const confident = (row.confident || row.tone_confident || row['پاسخ مقتدر'] || row['مقتدر'] || row['قاطع'] || row['با اعتماد به نفس'] || row['با اعتمادبه‌نفس'] || row['آلفا'] || '').toString().trim();
+        const mysterious = (row.mysterious || row.tone_mysterious || row['پاسخ مرموز'] || row['مرموز'] || row['پرکشش'] || row['چندلایه'] || '').toString().trim();
+        const mature = (row.mature || row.tone_mature || row['پاسخ متین'] || row['متین'] || row['پخته'] || row['بالغ'] || row['دیپلماتیک'] || '').toString().trim();
 
         const opponentLine = (row.opponentLine || row.opponent_line || row['پیام مخاطب'] || row['کلام طرف مقابل'] || '').toString().trim();
         const technique = (row.technique || row['تکنیک'] || row['روانشناسی'] || '').toString().trim();

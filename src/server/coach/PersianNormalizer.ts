@@ -7,29 +7,68 @@ export class PersianNormalizer {
     'شدی', 'بودی', 'چقد', 'چقدر', 'بسیار'
   ]);
 
+  static readonly GENERIC_CARRIER_PHRASES = new Set([
+    'چی بگم',
+    'چی بگم بهش',
+    'چی بگم به',
+    'چی جواب بدم',
+    'چی بفرستم',
+    'چی بنویسم',
+    'چی کار کنم',
+    'چیکار کنم',
+    'چطور بگم',
+    'چطوری بگم',
+    'به نظرت',
+    'به نظرت چی بگم',
+    'بگم بهش',
+    'بهش بگم',
+    'چی بگیم',
+    'چطور بگم بهش',
+    'چطوری بگم بهش',
+    'چطور رفتار کنم',
+    'چی بگم به دختری',
+    'چی بگم به پسری',
+    'چی بهش بگم',
+    'دختره میگه',
+    'پسره میگه',
+    'طرف میگه',
+    'کراشم میگه',
+    'دختره نوشته',
+    'پسره نوشته',
+    'طرف نوشته',
+    'پیام داده',
+    'پیام داده که',
+    'بهم میگه',
+    'بهم گفت',
+    'بهم پیام داد',
+    'دوست دارم',
+    'ببین دوست دارم',
+    'من دوست دارم'
+  ]);
+
   /**
    * Strips UI wrapper tags like [حالت کوچینگ: ...] or [لحن انتخابی: ...]
    */
-  static stripMetadataTags(rawText: string): { cleanText: string; extractedTone?: string } {
+  static stripMetadataTags(rawText: string): { cleanText: string; extractedTone?: 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' } {
     if (!rawText) return { cleanText: '' };
     
-    let extractedTone: string | undefined = undefined;
+    let extractedTone: 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' | undefined = undefined;
     let clean = rawText;
 
     // Extract tone if present in tag
     const toneMatch = clean.match(/\[لحن انتخابی:\s*([^\]]+)\]/);
     if (toneMatch && toneMatch[1]) {
       const toneLabel = toneMatch[1].trim();
-      if (toneLabel.includes('آلفا') || toneLabel.includes('مقتدر') || toneLabel.includes('لحن ۱') || toneLabel.includes('مستقیم')) {
-        extractedTone = 'direct';
-      } else if (toneLabel.includes('صمیمی') || toneLabel.includes('دوستانه') || toneLabel.includes('لحن ۲')) {
-        extractedTone = 'friendly';
-      } else if (toneLabel.includes('باکلاس') || toneLabel.includes('کاریزماتیک') || toneLabel.includes('لحن ۳')) {
+      if (toneLabel.includes('کاریزماتیک') || toneLabel.includes('باکلاس')) {
         extractedTone = 'charismatic';
-      } else if (toneLabel.includes('احساسی') || toneLabel.includes('عاطفی') || toneLabel.includes('همدل') || toneLabel.includes('لحن ۴')) {
-        extractedTone = 'emotional';
-      } else if (toneLabel.includes('شوخ') || toneLabel.includes('کل‌کل') || toneLabel.includes('روانشناختی') || toneLabel.includes('تحلیل') || toneLabel.includes('لحن ۵')) {
+      } else if (toneLabel.includes('شوخ') || toneLabel.includes('کل‌کل') || toneLabel.includes('طنز') || toneLabel.includes('رندانه')) {
         extractedTone = 'funny';
+      } else if (toneLabel.includes('مقتدر') || toneLabel.includes('قاطع') || toneLabel.includes('آلفا') || toneLabel.includes('اعتماد') || toneLabel.includes('مستقیم')) {
+        extractedTone = 'confident';
+      } else if (toneLabel.includes('مرموز') || toneLabel.includes('پرکشش') || toneLabel.includes('چندلایه') || toneLabel.includes('تحلیل')) {
+        extractedTone = 'mysterious';
+      } else if (toneLabel.includes('متین') || toneLabel.includes('پخته') || toneLabel.includes('بالغ') || toneLabel.includes('سنگین') || toneLabel.includes('دیپلماتیک')) {
+        extractedTone = 'mature';
       }
     }
 

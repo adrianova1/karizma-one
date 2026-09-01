@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { CoachScenario, CoachFallbackItem, CoachCategory, CoachToneResponses } from './CoachTypes.js';
 import { PersianNormalizer } from './PersianNormalizer.js';
+import { CANONICAL_FEATURED_SCENARIOS } from './CanonicalScenarios.js';
 
 /**
  * Safely parse JSON from a file with graceful error handling
@@ -202,6 +203,12 @@ export class CoachLoader {
             }
           }
         }
+      }
+
+      // Add high-priority canonical hand-crafted scenarios
+      for (const canonical of CANONICAL_FEATURED_SCENARIOS) {
+        scenarioMap.set(canonical.id, canonical);
+        this.scenarioChunkMap.set(canonical.id, 'canonical_core.json');
       }
 
       this.scenarios = Array.from(scenarioMap.values());
