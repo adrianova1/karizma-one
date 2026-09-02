@@ -227,7 +227,7 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
     }
   };
 
-  // Excel / CSV File Handlers
+  // Excel / CSV / JSON File Handlers
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -236,20 +236,43 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
     setImportResult(null);
 
     const reader = new FileReader();
-    reader.onload = (evt) => {
-      try {
-        const bstr = evt.target?.result;
-        const wb = XLSX.read(bstr, { type: 'binary' });
-        const wsName = wb.SheetNames[0];
-        const ws = wb.Sheets[wsName];
-        const data = XLSX.utils.sheet_to_json(ws);
-        setParsedRows(data);
-      } catch (err) {
-        console.error('Error reading Excel file:', err);
-        alert('خطا در خواندن فایل اکسل. لطفاً فرمت فایل را بررسی فرمایید.');
-      }
-    };
-    reader.readAsBinaryString(file);
+
+    if (file.name.toLowerCase().endsWith('.json')) {
+      reader.onload = (evt) => {
+        try {
+          const content = evt.target?.result as string;
+          const parsed = JSON.parse(content);
+          if (Array.isArray(parsed)) {
+            setParsedRows(parsed);
+          } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.scenarios)) {
+            setParsedRows(parsed.scenarios);
+          } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.items)) {
+            setParsedRows(parsed.items);
+          } else {
+            alert('فرمت فایل جیسون باید یک آرایه از سناریوها باشد: [{ title, situation, responses: {...} }]');
+          }
+        } catch (err: any) {
+          console.error('Error reading JSON file:', err);
+          alert('خطا در خواندن فایل JSON: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    } else {
+      reader.onload = (evt) => {
+        try {
+          const bstr = evt.target?.result;
+          const wb = XLSX.read(bstr, { type: 'binary' });
+          const wsName = wb.SheetNames[0];
+          const ws = wb.Sheets[wsName];
+          const data = XLSX.utils.sheet_to_json(ws);
+          setParsedRows(data);
+        } catch (err) {
+          console.error('Error reading Excel file:', err);
+          alert('خطا در خواندن فایل اکسل. لطفاً فرمت فایل را بررسی فرمایید.');
+        }
+      };
+      reader.readAsBinaryString(file);
+    }
   };
 
   const handleExecuteImport = async () => {
@@ -312,7 +335,7 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
             className="px-4 py-2.5 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm"
           >
             <CloudUpload className="w-4 h-4" />
-            <span>درون‌ریزی اکسل (Import)</span>
+            <span>درون‌ریزی فایل (Excel / JSON)</span>
           </button>
 
           <button
@@ -658,7 +681,7 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
         </div>
       )}
 
-      {/* 5. Excel Import Modal */}
+      {/* 5. Excel / JSON Import Modal */}
       {isImportOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
@@ -666,7 +689,7 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
             <div className="px-6 py-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                <span>درون‌ریزی فایل اکسل به بانک سناریوها</span>
+                <span>درون‌ریزی فایل (Excel / JSON) به بانک سناریوها</span>
               </h3>
               <button onClick={() => setIsImportOpen(false)} className="text-slate-400 hover:text-white p-1">
                 <X className="w-4 h-4" />
@@ -675,7 +698,7 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
 
             <div className="p-6 space-y-4 text-xs">
               <p className="text-slate-400 leading-relaxed">
-                می‌توانید فایل‌های اکسل (`.xlsx`, `.xls`, `.csv`) را مستقیماً آپلود کنید. ستون‌های فارسی (عنوان، دسته‌بندی، موقعیت، پاسخ قاطع، پاسخ شوخ‌طبع، تکنیک و...) به صورت هوشمند نگاشت خواهند شد.
+                می‌توانید فایل‌های اکسل (<code className="text-emerald-400">.xlsx</code>, <code className="text-emerald-400">.xls</code>, <code className="text-emerald-400">.csv</code>) یا فایل‌های داده <code className="text-sky-400">.json</code> را مستقیماً آپلود کنید. فیلدها و ستون‌های ۵ لحن و اطلاعات روانشناسی به صورت هوشمند شناسایی و در بانک ذخیره خواهند شد.
               </p>
 
               <div>
@@ -699,16 +722,16 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".xlsx,.xls,.csv"
+                  accept=".xlsx,.xls,.csv,.json"
                   onChange={handleFileChange}
                   className="hidden"
                 />
                 <CloudUpload className="w-8 h-8 text-emerald-400 mx-auto" />
                 <span className="text-slate-300 font-bold block">
-                  {importFile ? importFile.name : 'انتخاب یا رها کردن فایل اکسل'}
+                  {importFile ? importFile.name : 'انتخاب یا رها کردن فایل اکسل یا جیسون'}
                 </span>
                 <span className="text-[11px] text-slate-500 block">
-                  {parsedRows.length > 0 ? `${parsedRows.length} سطر شناسایی شد.` : 'فرمت‌های پشتیبانی‌شده: .xlsx , .xls , .csv'}
+                  {parsedRows.length > 0 ? `${parsedRows.length} مورد شناسایی شد.` : 'فرمت‌های پشتیبانی‌شده: .xlsx , .xls , .csv , .json'}
                 </span>
               </div>
 
