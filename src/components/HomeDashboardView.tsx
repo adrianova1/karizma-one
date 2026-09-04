@@ -2,7 +2,8 @@ import React from 'react';
 import { 
   Sparkles, GraduationCap, MessagesSquare, Zap, 
   Flame, Trophy, Play, Award, Send, FlameKindling,
-  Lock, CreditCard, HelpCircle, BookOpen, ChevronLeft
+  Lock, CreditCard, HelpCircle, BookOpen, ChevronLeft,
+  Layers
 } from 'lucide-react';
 
 interface HomeDashboardViewProps {
@@ -193,18 +194,35 @@ export default function HomeDashboardView({
           </button>
 
           <button
-            onClick={onOpenEmergencyCoach}
-            className="p-3 bg-gradient-to-b from-red-950/30 to-[#0b0f19]/80 border border-red-500/30 hover:border-red-500/60 rounded-2xl text-right flex items-center gap-2.5 transition cursor-pointer active:scale-95 shadow-sm"
+            onClick={() => onChangeTab('leitner')}
+            className="p-3 bg-gradient-to-b from-[#0f172a]/80 to-[#0b0f19]/80 border border-amber-500/20 hover:border-amber-500/50 rounded-2xl text-right flex items-center gap-2.5 transition cursor-pointer active:scale-95 shadow-sm"
           >
-            <div className="w-9 h-9 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 flex items-center justify-center shrink-0">
-              <Zap className="w-4 h-4 fill-red-400/20" />
+            <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
+              <Layers className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <h4 className="text-xs font-bold text-red-400 truncate">کوچ اضطراری</h4>
-              <span className="text-[10px] text-red-300/80 block truncate">راهنمای زنده قرار</span>
+              <h4 className="text-xs font-bold text-white truncate">جعبه لایتنر</h4>
+              <span className="text-[10px] text-slate-400 block truncate">تثبیت سناریوها</span>
             </div>
           </button>
+        </div>
 
+        <div className="grid grid-cols-1 gap-2.5">
+          <button
+            onClick={onOpenEmergencyCoach}
+            className="p-3 bg-gradient-to-b from-red-950/30 to-[#0b0f19]/80 border border-red-500/30 hover:border-red-500/60 rounded-2xl text-right flex items-center justify-between transition cursor-pointer active:scale-95 shadow-sm"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 flex items-center justify-center shrink-0">
+                <Zap className="w-4 h-4 fill-red-400/20" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-red-400 truncate">کوچ اضطراری قرار</h4>
+                <span className="text-[10px] text-red-300/80 block truncate">راهنمای زنده رفتار و گفتار در قرار</span>
+              </div>
+            </div>
+            <ChevronLeft className="w-4 h-4 text-red-400 shrink-0" />
+          </button>
         </div>
       </div>
 

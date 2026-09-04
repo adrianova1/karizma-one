@@ -14,6 +14,7 @@ import ScenarioBankView from './components/ScenarioBankView.js';
 import AcademyView from './components/AcademyView.js';
 import EducationalChannelView from './components/EducationalChannelView.js';
 import KnowledgeBaseView from './components/KnowledgeBaseView.js';
+import LeitnerStudyView from './components/LeitnerStudyView.js';
 import OnboardingGuideModal from './components/OnboardingGuideModal.js';
 import EmergencyLiveCoachModal from './components/EmergencyLiveCoachModal.js';
 import PaywallModal from './components/PaywallModal.js';
@@ -297,6 +298,18 @@ export default function App() {
           {currentTab === 'academy' && (
             <div className="flex-grow overflow-y-auto h-full">
               <AcademyView token={token} />
+            </div>
+          )}
+
+          {currentTab === 'leitner' && (
+            <div className="flex-grow overflow-y-auto h-full">
+              <LeitnerStudyView 
+                token={token} 
+                onBack={() => setCurrentTab('home')}
+                onStudyComplete={() => {
+                  setUserXP(prev => prev + 50);
+                }}
+              />
             </div>
           )}
 

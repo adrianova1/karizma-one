@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth.js';
-import { processRAGQuery, ConversationMemoryEngine } from '../rag.js';
+import { ConversationMemoryEngine } from '../utils/persianNormalizer.js';
 import { testAllAIProviders } from '../aiRouter.js';
 import { AIService } from '../services/ai.service.js';
 import { SubscriptionService } from '../services/subscription.service.js';

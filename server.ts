@@ -12,7 +12,7 @@ import { createServer as createViteServer } from 'vite';
 import { DBEngine, hashPassword } from './src/server/db.js';
 import { SubscriptionService } from './src/server/services/subscription.service.js';
 import { CleanupService } from './src/server/services/cleanup.service.js';
-import { processRAGQuery, normalizePersian, ConversationMemoryEngine } from './src/server/rag.js';
+import { normalizePersian } from './src/server/utils/persianNormalizer.js';
 import { testAllAIProviders, getAIKey } from './src/server/aiRouter.js';
 import { coachEngine } from './src/server/coach/CoachEngine.js';
 import { User, Role, KnowledgeCard, Plan, Subscription, AuditLog, PromptTemplate, Setting, Notification, ContentItem, Receipt, Conversation, Message, TrackingEvent, Ticket, TicketMessage } from './src/types.js';

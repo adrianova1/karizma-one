@@ -150,11 +150,11 @@ export default function OnboardingGuideModal({
               </div>
               <div className="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
                 <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 font-bold flex items-center justify-center shrink-0 text-[10px]">۲</span>
-                <span><strong>دریافت ۵ پاسخ هوشمند:</strong> کاریزما ۵ پاسخ عالی با سبک‌های مقتدر، صمیمی، کاریزماتیک، عاطفی و شوخ‌طبع تولید می‌کند.</span>
+                <span><strong>دریافت ۵ پاسخ کاریزماتیک:</strong> کاریزما ۵ پاسخ اختصاصی با لحن‌های باکلاس، شوخ‌طبع، مقتدر، مرموز و متین تولید می‌کند.</span>
               </div>
               <div className="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
                 <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-[10px]">۳</span>
-                <span><strong>کپی و ارسال:</strong> با یک کلیک بهترین پاسخ متناسب با خط فکری خودتان را کپی و ارسال کنید!</span>
+                <span><strong>کپی و ارسال:</strong> با یک لمس، پاسخ دلخواه‌تان را کپی و در چت ارسال کنید!</span>
               </div>
             </div>
           </div>
@@ -236,50 +236,45 @@ export default function OnboardingGuideModal({
     {
       id: 'five_styles',
       badge: 'بخش سوم: ۵ لحن کاریزماتیک',
-      title: 'آشنایی با ۵ سبک پاسخ‌دهی مربی',
-      description: 'کاریزما برای هر پیام، پاسخ‌هایی با سبک‌های مختلف روانشناسی ارائه می‌دهد تا دقیقا متناسب با اخلاق خودتان انتخاب کنید:',
+      title: 'آشنایی با ۵ لحن کاریزماتیک موتور هوشمند',
+      description: 'کاریزما برای هر پیام ورودی، ۵ پاسخ آماده با ۵ استراتژی و لحن روانشناختی متفاوت تولید می‌کند:',
       icon: Zap,
       color: 'from-purple-500 to-pink-600',
       content: (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-right">
           <div className="bg-slate-900/90 p-2.5 rounded-xl border border-amber-500/20">
             <span className="text-amber-400 font-bold text-xs flex items-center gap-1 mb-1">
-              <Flame className="w-3.5 h-3.5" />
-              <span>🔥 ۱. مقتدر و آلفا</span>
+              <span>👑 ۱. کاریزماتیک و باکلاس</span>
             </span>
-            <p className="text-[11px] text-slate-300">سنگین، قاطع، با پرستیژ بالا و بدون ابراز نیاز.</p>
+            <p className="text-[11px] text-slate-300">شیک، جذاب، با پرستیژ بالا، بااحترام و سنجیده.</p>
           </div>
 
           <div className="bg-slate-900/90 p-2.5 rounded-xl border border-emerald-500/20">
             <span className="text-emerald-400 font-bold text-xs flex items-center gap-1 mb-1">
-              <Smile className="w-3.5 h-3.5" />
-              <span>😊 ۲. صمیمی و دوستانه</span>
+              <span>😂 ۲. شوخ‌طبع و رندانه</span>
             </span>
-            <p className="text-[11px] text-slate-300">گرم، خاکی، پرانرژی و ایجاد حس راحت بودن.</p>
+            <p className="text-[11px] text-slate-300">شکستن یخ مکالمه، طنز هوشمندانه، شوخی و بازیگوشی.</p>
           </div>
 
-          <div className="bg-slate-900/90 p-2.5 rounded-xl border border-sky-500/20">
-            <span className="text-sky-400 font-bold text-xs flex items-center gap-1 mb-1">
-              <Crown className="w-3.5 h-3.5" />
-              <span>😎 ۳. باکلاس و کاریزماتیک</span>
+          <div className="bg-slate-900/90 p-2.5 rounded-xl border border-red-500/20">
+            <span className="text-red-400 font-bold text-xs flex items-center gap-1 mb-1">
+              <span>🔥 ۳. مقتدر و با اعتماد به نفس</span>
             </span>
-            <p className="text-[11px] text-slate-300">جذاب، بااحترام، سنجیده و هوشمندانه.</p>
+            <p className="text-[11px] text-slate-300">چارچوب‌مند، قاطع، مقتدر و بدون تاییدطلبی.</p>
           </div>
 
-          <div className="bg-slate-900/90 p-2.5 rounded-xl border border-pink-500/20">
-            <span className="text-pink-400 font-bold text-xs flex items-center gap-1 mb-1">
-              <Heart className="w-3.5 h-3.5" />
-              <span>❤️ ۴. احساسی و عاطفی</span>
-            </span>
-            <p className="text-[11px] text-slate-300">ایجاد پیوند قلبی، همدلی و صمیمیت عمیق.</p>
-          </div>
-
-          <div className="sm:col-span-2 bg-slate-900/90 p-2.5 rounded-xl border border-purple-500/20">
+          <div className="bg-slate-900/90 p-2.5 rounded-xl border border-purple-500/20">
             <span className="text-purple-400 font-bold text-xs flex items-center gap-1 mb-1">
-              <Brain className="w-3.5 h-3.5" />
-              <span>😂 ۵. شوخ‌طبع و کل‌کل + تحلیل مربی</span>
+              <span>🔮 ۴. مرموز و پرکشش</span>
             </span>
-            <p className="text-[11px] text-slate-300">حاضرجوابی شیطنت‌آمیز همراه با تحلیل روانشناسی انگیزه مخاطب و شیوه کنترل گفتگو.</p>
+            <p className="text-[11px] text-slate-300">برانگیختن کنجکاوی، کشش مکالمه و ایجاد اشتیاق در طرف مقابل.</p>
+          </div>
+
+          <div className="sm:col-span-2 bg-slate-900/90 p-2.5 rounded-xl border border-cyan-500/20">
+            <span className="text-cyan-400 font-bold text-xs flex items-center gap-1 mb-1">
+              <span>💎 ۵. متین و پخته (دیپلماتیک)</span>
+            </span>
+            <p className="text-[11px] text-slate-300">باوقار، عمیق، مدیریت تعارض و گفتگو در کمال آرامش و تسلط.</p>
           </div>
         </div>
       )

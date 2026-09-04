@@ -1,27 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { 
   BookOpen, HelpCircle, ChevronRight, ChevronLeft, Check, X, 
-  RotateCw, RefreshCw, Star, Info, Flame, Heart, Smile
+  RotateCw, RefreshCw, Star, Info, Flame, Heart, Smile, ArrowRight
 } from 'lucide-react';
-import { ScenarioNode } from '../data/scenarios.js';
+import { ScenarioNode, PRESEEDED_SCENARIOS } from '../data/scenarios.js';
 import { trackEvent } from '../lib/tracking.js';
 
 interface LeitnerStudyViewProps {
-  allScenarios: ScenarioNode[];
-  leitnerBoxes: Record<string, number>;
-  saveLeitnerBoxes: (boxes: Record<string, number>) => void;
-  onCopyText: (text: string, id: string) => void;
-  copiedId: string | null;
+  allScenarios?: ScenarioNode[];
+  leitnerBoxes?: Record<string, number>;
+  saveLeitnerBoxes?: (boxes: Record<string, number>) => void;
+  onCopyText?: (text: string, id: string) => void;
+  copiedId?: string | null;
+  token?: string | null;
+  onBack?: () => void;
+  onStudyComplete?: () => void;
 }
 
 export default function LeitnerStudyView({
-  allScenarios,
-  leitnerBoxes,
-  saveLeitnerBoxes,
-  onCopyText,
-  copiedId
+  allScenarios = PRESEEDED_SCENARIOS,
+  leitnerBoxes: externalBoxes,
+  saveLeitnerBoxes: externalSaveBoxes,
+  onCopyText: externalCopyText,
+  copiedId: externalCopiedId,
+  token,
+  onBack,
+  onStudyComplete
 }: LeitnerStudyViewProps) {
+  // Local state for leitner persistence
+  const [localBoxes, setLocalBoxes] = useState<Record<string, number>>(() => {
+    try {
+      const saved = localStorage.getItem('karizma_leitner_boxes');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [internalCopiedId, setInternalCopiedId] = useState<string | null>(null);
+
+  const leitnerBoxes = externalBoxes || localBoxes;
+  const saveLeitnerBoxes = externalSaveBoxes || ((boxes: Record<string, number>) => {
+    setLocalBoxes(boxes);
+    try {
+      localStorage.setItem('karizma_leitner_boxes', JSON.stringify(boxes));
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  const onCopyText = externalCopyText || ((text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setInternalCopiedId(id);
+    setTimeout(() => setInternalCopiedId(null), 2500);
+  });
+  const copiedId = externalCopiedId !== undefined ? externalCopiedId : internalCopiedId;
   const [leitnerFilter, setLeitnerFilter] = useState<'all' | 'box1' | 'box2' | 'box3'>('all');
   const [leitnerIndex, setLeitnerIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -111,8 +144,21 @@ export default function LeitnerStudyView({
   };
 
   return (
-    <div className="space-y-6 animate-fade-in" style={{ direction: 'rtl' }}>
+    <div className="space-y-6 animate-fade-in p-4 sm:p-5" style={{ direction: 'rtl' }}>
       
+      {onBack && (
+        <div className="flex items-center justify-between">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl transition cursor-pointer active:scale-95"
+          >
+            <ChevronRight className="w-4 h-4 text-sky-400" />
+            <span>بازگشت به داشبورد</span>
+          </button>
+          <span className="text-xs font-bold text-slate-400">جعبه لایتنر سناریوها</span>
+        </div>
+      )}
+
       {/* Daily Goal, Streak & Mastery Learning Banner */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-900/90 to-sky-950/40 border border-slate-800 rounded-3xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center gap-3.5 w-full md:w-auto">

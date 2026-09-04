@@ -4,7 +4,7 @@ import path from 'path';
 import { DBEngine } from '../db.js';
 import { ScenarioItem, Role } from '../../types.js';
 import { authenticateToken, AuthenticatedRequest, requireRole } from '../middleware/auth.js';
-import { normalizePersian } from '../rag.js';
+import { normalizePersian } from '../utils/persianNormalizer.js';
 import { MASTER_CATEGORIES, getMasterCategoryTitle } from '../../data/scenarios.js';
 import { CoachDataPipeline } from '../coach/CoachDataPipeline.js';
 import { coachEngine, CoachEngine } from '../coach/CoachEngine.js';

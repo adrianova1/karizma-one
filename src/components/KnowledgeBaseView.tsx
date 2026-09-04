@@ -392,14 +392,16 @@ export default function KnowledgeBaseView({ token, userRole, onChangeTab }: Know
           >
             درخت مهارت‌ها (Skill Tree)
           </button>
-          <button
-            onClick={() => setActiveTab('rag_docs')}
-            className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-              activeTab === 'rag_docs' ? 'bg-sky-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            اسناد مرجع RAG ({cards.length})
-          </button>
+          {(userRole === Role.ADMIN || userRole === Role.MODERATOR || userRole === 'admin' || userRole === 'moderator') && (
+            <button
+              onClick={() => setActiveTab('rag_docs')}
+              className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                activeTab === 'rag_docs' ? 'bg-sky-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              اسناد مرجع RAG ({cards.length})
+            </button>
+          )}
         </div>
       </div>
 

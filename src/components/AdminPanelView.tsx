@@ -1306,8 +1306,8 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
               {/* Status flags */}
               <div className="border-t border-slate-800 pt-4 text-xs space-y-2 text-right">
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-slate-400">امکان استفاده از هوش مصنوعی:</span>
-                  <span className="text-emerald-400 font-bold">بله، فعال</span>
+                  <span className="text-slate-400">موتور پردازشگر کاریزما:</span>
+                  <span className="text-emerald-400 font-bold">موتور محلی پرسرعت فعال (Offline & Fast)</span>
                 </div>
                 <div className="flex justify-between items-center text-[11px]">
                   <span className="text-slate-400">تعداد کدهای ممیزی ثبت شده:</span>

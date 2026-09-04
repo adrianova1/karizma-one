@@ -1,4 +1,3 @@
-import { processRAGQuery } from '../rag.js';
 import { AIScenarioQueryResponse, AIToneResponse, AITraceRecord } from '../../types.js';
 import { DBEngine } from '../db.js';
 
