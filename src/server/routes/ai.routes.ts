@@ -51,10 +51,10 @@ router.post('/query', authenticateToken, async (req: AuthenticatedRequest, res: 
   const startTime = Date.now();
 
   try {
-    // Extract selected tone if present in question tag
-    let selectedTone = 'all';
-    const toneTagMatch = question.match(/\[لحن انتخابی:\s*([^\]]+)\]/);
-    if (toneTagMatch) {
+    // Extract selected tone if present in question tag or explicit body parameter
+    let selectedTone = (req.body.selectedTone as string) || 'all';
+    const toneTagMatch = question.match(/\[لحن انتخابی:\s*([^\]\n]+)\]?/);
+    if (toneTagMatch && (!selectedTone || selectedTone === 'all')) {
       selectedTone = toneTagMatch[1].trim();
     }
 
@@ -72,11 +72,15 @@ router.post('/query', authenticateToken, async (req: AuthenticatedRequest, res: 
     }
 
     // 2. Save Conversation Record
+    let isExistingRecord = false;
     let currentConv: Conversation | undefined;
 
     if (conversationId) {
-      currentConv = await DBEngine.findById<Conversation>('conversations', conversationId);
-      if (currentConv && currentConv.userId !== user.id) currentConv = undefined;
+      const found = await DBEngine.findById<Conversation>('conversations', conversationId);
+      if (found && found.userId === user.id) {
+        currentConv = found;
+        isExistingRecord = true;
+      }
     }
 
     const userMsg: Message = { role: 'user', content: question, timestamp: new Date().toISOString() };
@@ -94,7 +98,7 @@ router.post('/query', authenticateToken, async (req: AuthenticatedRequest, res: 
       };
     }
 
-    if (currentConv.messages.length > 2) {
+    if (isExistingRecord) {
       await DBEngine.updateRecord('conversations', currentConv.id, { messages: currentConv.messages });
     } else {
       await DBEngine.insertRecord('conversations', currentConv);

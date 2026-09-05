@@ -203,13 +203,21 @@ export class ToneDistributor {
       mysteriousReply = this.extractToneText(res.mysterious);
       matureReply = this.extractToneText(res.mature);
 
-      // Check if all extracted replies are identical or empty (legacy single-reply scenarios)
+      // Check if all extracted replies are identical, missing or near-identical (legacy single-reply scenarios)
       const baseClean = this.cleanDialogue(charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || scenario!.situation || scenario!.title);
+      
+      const allExtracted = [charismaticReply, funnyReply, confidentReply, mysteriousReply, matureReply].filter(s => s && s.trim().length > 0);
+      const uniqueReplies = new Set(allExtracted.map(s => s.trim()));
+      
       const isSingleReplyRecord = 
-        (!funnyReply || funnyReply === charismaticReply) &&
-        (!confidentReply || confidentReply === charismaticReply) &&
-        (!mysteriousReply || mysteriousReply === charismaticReply) &&
-        (!matureReply || matureReply === charismaticReply);
+        allExtracted.length <= 1 ||
+        uniqueReplies.size <= 1 ||
+        (
+          (!funnyReply || funnyReply === charismaticReply) &&
+          (!confidentReply || confidentReply === charismaticReply) &&
+          (!mysteriousReply || mysteriousReply === charismaticReply) &&
+          (!matureReply || matureReply === charismaticReply)
+        );
 
       if (isSingleReplyRecord) {
         const variations = PersonaGenerator.generateVariations(baseClean, scenario, userQuery || '');
@@ -235,11 +243,18 @@ export class ToneDistributor {
       matureReply = this.extractToneText(res.mature);
 
       const baseClean = this.cleanDialogue(charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || 'با وقار و کنترل فریم پاسخ دهید.');
+      const allExtracted = [charismaticReply, funnyReply, confidentReply, mysteriousReply, matureReply].filter(s => s && s.trim().length > 0);
+      const uniqueReplies = new Set(allExtracted.map(s => s.trim()));
+      
       const isSingleReplyRecord = 
-        (!funnyReply || funnyReply === charismaticReply) &&
-        (!confidentReply || confidentReply === charismaticReply) &&
-        (!mysteriousReply || mysteriousReply === charismaticReply) &&
-        (!matureReply || matureReply === charismaticReply);
+        allExtracted.length <= 1 ||
+        uniqueReplies.size <= 1 ||
+        (
+          (!funnyReply || funnyReply === charismaticReply) &&
+          (!confidentReply || confidentReply === charismaticReply) &&
+          (!mysteriousReply || mysteriousReply === charismaticReply) &&
+          (!matureReply || matureReply === charismaticReply)
+        );
 
       if (isSingleReplyRecord) {
         const variations = PersonaGenerator.generateVariations(baseClean, null, userQuery || '');

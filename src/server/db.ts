@@ -24,6 +24,8 @@ export function hashPassword(password: string): string {
 
 // In-Memory Cache for fast sub-millisecond table operations
 const tableCache = new Map<string, { data: any[]; mtime: number }>();
+// Per-table write lock queue to prevent race conditions during concurrent requests
+const tableWriteQueues = new Map<string, Promise<void>>();
 
 export class DBEngine {
   private static getFilePath(tableName: string): string {
@@ -66,26 +68,35 @@ export class DBEngine {
   }
 
   static async writeTable<T>(tableName: string, data: T[]): Promise<void> {
-    try {
-      const filePath = this.getFilePath(tableName);
-      const tempPath = `${filePath}.tmp_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-      const jsonString = JSON.stringify(data, null, 2);
-      
-      fs.writeFileSync(tempPath, jsonString, 'utf8');
-      fs.renameSync(tempPath, filePath);
-      
-      const stat = fs.statSync(filePath);
-      tableCache.set(tableName, { data: JSON.parse(JSON.stringify(data)), mtime: stat.mtimeMs });
-    } catch (e) {
-      console.error(`[DBEngine] Error writing JSON table ${tableName}:`, e);
-      // Fallback direct write
+    // Chain write operations sequentially per table to guarantee atomic writes
+    const prevTask = tableWriteQueues.get(tableName) || Promise.resolve();
+    const writeTask = prevTask.then(async () => {
       try {
         const filePath = this.getFilePath(tableName);
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-      } catch (err) {
-        console.error(`[DBEngine] Direct write fallback failed for ${tableName}:`, err);
+        const tempPath = `${filePath}.tmp_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+        const jsonString = JSON.stringify(data, null, 2);
+        
+        fs.writeFileSync(tempPath, jsonString, 'utf8');
+        fs.renameSync(tempPath, filePath);
+        
+        const stat = fs.statSync(filePath);
+        tableCache.set(tableName, { data: JSON.parse(JSON.stringify(data)), mtime: stat.mtimeMs });
+      } catch (e) {
+        console.error(`[DBEngine] Error writing JSON table ${tableName}:`, e);
+        // Fallback direct write
+        try {
+          const filePath = this.getFilePath(tableName);
+          fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+        } catch (err) {
+          console.error(`[DBEngine] Direct write fallback failed for ${tableName}:`, err);
+        }
       }
-    }
+    }).catch(err => {
+      console.error(`[DBEngine] Critical queue write error for ${tableName}:`, err);
+    });
+
+    tableWriteQueues.set(tableName, writeTask);
+    return writeTask;
   }
 
   static async findById<T extends { id?: string }>(tableName: string, id: string): Promise<T | null> {

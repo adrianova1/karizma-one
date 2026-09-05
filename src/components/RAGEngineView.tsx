@@ -730,7 +730,8 @@ export default function RAGEngineView({
           question: fullQuery,
           conversationId: currentConversationId,
           customSystemPrompt: effectiveSystemPrompt || undefined,
-          history: memoryBuffer
+          history: memoryBuffer,
+          selectedTone: selectedTone || 'all'
         })
       });
 

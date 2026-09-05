@@ -50,13 +50,13 @@ export class PersianNormalizer {
    * Strips UI wrapper tags like [حالت کوچینگ: ...] or [لحن انتخابی: ...]
    */
   static stripMetadataTags(rawText: string): { cleanText: string; extractedTone?: 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' } {
-    if (!rawText) return { cleanText: '' };
+    if (!rawText || typeof rawText !== 'string') return { cleanText: '' };
     
     let extractedTone: 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' | undefined = undefined;
     let clean = rawText;
 
-    // Extract tone if present in tag
-    const toneMatch = clean.match(/\[لحن انتخابی:\s*([^\]]+)\]/);
+    // Extract tone if present in tag (handles both closed [لحن انتخابی: ...] and malformed unclosed tags)
+    const toneMatch = clean.match(/\[لحن انتخابی:\s*([^\]\n]+)\]?/);
     if (toneMatch && toneMatch[1]) {
       const toneLabel = toneMatch[1].trim();
       if (toneLabel.includes('کاریزماتیک') || toneLabel.includes('باکلاس')) {
@@ -73,7 +73,7 @@ export class PersianNormalizer {
     }
 
     // Strip all bracketed tags: [حالت کوچینگ: ...], [لحن انتخابی: ...], [هر تگ دیگری: ...]
-    clean = clean.replace(/\[[^\]]+\]/g, ' ');
+    clean = clean.replace(/\[[^\]\n]+\]?/g, ' ');
     clean = clean.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
 
     return { cleanText: clean, extractedTone };
