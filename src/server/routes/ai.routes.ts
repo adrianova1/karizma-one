@@ -1,7 +1,6 @@
 import { Router, Response } from 'express';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth.js';
 import { ConversationMemoryEngine } from '../utils/persianNormalizer.js';
-import { testAllAIProviders } from '../aiRouter.js';
 import { AIService } from '../services/ai.service.js';
 import { SubscriptionService } from '../services/subscription.service.js';
 import { DBEngine } from '../db.js';
@@ -156,16 +155,6 @@ router.post('/compress-history', authenticateToken, async (req: AuthenticatedReq
   });
 
   res.json(compressed);
-});
-
-// GET /api/ai/providers/status
-router.get('/providers/status', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const health = await testAllAIProviders();
-    res.json(health);
-  } catch (e: any) {
-    res.status(500).json({ error: 'خطا در ارزیابی وضعیت هوش مصنوعی' });
-  }
 });
 
 export default router;

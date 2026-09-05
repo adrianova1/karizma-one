@@ -16,7 +16,7 @@ interface AdminPanelViewProps {
 }
 
 export default function AdminPanelView({ token, currentUserId }: AdminPanelViewProps) {
-  const [activeSubTab, setActiveSubTab] = useState<'stats' | 'users' | 'scenarios_mgmt' | 'import' | 'payments' | 'audit' | 'ai_settings' | 'plans' | 'channel_settings' | 'tickets' | 'knowledge_cards'>('stats');
+  const [activeSubTab, setActiveSubTab] = useState<'stats' | 'users' | 'scenarios_mgmt' | 'import' | 'payments' | 'audit' | 'plans' | 'channel_settings' | 'tickets' | 'knowledge_cards'>('stats');
 
   // Educational Channel Links State (2-Option Architecture: Telegram + Alternative Channel)
   const [channelForm, setChannelForm] = useState({
@@ -296,135 +296,6 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
     }
   };
 
-  // 7. AI API Keys & System Prompt State
-  const [geminiKey, setGeminiKey] = useState('');
-  const [groqKey, setGroqKey] = useState('');
-  const [openRouterKey, setOpenRouterKey] = useState('');
-  const [customBaseUrl, setCustomBaseUrl] = useState('');
-  const [customKey, setCustomKey] = useState('');
-  const [customModel, setCustomModel] = useState('');
-  const [openrouterKey, setOpenrouterKey] = useState('');
-  const [aiKeySaveLoading, setAiKeySaveLoading] = useState(false);
-  const [aiKeySaveSuccess, setAiKeySaveSuccess] = useState('');
-  const [aiKeySaveError, setAiKeySaveError] = useState('');
-
-  const [aiTestLoading, setAiTestLoading] = useState(false);
-  const [aiTestResults, setAiTestResults] = useState<any>(null);
-
-  const [activePromptId, setActivePromptId] = useState('');
-  const [systemInstruction, setSystemInstruction] = useState('');
-  const [templateText, setTemplateText] = useState('');
-  const [promptSaveLoading, setPromptSaveLoading] = useState(false);
-  const [promptSaveSuccess, setPromptSaveSuccess] = useState('');
-  const [promptSaveError, setPromptSaveError] = useState('');
-
-  const fetchAISettings = async () => {
-    try {
-      const res = await fetch('/api/admin/settings/ai', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await parseSafeJson(res);
-      if (data) {
-        if (data.gemini_api_key) setGeminiKey(data.gemini_api_key);
-        if (data.groq_api_key) setGroqKey(data.groq_api_key);
-        if (data.openrouter_api_key) setOpenrouterKey(data.openrouter_api_key);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const fetchPrompts = async () => {
-    try {
-      const res = await fetch('/api/prompts', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await parseSafeJson(res);
-      if (Array.isArray(data) && data.length > 0) {
-        const active = data.find((p: any) => p.isActive) || data[0];
-        setActivePromptId(active.id);
-        setSystemInstruction(active.systemInstruction);
-        setTemplateText(active.templateText);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleSaveAIKeys = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAiKeySaveLoading(true);
-    setAiKeySaveSuccess('');
-    setAiKeySaveError('');
-    try {
-      const res = await fetch('/api/admin/ai/keys', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ geminiKey, groqKey, openRouterKey, customBaseUrl, customKey, customModel })
-      });
-      const data = await parseSafeJson(res);
-      if (data?.success) {
-        setAiKeySaveSuccess('تنظیمات با موفقیت ذخیره شد.');
-      } else {
-        setAiKeySaveError(data?.error || 'خطا در ذخیره تنظیمات');
-      }
-    } catch (err: any) {
-      setAiKeySaveError(err.message || 'خطا در شبکه');
-    } finally {
-      setAiKeySaveLoading(false);
-    }
-  };
-
-  const handleTestAIConnection = async () => {
-    setAiTestLoading(true);
-    setAiTestResults(null);
-    try {
-      const res = await fetch('/api/admin/ai/test', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await parseSafeJson(res);
-      if (data?.success) {
-        setAiTestResults(data.results);
-      } else {
-        setAiTestResults({ error: data?.error || 'تست ناموفق بود.' });
-      }
-    } catch (err: any) {
-      setAiTestResults({ error: err.message || 'خطا در شبکه' });
-    } finally {
-      setAiTestLoading(false);
-    }
-  };
-
-  const handleSavePrompt = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activePromptId) return;
-    setPromptSaveLoading(true);
-    setPromptSaveSuccess('');
-    setPromptSaveError('');
-    try {
-      const res = await fetch(`/api/prompts/${activePromptId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          systemInstruction,
-          templateText,
-          isActive: true
-        })
-      });
-      const data = await parseSafeJson(res);
-      if (!res.ok) throw new Error(data?.error || 'خطا در بروزرسانی پرامپت.');
-      setPromptSaveSuccess('دستورالعمل هوش مصنوعی مرکز کاریزما با موفقیت ذخیره شد.');
-    } catch (err: any) {
-      setPromptSaveError(err.message);
-    } finally {
-      setPromptSaveLoading(false);
-    }
-  };
-
   // 1. Users CRUD state
   const [users, setUsers] = useState<any[]>([]);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
@@ -479,28 +350,6 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
   const [cardSaveLoading, setCardSaveLoading] = useState(false);
   const [cardSaveSuccess, setCardSaveSuccess] = useState('');
   const [cardSaveError, setCardSaveError] = useState('');
-
-  
-  useEffect(() => {
-    if (activeSubTab === 'ai_settings') {
-      fetchPrompts();
-      fetch('/api/admin/ai/keys', { headers: { 'Authorization': `Bearer ${token}` } })
-        .then(async (res) => {
-          if (!res.ok) return null;
-          return parseSafeJson(res);
-        })
-        .then(data => {
-          if (data) {
-            setGeminiKey(data.geminiKey || '');
-            setGroqKey(data.groqKey || '');
-            setOpenRouterKey(data.openRouterKey || '');
-            setCustomBaseUrl(data.customBaseUrl || '');
-            setCustomKey(data.customKey || '');
-            setCustomModel(data.customModel || '');
-          }
-        }).catch(console.error);
-    }
-  }, [activeSubTab, token]);
 
   const fetchAdminCardSettings = async () => {
     try {
@@ -638,10 +487,6 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
       fetchReceipts();
       fetchBankDeposits();
       fetchAdminCardSettings();
-    }
-    if (activeSubTab === 'ai_settings') {
-      fetchAISettings();
-      fetchPrompts();
     }
   }, [activeSubTab]);
 
@@ -959,7 +804,6 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
             { id: 'users', label: 'مدیریت کاربران', icon: Users },
             { id: 'scenarios_mgmt', label: 'بانک سناریوها و اکسل', icon: MessagesSquare },
             { id: 'knowledge_cards', label: 'پایگاه دانش هوش مصنوعی', icon: Brain },
-            { id: 'ai_settings', label: 'تنظیمات مربی (AI)', icon: Sparkles },
             { id: 'channel_settings', label: 'لینک‌های کانال VIP', icon: Send },
             { id: 'plans', label: 'تعرفه‌ها و اشتراک', icon: Coins },
             { id: 'payments', label: 'تراکنش‌های مالی', icon: CreditCard },
@@ -1821,232 +1665,6 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
                   ))
                 )}
               </div>
-            </div>
-
-          </div>
-
-        </div>
-      )}
-
-      {/* 6. AI & PROMPTS MANAGEMENT VIEW */}
-      {activeSubTab === 'ai_settings' && (
-        <div className="space-y-6 text-right">
-          
-          {/* Top Banner */}
-          <div className="glass-card rounded-2xl p-6 border border-slate-800 bg-gradient-to-l from-slate-900 via-slate-900 to-sky-950/40">
-            <div className="flex items-center gap-3 mb-2">
-              <Sparkles className="w-5 h-5 text-sky-400" />
-              <h2 className="text-sm font-bold text-white">تنظیمات هوش مصنوعی مرکز کاریزما (Gemini / Groq / OpenRouter)</h2>
-            </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              در این بخش می‌توانید کلیدهای API سرویس‌های مختلف هوش مصنوعی را تنظیم کرده، اتصال را تست کنید و دستورالعمل سیستم (System Instruction) مرکز کاریزما را به‌روزرسانی نمایید.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-            {/* AI API KEYS & DIAGNOSTICS CARD */}
-            <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-5">
-              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-                <div className="flex items-center gap-2">
-                  <KeyRound className="w-4 h-4 text-purple-400" />
-                  <h3 className="text-xs font-bold text-white">کلیدهای API ارائه‌دهندگان هوش مصنوعی</h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleTestAIConnection}
-                  disabled={aiTestLoading}
-                  className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-500/30 text-purple-300 font-semibold text-[11px] py-1.5 px-3 rounded-xl transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${aiTestLoading ? 'animate-spin' : ''}`} />
-                  <span>{aiTestLoading ? 'در حال تست...' : 'تست اتصال زنده'}</span>
-                </button>
-              </div>
-
-              {aiKeySaveSuccess && (
-                <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs rounded-xl flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 shrink-0" />
-                  <span>{aiKeySaveSuccess}</span>
-                </div>
-              )}
-
-              {aiKeySaveError && (
-                <div className="p-3 bg-red-950/40 border border-red-500/30 text-red-300 text-xs rounded-xl flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>{aiKeySaveError}</span>
-                </div>
-              )}
-
-              {/* LIVE DIAGNOSTICS TEST RESULTS */}
-              {aiTestResults && (
-                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2 text-xs">
-                  <span className="font-bold text-slate-300 block mb-1">نتیجه تست اتصال ارائه‌دهندگان:</span>
-                  {aiTestResults.error ? (
-                    <div className="text-red-400 font-semibold">{aiTestResults.error}</div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      {['gemini', 'groq', 'openrouter', 'custom'].map(prov => {
-                        const item = aiTestResults[prov];
-                        const isOk = item?.status === 'ok';
-                        if (prov === 'custom' && !customBaseUrl) return null;
-                        return (
-                          <div key={prov} className={`p-2.5 rounded-lg border text-center space-y-1 ${
-                            isOk ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300' : 'bg-red-950/20 border-red-500/30 text-red-300'
-                          }`}>
-                            <span className="font-bold uppercase text-[10px] block">{prov}</span>
-                            <span className="text-[11px] font-semibold block">{isOk ? 'اتصال برقرار' : 'قطع / خطا'}</span>
-                            {item?.message && (
-                              <span className="text-[10px] text-slate-300 block truncate" title={item.message}>{item.message}</span>
-                            )}
-                            {item?.modelUsed && (
-                              <span className="text-[9px] text-slate-400 block font-mono truncate">{item.modelUsed}</span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <form onSubmit={handleSaveAIKeys} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">کلید API گوگل (Gemini API Key)</label>
-                  <input
-                    type="password"
-                    value={geminiKey}
-                    onChange={(e) => setGeminiKey(e.target.value)}
-                    placeholder="AIzaSy..."
-                    className="w-full bg-slate-900/70 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono dir-ltr"
-                  />
-                  <span className="text-[10px] text-slate-500 mt-1 block">پشتیبانی از مدل‌های رسمی gemini-3.7-flash و gemini-3.1-flash-lite</span>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">کلید API گروک (Groq Cloud API Key)</label>
-                  <input
-                    type="password"
-                    value={groqKey}
-                    onChange={(e) => setGroqKey(e.target.value)}
-                    placeholder="gsk_..."
-                    className="w-full bg-slate-900/70 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono dir-ltr"
-                  />
-                  <span className="text-[10px] text-slate-500 mt-1 block">پشتیبانی از Llama-3.3-70b با سرعت فراخوانی بالا</span>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">API جایگزین (سفارشی) - Base URL</label>
-                  <input
-                    type="text"
-                    value={customBaseUrl}
-                    onChange={(e) => setCustomBaseUrl(e.target.value)}
-                    placeholder="https://api.example.com/v1"
-                    className="w-full bg-slate-900/70 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono dir-ltr"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">API جایگزین - کلید (API Key)</label>
-                  <input
-                    type="password"
-                    value={customKey}
-                    onChange={(e) => setCustomKey(e.target.value)}
-                    placeholder="sk-..."
-                    className="w-full bg-slate-900/70 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono dir-ltr"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">API جایگزین - نام مدل (Model)</label>
-                  <input
-                    type="text"
-                    value={customModel}
-                    onChange={(e) => setCustomModel(e.target.value)}
-                    placeholder="gpt-4o-mini"
-                    className="w-full bg-slate-900/70 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono dir-ltr"
-                  />
-                </div>
-
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">کلید API اوپن‌روتر (OpenRouter API Key)</label>
-                  <input
-                    type="password"
-                    value={openrouterKey}
-                    onChange={(e) => setOpenrouterKey(e.target.value)}
-                    placeholder="sk-or-v1-..."
-                    className="w-full bg-slate-900/70 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono dir-ltr"
-                  />
-                  <span className="text-[10px] text-slate-500 mt-1 block">درگاه پشتیبان چندمدله (DeepSeek, Llama 3.3, Gemini)</span>
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={aiKeySaveLoading}
-                    className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs py-2.5 rounded-xl transition cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-purple-600/20 disabled:opacity-50"
-                  >
-                    <CheckCircle className="w-4 h-4" />
-                    <span>{aiKeySaveLoading ? 'در حال ذخیره‌سازی...' : 'ذخیره کلیدهای API'}</span>
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* SYSTEM PROMPT & INSTRUCTION EDIT CARD */}
-            <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-5">
-              <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                <Bot className="w-4 h-4 text-sky-400" />
-                <h3 className="text-xs font-bold text-white">دستورالعمل سیستم و پرامپت هوشمند مرکز کاریزما</h3>
-              </div>
-
-              {promptSaveSuccess && (
-                <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs rounded-xl flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 shrink-0" />
-                  <span>{promptSaveSuccess}</span>
-                </div>
-              )}
-
-              {promptSaveError && (
-                <div className="p-3 bg-red-950/40 border border-red-500/30 text-red-300 text-xs rounded-xl flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>{promptSaveError}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleSavePrompt} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">دستورالعمل هویت هوش مصنوعی (System Instruction)</label>
-                  <textarea
-                    rows={5}
-                    value={systemInstruction}
-                    onChange={(e) => setSystemInstruction(e.target.value)}
-                    className="w-full bg-slate-900/70 border border-slate-800 rounded-xl p-3 text-xs text-white leading-relaxed font-sans"
-                    placeholder="تعریف هویت، لحن کاریزماتیک، اصول پاسخگویی..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">الگوی پرامپت ترکیبی (Template Text)</label>
-                  <textarea
-                    rows={6}
-                    value={templateText}
-                    onChange={(e) => setTemplateText(e.target.value)}
-                    className="w-full bg-slate-900/70 border border-slate-800 rounded-xl p-3 text-xs text-white leading-relaxed font-mono"
-                    placeholder="از متغیرهای {{CONTEXT}} و {{QUESTION}} استفاده کنید..."
-                  />
-                  <span className="text-[10px] text-slate-500 mt-1 block">متغیرهای مجاز: <code className="text-sky-400 font-mono">&#123;&#123;CONTEXT&#125;&#125;</code> برای کارت‌های دانش و <code className="text-sky-400 font-mono">&#123;&#123;QUESTION&#125;&#125;</code> برای سوال کاربر</span>
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={promptSaveLoading}
-                    className="w-full bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs py-2.5 rounded-xl transition cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 disabled:opacity-50"
-                  >
-                    <CheckCircle className="w-4 h-4" />
-                    <span>{promptSaveLoading ? 'در حال ذخیره‌سازی...' : 'ذخیره دستورالعمل و پرامپت'}</span>
-                  </button>
-                </div>
-              </form>
             </div>
 
           </div>

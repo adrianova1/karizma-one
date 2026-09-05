@@ -13,13 +13,11 @@ import { DBEngine, hashPassword } from './src/server/db.js';
 import { SubscriptionService } from './src/server/services/subscription.service.js';
 import { CleanupService } from './src/server/services/cleanup.service.js';
 import { normalizePersian } from './src/server/utils/persianNormalizer.js';
-import { testAllAIProviders, getAIKey } from './src/server/aiRouter.js';
 import { coachEngine } from './src/server/coach/CoachEngine.js';
 import { User, Role, KnowledgeCard, Plan, Subscription, AuditLog, PromptTemplate, Setting, Notification, ContentItem, Receipt, Conversation, Message, TrackingEvent, Ticket, TicketMessage } from './src/types.js';
 
 import aiRoutes from './src/server/routes/ai.routes.js';
 import adminRoutes from './src/server/routes/admin.routes.js';
-import { testRouter } from './src/server/routes/test_models.js';
 import scenarioRoutes from './src/server/routes/scenario.routes.js';
 
 // Persistent JWT secret key for session stability across restarts
@@ -123,7 +121,6 @@ async function startServer() {
   // Mount Modular Routes
   app.use(['/api/ai', '/app/api/ai'], aiRoutes);
   app.use(['/api/admin', '/app/api/admin'], adminRoutes);
-  app.use(['/api/test', '/app/api/test'], testRouter);
   app.use(['/api/scenarios', '/app/api/scenarios'], scenarioRoutes);
 
   // Helper to log user actions in the audit ledger
@@ -1019,67 +1016,6 @@ async function startServer() {
     await logAudit(user.id, user.username, 'بروزرسانی قالب پرامپت', req.ip || '127.0.0.1', `شناسه قالب: ${id}`);
 
     res.json(templates[index]);
-  });
-
-  // ==================== AI KEYS & LIVE DIAGNOSTICS ====================
-
-  app.get('/api/admin/settings/ai', authenticateToken, requireRole([Role.ADMIN]), async (req: Request, res: Response) => {
-    const geminiKey = await getAIKey('gemini_api_key', 'GEMINI_API_KEY');
-    const groqKey = await getAIKey('groq_api_key', 'GROQ_API_KEY');
-    const openrouterKey = await getAIKey('openrouter_api_key', 'OPENROUTER_API_KEY');
-
-    res.json({
-      gemini_api_key: geminiKey,
-      groq_api_key: groqKey,
-      openrouter_api_key: openrouterKey,
-    });
-  });
-
-  app.put('/api/admin/settings/ai', authenticateToken, requireRole([Role.ADMIN]), async (req: Request, res: Response) => {
-    const { gemini_api_key, groq_api_key, openrouter_api_key } = req.body;
-
-    let settings = await DBEngine.readTable<Setting>('settings');
-
-    const updateOrInsert = (key: string, value: string) => {
-      const idx = settings.findIndex(s => s.key === key);
-      if (idx !== -1) {
-        settings[idx].value = value;
-        settings[idx].updatedAt = new Date().toISOString();
-      } else {
-        settings.push({
-          id: 'set_' + Math.random().toString(36).substring(2, 9),
-          key,
-          value,
-          description: `کلید ${key}`,
-          updatedAt: new Date().toISOString()
-        });
-      }
-    };
-
-    if (gemini_api_key !== undefined) updateOrInsert('gemini_api_key', gemini_api_key.trim());
-    if (groq_api_key !== undefined) updateOrInsert('groq_api_key', groq_api_key.trim());
-    if (openrouter_api_key !== undefined) updateOrInsert('openrouter_api_key', openrouter_api_key.trim());
-
-    await DBEngine.writeTable('settings', settings);
-
-    const user = (req as any).user;
-    await logAudit(user.id, user.username, 'بروزرسانی کلیدهای API هوش مصنوعی', req.ip || '127.0.0.1', 'تنظیمات کلیدهای Gemini/Groq/OpenRouter بروزرسانی شد.');
-
-    res.json({
-      success: true,
-      gemini_api_key: await getAIKey('gemini_api_key', 'GEMINI_API_KEY'),
-      groq_api_key: await getAIKey('groq_api_key', 'GROQ_API_KEY'),
-      openrouter_api_key: await getAIKey('openrouter_api_key', 'OPENROUTER_API_KEY'),
-    });
-  });
-
-  app.post('/api/admin/ai/test', authenticateToken, requireRole([Role.ADMIN]), async (req: Request, res: Response) => {
-    try {
-      const results = await testAllAIProviders();
-      res.json({ success: true, results });
-    } catch (err: any) {
-      res.status(500).json({ success: false, error: err?.message || 'خطا در تست اتصال هوش مصنوعی' });
-    }
   });
 
   // ==================== AUDIT LOGS & STATS ====================
