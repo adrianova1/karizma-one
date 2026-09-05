@@ -51,6 +51,36 @@ export function runTests(): boolean {
   assert(Boolean(result.structuredData && result.structuredData.responses.length === 5), 'ResponseSelector outputs 5 canonical responses in structuredData');
   assert(Boolean(result.answer && result.answer.includes('لحن ۱') && result.answer.includes('لحن ۵')), 'ResponseSelector markdown includes all 5 tones');
 
+  // Test 7: canonicalizeTone mapping
+  assert(PersianNormalizer.canonicalizeTone('کاریزماتیک') === 'charismatic', 'canonicalizeTone maps کاریزماتیک to charismatic');
+  assert(PersianNormalizer.canonicalizeTone('مقتدر و قاطع') === 'confident', 'canonicalizeTone maps مقتدر to confident');
+  assert(PersianNormalizer.canonicalizeTone('شوخ طبع') === 'funny', 'canonicalizeTone maps شوخ to funny');
+  assert(PersianNormalizer.canonicalizeTone('مرموز') === 'mysterious', 'canonicalizeTone maps مرموز to mysterious');
+  assert(PersianNormalizer.canonicalizeTone('متین و سنگین') === 'mature', 'canonicalizeTone maps متین to mature');
+  assert(PersianNormalizer.canonicalizeTone('نامشخص') === 'all', 'canonicalizeTone defaults unmapped strings to all');
+
+  // Test 8: Single-reply legacy scenario distribution with trigram similarity detection
+  const legacyScenario: any = {
+    id: 'legacy_1',
+    title: 'تست لگاسی',
+    situation: 'موقعیت تستی',
+    responses: {
+      charismatic: 'همین یک پاسخ تستی برای تمام لحن‌ها',
+      funny: 'همین یک پاسخ تستی برای تمام لحن‌ها',
+      confident: 'همین یک پاسخ تستی برای تمام لحن‌ها',
+      mysterious: 'همین یک پاسخ تستی برای تمام لحن‌ها',
+      mature: 'همین یک پاسخ تستی برای تمام لحن‌ها'
+    }
+  };
+  const legacyDistributed = ToneDistributor.distribute(legacyScenario, null, 'legacy_1', 'به من بی احترامی کرد');
+  assert(legacyDistributed.charismaticReply !== legacyDistributed.funnyReply, 'ToneDistributor generates distinct variations for identical single-reply legacy scenario');
+  assert(legacyDistributed.funnyReply !== legacyDistributed.confidentReply, 'Funny and confident tones are distinct in legacy distribution');
+
+  // Test 9: ResponseSelector filtering with canonical tone
+  const filteredResult = ResponseSelector.formatResult(legacyScenario, null, 'تست', 0.85, { selectedTone: 'confident' });
+  assert(filteredResult.structuredData?.responses.length === 1, 'ResponseSelector correctly filters to 1 response when selectedTone is confident');
+  assert(filteredResult.structuredData?.responses[0].tone === 'confident', 'Filtered response tone matches selected confident tone');
+
   console.log(`[TEST] Complete: ${passed}/${total} assertions passed successfully!`);
   return true;
 }

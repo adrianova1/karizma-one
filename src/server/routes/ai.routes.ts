@@ -5,6 +5,7 @@ import { AIService } from '../services/ai.service.js';
 import { SubscriptionService } from '../services/subscription.service.js';
 import { DBEngine } from '../db.js';
 import { coachEngine } from '../coach/CoachEngine.js';
+import { PersianNormalizer } from '../coach/PersianNormalizer.js';
 import { Conversation, Message, AuditLog, Subscription, Plan, Role } from '../../types.js';
 
 const router = Router();
@@ -51,12 +52,13 @@ router.post('/query', authenticateToken, async (req: AuthenticatedRequest, res: 
   const startTime = Date.now();
 
   try {
-    // Extract selected tone if present in question tag or explicit body parameter
-    let selectedTone = (req.body.selectedTone as string) || 'all';
+    // Extract and canonicalize selected tone
+    let rawTone = (req.body.selectedTone as string) || 'all';
     const toneTagMatch = question.match(/\[لحن انتخابی:\s*([^\]\n]+)\]?/);
-    if (toneTagMatch && (!selectedTone || selectedTone === 'all')) {
-      selectedTone = toneTagMatch[1].trim();
+    if (toneTagMatch && (!rawTone || rawTone === 'all')) {
+      rawTone = toneTagMatch[1].trim();
     }
+    const selectedTone = PersianNormalizer.canonicalizeTone(rawTone);
 
     // 1. Run Local Coach Engine without external AI calls
     const coachResult = coachEngine.processQuery(question, {
@@ -66,9 +68,13 @@ router.post('/query', authenticateToken, async (req: AuthenticatedRequest, res: 
       selectedTone
     });
 
-    // Increment query usage for non-admin users
+    // Increment query usage for non-admin users safely without failing user response
     if (!isAdmin) {
-      await SubscriptionService.incrementUsage(user.id);
+      try {
+        await SubscriptionService.incrementUsage(user.id);
+      } catch (usageErr) {
+        console.error('[AI Routes] Non-blocking usage increment error:', usageErr);
+      }
     }
 
     // 2. Save Conversation Record

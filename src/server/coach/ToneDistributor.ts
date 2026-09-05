@@ -1,5 +1,6 @@
 import { CoachScenario, CoachFallbackItem } from './CoachTypes.js';
 import { PersonaGenerator } from './PersonaGenerator.js';
+import { PersianNormalizer } from './PersianNormalizer.js';
 
 export interface DistributedToneResult {
   charismaticReply: string;
@@ -203,15 +204,28 @@ export class ToneDistributor {
       mysteriousReply = this.extractToneText(res.mysterious);
       matureReply = this.extractToneText(res.mature);
 
-      // Check if all extracted replies are identical, missing or near-identical (legacy single-reply scenarios)
+      // Check if all extracted replies are identical, missing or highly similar (legacy single-reply scenarios)
       const baseClean = this.cleanDialogue(charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || scenario!.situation || scenario!.title);
       
       const allExtracted = [charismaticReply, funnyReply, confidentReply, mysteriousReply, matureReply].filter(s => s && s.trim().length > 0);
       const uniqueReplies = new Set(allExtracted.map(s => s.trim()));
       
+      // Compute pairwise similarity to detect near-identical replies (similarity > 0.82)
+      let highSimilarityCount = 0;
+      if (allExtracted.length >= 2) {
+        for (let i = 0; i < allExtracted.length; i++) {
+          for (let j = i + 1; j < allExtracted.length; j++) {
+            const sim = PersianNormalizer.computeTrigramSimilarity(allExtracted[i], allExtracted[j]);
+            if (sim >= 0.82) highSimilarityCount++;
+          }
+        }
+      }
+      const isHighlyRedundant = allExtracted.length >= 2 && highSimilarityCount >= (allExtracted.length - 1);
+
       const isSingleReplyRecord = 
         allExtracted.length <= 1 ||
         uniqueReplies.size <= 1 ||
+        isHighlyRedundant ||
         (
           (!funnyReply || funnyReply === charismaticReply) &&
           (!confidentReply || confidentReply === charismaticReply) &&

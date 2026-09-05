@@ -44,6 +44,9 @@ export class ResponseSelector {
     };
 
     const provenanceMatch = Object.values(responseScenarioIds).every(id => id === selectedScenarioId);
+    if (!provenanceMatch) {
+      console.warn(`[ResponseSelector] Provenance mismatch detected: selectedScenarioId=${selectedScenarioId}, distributedIds=${JSON.stringify(responseScenarioIds)}`);
+    }
 
     // Construct 5 Canonical Tone Array for Structured JSON Response
     const responsesArray: Array<{

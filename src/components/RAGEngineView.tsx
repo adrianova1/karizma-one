@@ -497,6 +497,7 @@ export default function RAGEngineView({
   }, [messages]);
 
   const handleCopy = (text: string, id: string) => {
+    if (!text || !navigator.clipboard) return;
     navigator.clipboard.writeText(text).then(() => {
       setCopiedIndex(id);
       setTimeout(() => setCopiedIndex(null), 2000);
@@ -782,7 +783,8 @@ export default function RAGEngineView({
         role: 'assistant',
         content: data.answer,
         timestamp: new Date().toISOString(),
-        mode: modeToUse
+        mode: modeToUse,
+        structuredData: data.structuredData || undefined
       };
 
       setMessages(prev => [...prev, assistantMsg]);
@@ -856,10 +858,8 @@ export default function RAGEngineView({
     }
   };
 
-  // Parse structured 5-style responses from assistant markdown
-  const parseFiveStyles = (content: string) => {
-    if (!content) return null;
-
+  // Parse structured 5-style responses from structuredData or fallback to assistant markdown
+  const parseFiveStyles = (content: string, structuredData?: import('../types.js').AIScenarioQueryResponse) => {
     const styleDefs = [
       {
         id: 'charismatic',
@@ -912,6 +912,26 @@ export default function RAGEngineView({
         badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
       }
     ];
+
+    // Priority 1: Use direct structured JSON data from ResponseSelector
+    if (structuredData && Array.isArray(structuredData.responses) && structuredData.responses.length > 0) {
+      const respMap = new Map(structuredData.responses.map(r => [r.tone, r]));
+      return styleDefs.map(def => {
+        const item = respMap.get(def.id as any);
+        const quote = item ? item.reply.replace(/^[«"“'’\-*\d.)\s]+|[»"”'’\s]+$/g, '').trim() : '';
+        const tip = item ? item.nextMove : '';
+        const explanation = item ? item.whyWorks : '';
+        return {
+          ...def,
+          quote: quote || def.subtitle,
+          tip,
+          explanation,
+          fullText: item ? `«${quote}»\n\n📌 نکته اجرا: ${tip}\n\n💡 دلیل اثربخشی: ${explanation}` : `«${def.subtitle}»`
+        };
+      });
+    }
+
+    if (!content) return null;
 
     // Clean any residual English thought/meta tags from display content
     const sanitizedContent = content
@@ -1341,7 +1361,7 @@ export default function RAGEngineView({
               ) : (
                 <div className="space-y-4 w-full min-w-0">
                   {messages.map((msg, idx) => {
-                    const parsedFiveStyles = msg.role === 'assistant' ? parseFiveStyles(msg.content) : null;
+                    const parsedFiveStyles = msg.role === 'assistant' ? parseFiveStyles(msg.content, msg.structuredData) : null;
 
                     return (
                       <div 

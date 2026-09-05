@@ -47,6 +47,21 @@ export class PersianNormalizer {
   ]);
 
   /**
+   * Canonicalize tone string/label to one of the 5 core keys: charismatic, funny, confident, mysterious, mature, or 'all'
+   */
+  static canonicalizeTone(rawTone?: string): 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' | 'all' {
+    if (!rawTone || typeof rawTone !== 'string') return 'all';
+    const s = rawTone.trim().toLowerCase();
+    if (s === 'all' || s === 'همه' || s === 'هر_پنج_لحن' || s === '5tones' || s === '5_tones') return 'all';
+    if (/کاریزماتیک|باکلاس|جذاب|charismatic|charisma/.test(s)) return 'charismatic';
+    if (/شوخ|طنز|کل‌کل|کل_کل|رندانه|funny|humor|playful/.test(s)) return 'funny';
+    if (/مقتدر|قاطع|آلفا|اعتماد|مستقیم|confident|direct|alpha/.test(s)) return 'confident';
+    if (/مرموز|پرکشش|چندلایه|تحلیل|عاطفی|mysterious|emotional|deep_attraction/.test(s)) return 'mysterious';
+    if (/متین|پخته|بالغ|سنگین|دیپلماتیک|روانشناختی|mature|diplomatic|psychology/.test(s)) return 'mature';
+    return 'all';
+  }
+
+  /**
    * Strips UI wrapper tags like [حالت کوچینگ: ...] or [لحن انتخابی: ...]
    */
   static stripMetadataTags(rawText: string): { cleanText: string; extractedTone?: 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' } {
@@ -58,17 +73,9 @@ export class PersianNormalizer {
     // Extract tone if present in tag (handles both closed [لحن انتخابی: ...] and malformed unclosed tags)
     const toneMatch = clean.match(/\[لحن انتخابی:\s*([^\]\n]+)\]?/);
     if (toneMatch && toneMatch[1]) {
-      const toneLabel = toneMatch[1].trim();
-      if (toneLabel.includes('کاریزماتیک') || toneLabel.includes('باکلاس')) {
-        extractedTone = 'charismatic';
-      } else if (toneLabel.includes('شوخ') || toneLabel.includes('کل‌کل') || toneLabel.includes('طنز') || toneLabel.includes('رندانه')) {
-        extractedTone = 'funny';
-      } else if (toneLabel.includes('مقتدر') || toneLabel.includes('قاطع') || toneLabel.includes('آلفا') || toneLabel.includes('اعتماد') || toneLabel.includes('مستقیم')) {
-        extractedTone = 'confident';
-      } else if (toneLabel.includes('مرموز') || toneLabel.includes('پرکشش') || toneLabel.includes('چندلایه') || toneLabel.includes('تحلیل')) {
-        extractedTone = 'mysterious';
-      } else if (toneLabel.includes('متین') || toneLabel.includes('پخته') || toneLabel.includes('بالغ') || toneLabel.includes('سنگین') || toneLabel.includes('دیپلماتیک')) {
-        extractedTone = 'mature';
+      const canonical = this.canonicalizeTone(toneMatch[1]);
+      if (canonical !== 'all') {
+        extractedTone = canonical;
       }
     }
 

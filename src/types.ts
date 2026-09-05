@@ -292,6 +292,7 @@ export interface Message {
   timestamp: string;
   mode?: CoachingMode;
   isSubscriptionAlert?: boolean;
+  structuredData?: AIScenarioQueryResponse;
 }
 
 export interface Conversation {
