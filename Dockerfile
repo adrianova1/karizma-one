@@ -21,8 +21,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Copy output bundles from builder stage
+# Copy output bundles and persistent data from builder stage
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/data ./data
 COPY --from=builder /app/package*.json ./
 
 # Install production dependencies only
