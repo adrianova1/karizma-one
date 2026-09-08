@@ -47,41 +47,40 @@ export class PersianNormalizer {
   ]);
 
   /**
-   * Canonicalize tone string/label to one of the 5 core keys: charismatic, funny, confident, mysterious, mature, or 'all'
+   * Canonicalize tone label (Persian/English variants) to one of the canonical keys
    */
-  static canonicalizeTone(input?: string): 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' | 'all' {
-    if (!input || typeof input !== 'string') return 'all';
-    const s = input.trim().toLowerCase();
-    if (s === 'all' || s === 'همه' || s === 'هر_پنج_لحن' || s === '5tones' || s === '5_tones') return 'all';
-    if (/(?:کاریزماتیک|باکلاس|جذاب|charisma|charismatic)/i.test(s)) return 'charismatic';
-    if (/(?:شوخ|طنز|رندانه|کل‌کل|کل_کل|funny|humor|playful)/i.test(s)) return 'funny';
-    if (/(?:مقتدر|قاطع|آلفا|اعتماد|مستقیم|direct|confident|alpha)/i.test(s)) return 'confident';
-    if (/(?:مرموز|پرکشش|چندلایه|تحلیل|عاطفی|emotional|mysterious|deep_attraction)/i.test(s)) return 'mysterious';
-    if (/(?:متین|پخته|بالغ|سنگین|دیپلماتیک|روانشناختی|diplomatic|mature|deep|psychology)/i.test(s)) return 'mature';
+  static canonicalizeTone(input: string | undefined | null): 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' | 'all' {
+    if (!input) return 'all';
+    const s = String(input).toLowerCase();
+    if (/(?:کاریزماتیک|باکلاس|charisma|charismatic)/i.test(s)) return 'charismatic';
+    if (/(?:شوخ|طنز|رندانه|funny|humor|humorous|witty)/i.test(s)) return 'funny';
+    if (/(?:مقتدر|قاطع|آلفا|direct|confident|alpha)/i.test(s)) return 'confident';
+    if (/(?:مرموز|پرکشش|emotional|mysterious|flirty)/i.test(s)) return 'mysterious';
+    if (/(?:متین|پخته|diplomatic|mature|deep|psychology)/i.test(s)) return 'mature';
     return 'all';
   }
 
   /**
    * Strips UI wrapper tags like [حالت کوچینگ: ...] or [لحن انتخابی: ...]
-   * Highly tolerant parsing supporting both closed tags and unclosed tags trailing to line end.
    */
   static stripMetadataTags(rawText: string): { cleanText: string; extractedTone?: 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' } {
-    if (!rawText || typeof rawText !== 'string') return { cleanText: '' };
+    if (!rawText) return { cleanText: '' };
     
     let extractedTone: 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' | undefined = undefined;
     let clean = rawText;
 
-    // Tolerant regex match: either bracketed tag [لحن انتخابی: ...] or unclosed up to newline
-    const toneMatch = clean.match(/\[لحن انتخابی:\s*([^\]\r\n]+)\]?/) || clean.match(/\[لحن انتخابی:\s*([^\]]+)\]/);
+    // Extract tone if present in tag — be tolerant of unclosed bracket (until newline)
+    const toneMatch = clean.match(/\[لحن انتخابی:\s*([^\]\n\r]+)/) || clean.match(/\[لحن انتخابی:\s*([^\]]+)\]/);
     if (toneMatch && toneMatch[1]) {
-      const canonical = this.canonicalizeTone(toneMatch[1].trim());
-      if (canonical !== 'all') {
-        extractedTone = canonical;
-      }
+      const toneLabel = toneMatch[1].trim();
+      extractedTone = this.canonicalizeTone(toneLabel);
     }
 
-    // Strip bracketed tags or unclosed bracketed lines
-    clean = clean.replace(/\[[^\]\r\n]+\]?/g, ' ');
+    // Remove any [لحن انتخابی: ... (possibly unclosed until EOL)] patterns explicitly
+    clean = clean.replace(/\[لحن انتخابی:[^\]\n\r]*/g, ' ');
+
+    // Strip all other bracketed tags: [حالت کوچینگ: ...], [هر تگ دیگری: ...]
+    clean = clean.replace(/\[[^\]]+\]/g, ' ');
     clean = clean.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
 
     return { cleanText: clean, extractedTone };
@@ -122,11 +121,11 @@ export class PersianNormalizer {
     normalized = normalized.replace(/\s+/g, ' ');
 
     // Strip punctuations, emojis & non-word special characters
-    normalized = normalized.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'«»،؛؟\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ');
+    normalized = normalized.replace(/[.,\\/#!$%\\^&\\*;:{}=\\-_`~()?"'«»،؛؟\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ');
     normalized = normalized.replace(/\s+/g, ' ');
 
     // Collapse 3 or more repeated identical characters into 1 (e.g. سلامممم -> سلام, but keep 2 letters like ممنون, ببخشید)
-    normalized = normalized.replace(/(.)\1{2,}/g, '$1');
+    normalized = normalized.replace(/(.)\\1{2,}/g, '$1');
 
     // Safe normalization for common colloquial variations and typos in Persian chat
     normalized = normalized
