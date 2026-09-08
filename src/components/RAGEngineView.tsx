@@ -117,14 +117,15 @@ function AssistantMessageBlock({
 
                 return (
                   <button
-                    key={sec.id}
+                    key={sec.id || i}
                     type="button"
-                    onClick={() => setActiveStyleId(sec.id)}
+                    disabled={!sec.id}
+                    onClick={() => sec.id && setActiveStyleId(sec.id)}
                     className={`flex items-center gap-1.5 p-1.5 rounded-lg border transition-all cursor-pointer active:scale-95 text-right relative overflow-hidden min-w-0 ${
                       i === 4 ? 'col-span-2 sm:col-span-1' : ''
                     } ${
                       isActive
-                        ? `bg-slate-900 ${sec.borderColor} text-white shadow-md ring-1 ring-white/10`
+                        ? `bg-slate-900 ${sec.borderColor || 'border-sky-500/50'} text-white shadow-md ring-1 ring-white/10`
                         : 'bg-[#121216] border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700'
                     }`}
                   >
@@ -175,11 +176,12 @@ function AssistantMessageBlock({
                   {activeSection.quote && (
                     <button
                       type="button"
-                      onClick={() => handleCopy(activeSection.quote, `card_${idx}_${activeSection.id}`)}
-                      className="px-2 py-0.5 min-h-[28px] bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 rounded-lg text-[10px] font-bold flex items-center gap-1 transition cursor-pointer active:scale-95"
+                      disabled={!activeSection.quote}
+                      onClick={() => activeSection.quote && handleCopy(activeSection.quote, `card_${idx}_${activeSection.id || 'sec'}`)}
+                      className="px-2 py-0.5 min-h-[28px] bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-slate-200 border border-slate-700/80 rounded-lg text-[10px] font-bold flex items-center gap-1 transition cursor-pointer active:scale-95"
                       title="کپی دقیق جمله"
                     >
-                      {copiedIndex === `card_${idx}_${activeSection.id}` ? (
+                      {copiedIndex === `card_${idx}_${activeSection.id || 'sec'}` ? (
                         <>
                           <Check className="w-2.5 h-2.5 text-emerald-400" />
                           <span className="text-emerald-400 text-[9px]">کپی شد!</span>

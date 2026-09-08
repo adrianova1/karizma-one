@@ -126,6 +126,23 @@ export class ResponseSelector {
         'confident': 'confident',
         'mysterious': 'mysterious',
         'mature': 'mature',
+        // Persian mappings
+        'کاریزماتیک': 'charismatic',
+        'باکلاس': 'charismatic',
+        'جذاب': 'charismatic',
+        'شوخ': 'funny',
+        'شوخ‌طبع': 'funny',
+        'شوخ طبع': 'funny',
+        'طنز': 'funny',
+        'رندانه': 'funny',
+        'مقتدر': 'confident',
+        'قاطع': 'confident',
+        'آلفا': 'confident',
+        'مرموز': 'mysterious',
+        'پرکشش': 'mysterious',
+        'متین': 'mature',
+        'متین و پخته': 'mature',
+        'پخته': 'mature',
         // Backward compatibility mappings
         'direct': 'confident',
         'alpha': 'confident',
@@ -140,7 +157,11 @@ export class ResponseSelector {
       };
       const mappedTone = toneMap[options.selectedTone] || options.selectedTone;
       const filtered = responsesArray.filter(r => r.tone === mappedTone);
-      if (filtered.length > 0) finalResponsesArray = filtered;
+      if (filtered.length > 0) {
+        finalResponsesArray = filtered;
+      } else {
+        console.warn(`[ResponseSelector] Telemetry warning: options.selectedTone '${options.selectedTone}' could not be matched in canonical tones array.`);
+      }
     }
 
     const structuredData: CoachResultStructured = {

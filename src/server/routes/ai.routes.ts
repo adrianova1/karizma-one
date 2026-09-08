@@ -52,13 +52,11 @@ router.post('/query', authenticateToken, async (req: AuthenticatedRequest, res: 
   const startTime = Date.now();
 
   try {
-    // Extract and canonicalize selected tone
-    let rawTone = (req.body.selectedTone as string) || 'all';
-    const toneTagMatch = question.match(/\[لحن انتخابی:\s*([^\]\n]+)\]?/);
-    if (toneTagMatch && (!rawTone || rawTone === 'all')) {
-      rawTone = toneTagMatch[1].trim();
-    }
-    const selectedTone = PersianNormalizer.canonicalizeTone(rawTone);
+    // Extract and canonicalize selected tone from body or embedded question tags
+    const metadata = PersianNormalizer.stripMetadataTags(question);
+    const selectedToneRaw = (req.body.selectedTone as string) || (metadata.extractedTone ? metadata.extractedTone : undefined);
+    const canonical = PersianNormalizer.canonicalizeTone(selectedToneRaw);
+    const selectedTone = canonical;
 
     // 1. Run Local Coach Engine without external AI calls
     const coachResult = coachEngine.processQuery(question, {

@@ -1,5 +1,6 @@
 import { CoachScenario } from './CoachTypes.js';
 import { PERSIAN_ARCHETYPES } from './PersianArchetypes.js';
+import { PersianNormalizer } from './PersianNormalizer.js';
 
 export class PersonaGenerator {
   /**
@@ -24,6 +25,26 @@ export class PersonaGenerator {
     const sTitle = (scenario?.title || '').trim();
     const sSit = (scenario?.situation || '').trim();
     const combinedContext = `${q} ${sTitle} ${sSit} ${clean}`;
+
+    let variations = this.synthesizeVariations(clean, scenario, combinedContext);
+
+    // Post-validate distinctness: check pairwise trigram similarities between generated tones
+    variations = this.postValidateDistinctness(variations, clean);
+
+    return variations;
+  }
+
+  private static synthesizeVariations(
+    clean: string,
+    scenario: CoachScenario | null,
+    combinedContext: string
+  ): {
+    charismatic: string;
+    funny: string;
+    confident: string;
+    mysterious: string;
+    mature: string;
+  } {
 
     // 1. Direct Archetype / Pattern Matching across comprehensive conversational categories
     
@@ -233,5 +254,42 @@ export class PersonaGenerator {
     s = s.replace(/مرحله قرار اول به بعد[^\n✔⛔✅]*/g, '');
     s = s.replace(/[«"'"“‘⚡🎈🔹♦•\-–\d\.\s()👧👦👨👩🧔👱‍♂️👱‍♀️:✔⛔✅]+/gu, ' ');
     return s.replace(/\s{2,}/g, ' ').trim();
+  }
+
+  /**
+   * Post-validate that variations are genuinely distinct (pairwise trigram similarity < 0.85).
+   * If any pair is too similar, apply distinct structural adjustments.
+   */
+  private static postValidateDistinctness(
+    vars: { charismatic: string; funny: string; confident: string; mysterious: string; mature: string },
+    clean: string
+  ): { charismatic: string; funny: string; confident: string; mysterious: string; mature: string } {
+    const tones: Array<keyof typeof vars> = ['charismatic', 'funny', 'confident', 'mysterious', 'mature'];
+    
+    // Check pairwise similarities
+    for (let i = 0; i < tones.length; i++) {
+      for (let j = i + 1; j < tones.length; j++) {
+        const toneA = tones[i];
+        const toneB = tones[j];
+        const sim = PersianNormalizer.computeTrigramSimilarity(vars[toneA], vars[toneB]);
+        
+        if (sim >= 0.85) {
+          // Differentiate toneB with distinct stylistic tone structure
+          if (toneB === 'funny') {
+            vars.funny = `خیلی بامزه بود! راستش اگه بخوام بی‌تعارف بگم: ${clean || vars.funny}`;
+          } else if (toneB === 'confident') {
+            vars.confident = `قاطعانه و مشخص بگم: خطوط قرمز من روشنه، ${clean || vars.confident}`;
+          } else if (toneB === 'mysterious') {
+            vars.mysterious = `نکته جالب اینجاست که حقیقت همیشه توی نگاه اول مشخص نمیشه؛ ${clean || vars.mysterious}`;
+          } else if (toneB === 'mature') {
+            vars.mature = `با دیدی منطقی و عمیق به قضیه نگاه کنیم: ${clean || vars.mature}`;
+          } else if (toneB === 'charismatic') {
+            vars.charismatic = `با وقار و پرستیژ کامل: ترجیح میدم کیفیت صحبت حفظ بشه؛ ${clean || vars.charismatic}`;
+          }
+        }
+      }
+    }
+
+    return vars;
   }
 }

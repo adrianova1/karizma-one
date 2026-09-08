@@ -49,20 +49,21 @@ export class PersianNormalizer {
   /**
    * Canonicalize tone string/label to one of the 5 core keys: charismatic, funny, confident, mysterious, mature, or 'all'
    */
-  static canonicalizeTone(rawTone?: string): 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' | 'all' {
-    if (!rawTone || typeof rawTone !== 'string') return 'all';
-    const s = rawTone.trim().toLowerCase();
+  static canonicalizeTone(input?: string): 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' | 'all' {
+    if (!input || typeof input !== 'string') return 'all';
+    const s = input.trim().toLowerCase();
     if (s === 'all' || s === 'همه' || s === 'هر_پنج_لحن' || s === '5tones' || s === '5_tones') return 'all';
-    if (/کاریزماتیک|باکلاس|جذاب|charismatic|charisma/.test(s)) return 'charismatic';
-    if (/شوخ|طنز|کل‌کل|کل_کل|رندانه|funny|humor|playful/.test(s)) return 'funny';
-    if (/مقتدر|قاطع|آلفا|اعتماد|مستقیم|confident|direct|alpha/.test(s)) return 'confident';
-    if (/مرموز|پرکشش|چندلایه|تحلیل|عاطفی|mysterious|emotional|deep_attraction/.test(s)) return 'mysterious';
-    if (/متین|پخته|بالغ|سنگین|دیپلماتیک|روانشناختی|mature|diplomatic|psychology/.test(s)) return 'mature';
+    if (/(?:کاریزماتیک|باکلاس|جذاب|charisma|charismatic)/i.test(s)) return 'charismatic';
+    if (/(?:شوخ|طنز|رندانه|کل‌کل|کل_کل|funny|humor|playful)/i.test(s)) return 'funny';
+    if (/(?:مقتدر|قاطع|آلفا|اعتماد|مستقیم|direct|confident|alpha)/i.test(s)) return 'confident';
+    if (/(?:مرموز|پرکشش|چندلایه|تحلیل|عاطفی|emotional|mysterious|deep_attraction)/i.test(s)) return 'mysterious';
+    if (/(?:متین|پخته|بالغ|سنگین|دیپلماتیک|روانشناختی|diplomatic|mature|deep|psychology)/i.test(s)) return 'mature';
     return 'all';
   }
 
   /**
    * Strips UI wrapper tags like [حالت کوچینگ: ...] or [لحن انتخابی: ...]
+   * Highly tolerant parsing supporting both closed tags and unclosed tags trailing to line end.
    */
   static stripMetadataTags(rawText: string): { cleanText: string; extractedTone?: 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' } {
     if (!rawText || typeof rawText !== 'string') return { cleanText: '' };
@@ -70,17 +71,17 @@ export class PersianNormalizer {
     let extractedTone: 'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature' | undefined = undefined;
     let clean = rawText;
 
-    // Extract tone if present in tag (handles both closed [لحن انتخابی: ...] and malformed unclosed tags)
-    const toneMatch = clean.match(/\[لحن انتخابی:\s*([^\]\n]+)\]?/);
+    // Tolerant regex match: either bracketed tag [لحن انتخابی: ...] or unclosed up to newline
+    const toneMatch = clean.match(/\[لحن انتخابی:\s*([^\]\r\n]+)\]?/) || clean.match(/\[لحن انتخابی:\s*([^\]]+)\]/);
     if (toneMatch && toneMatch[1]) {
-      const canonical = this.canonicalizeTone(toneMatch[1]);
+      const canonical = this.canonicalizeTone(toneMatch[1].trim());
       if (canonical !== 'all') {
         extractedTone = canonical;
       }
     }
 
-    // Strip all bracketed tags: [حالت کوچینگ: ...], [لحن انتخابی: ...], [هر تگ دیگری: ...]
-    clean = clean.replace(/\[[^\]\n]+\]?/g, ' ');
+    // Strip bracketed tags or unclosed bracketed lines
+    clean = clean.replace(/\[[^\]\r\n]+\]?/g, ' ');
     clean = clean.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
 
     return { cleanText: clean, extractedTone };

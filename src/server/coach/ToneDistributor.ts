@@ -210,17 +210,20 @@ export class ToneDistributor {
       const allExtracted = [charismaticReply, funnyReply, confidentReply, mysteriousReply, matureReply].filter(s => s && s.trim().length > 0);
       const uniqueReplies = new Set(allExtracted.map(s => s.trim()));
       
-      // Compute pairwise similarity to detect near-identical replies (similarity > 0.82)
+      // Compute pairwise trigram similarity between extracted replies (> 0.82 considered near-duplicate)
+      let pairwisePairs = 0;
       let highSimilarityCount = 0;
       if (allExtracted.length >= 2) {
         for (let i = 0; i < allExtracted.length; i++) {
           for (let j = i + 1; j < allExtracted.length; j++) {
+            pairwisePairs++;
             const sim = PersianNormalizer.computeTrigramSimilarity(allExtracted[i], allExtracted[j]);
             if (sim >= 0.82) highSimilarityCount++;
           }
         }
       }
-      const isHighlyRedundant = allExtracted.length >= 2 && highSimilarityCount >= (allExtracted.length - 1);
+      // If majority (or >= 50%) of pairs are highly similar, treat as single-reply
+      const isHighlyRedundant = pairwisePairs > 0 && (highSimilarityCount / pairwisePairs >= 0.5);
 
       const isSingleReplyRecord = 
         allExtracted.length <= 1 ||
@@ -260,9 +263,23 @@ export class ToneDistributor {
       const allExtracted = [charismaticReply, funnyReply, confidentReply, mysteriousReply, matureReply].filter(s => s && s.trim().length > 0);
       const uniqueReplies = new Set(allExtracted.map(s => s.trim()));
       
+      let pairwisePairs = 0;
+      let highSimilarityCount = 0;
+      if (allExtracted.length >= 2) {
+        for (let i = 0; i < allExtracted.length; i++) {
+          for (let j = i + 1; j < allExtracted.length; j++) {
+            pairwisePairs++;
+            const sim = PersianNormalizer.computeTrigramSimilarity(allExtracted[i], allExtracted[j]);
+            if (sim >= 0.82) highSimilarityCount++;
+          }
+        }
+      }
+      const isHighlyRedundant = pairwisePairs > 0 && (highSimilarityCount / pairwisePairs >= 0.5);
+
       const isSingleReplyRecord = 
         allExtracted.length <= 1 ||
         uniqueReplies.size <= 1 ||
+        isHighlyRedundant ||
         (
           (!funnyReply || funnyReply === charismaticReply) &&
           (!confidentReply || confidentReply === charismaticReply) &&
