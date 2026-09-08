@@ -5,6 +5,7 @@ import { DBEngine } from '../db.js';
 import { ScenarioItem, Role } from '../../types.js';
 import { authenticateToken, AuthenticatedRequest, requireRole } from '../middleware/auth.js';
 import { normalizePersian } from '../utils/persianNormalizer.js';
+import { PersianNormalizer } from '../coach/PersianNormalizer.js';
 import { MASTER_CATEGORIES, getMasterCategoryTitle } from '../../data/scenarios.js';
 import { CoachDataPipeline } from '../coach/CoachDataPipeline.js';
 import { coachEngine, CoachEngine } from '../coach/CoachEngine.js';
@@ -78,31 +79,72 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
       filtered = filtered.filter(s => s.difficulty === difficulty);
     }
 
-    // Database Search by Word or Phrase across Title, Situation, OpponentLine, Technique, and 5-Tone Responses
+    // Intelligent Weighted Database Search by Phrase, Content Keywords, and Semantic Trigram Similarity
     if (search) {
       const normSearch = normalizePersian(search).toLowerCase();
-      const searchTerms = normSearch.split(/\s+/).filter(Boolean);
+      const rawTerms = normSearch.split(/\s+/).filter(Boolean);
+      const contentTerms = rawTerms.filter(t => !PersianNormalizer.isStopWord(t) && !PersianNormalizer.GENERIC_CARRIER_PHRASES.has(t));
+      const effectiveTerms = contentTerms.length > 0 ? contentTerms : rawTerms;
 
-      filtered = filtered.filter(s => {
+      const scoredList: { scenario: ScenarioItem; score: number }[] = [];
+
+      for (const s of filtered) {
+        let score = 0;
         const titleNorm = normalizePersian(s.title || '').toLowerCase();
         const situationNorm = normalizePersian(s.situation || '').toLowerCase();
-        const opponentNorm = normalizePersian(s.opponentLine || '').toLowerCase();
+        const opponentNorm = normalizePersian((s as any).opponentLine || '').toLowerCase();
+        const triggersNorm = (s.triggers || []).map(t => normalizePersian(t).toLowerCase()).join(' ');
+        const aliasesNorm = (s.aliases || []).map(a => normalizePersian(a).toLowerCase()).join(' ');
+        const keywordsNorm = (s.keywords || []).map(k => normalizePersian(k).toLowerCase()).join(' ');
         const techNorm = normalizePersian(s.technique || '').toLowerCase();
-        const noteNorm = normalizePersian(s.teachingNote || '').toLowerCase();
-        
-        const responsesNorm = s.responses
-          ? Object.values(s.responses)
-              .map(r => (Array.isArray(r) ? r.join(' ') : String(r || '')))
-              .map(text => normalizePersian(text).toLowerCase())
-              .join(' ')
-          : '';
 
-        const fullText = `${titleNorm} ${situationNorm} ${opponentNorm} ${techNorm} ${noteNorm} ${responsesNorm}`;
+        // 1. Exact phrase match (High priority)
+        if (normSearch.length >= 3) {
+          if (opponentNorm.includes(normSearch)) score += 120;
+          if (titleNorm.includes(normSearch)) score += 100;
+          if (triggersNorm.includes(normSearch)) score += 90;
+          if (aliasesNorm.includes(normSearch)) score += 80;
+          if (situationNorm.includes(normSearch)) score += 60;
+          if (keywordsNorm.includes(normSearch)) score += 50;
+        }
 
-        // Match either complete phrase or all individual keywords
-        if (fullText.includes(normSearch)) return true;
-        return searchTerms.every(term => fullText.includes(term));
-      });
+        // 2. Individual content terms matching
+        let matchedTermsCount = 0;
+        for (const term of effectiveTerms) {
+          if (term.length < 2) continue;
+          let termMatched = false;
+          if (opponentNorm.includes(term)) { score += 40; termMatched = true; }
+          if (titleNorm.includes(term)) { score += 35; termMatched = true; }
+          if (triggersNorm.includes(term)) { score += 30; termMatched = true; }
+          if (aliasesNorm.includes(term)) { score += 25; termMatched = true; }
+          if (situationNorm.includes(term)) { score += 20; termMatched = true; }
+          if (keywordsNorm.includes(term)) { score += 15; termMatched = true; }
+          if (techNorm.includes(term)) { score += 10; termMatched = true; }
+          if (termMatched) matchedTermsCount++;
+        }
+
+        // 3. Trigram similarity for long user sentences / questions
+        if (normSearch.length >= 5) {
+          const simTitle = PersianNormalizer.computeTrigramSimilarity(normSearch, titleNorm);
+          const simOpponent = opponentNorm ? PersianNormalizer.computeTrigramSimilarity(normSearch, opponentNorm) : 0;
+          const bestSim = Math.max(simTitle, simOpponent);
+          if (bestSim >= 0.25) {
+            score += Math.round(bestSim * 85);
+          }
+        }
+
+        // Include if any meaningful relevance score was achieved
+        if (score > 0) {
+          // Bonus if all terms matched
+          if (effectiveTerms.length > 1 && matchedTermsCount === effectiveTerms.length) {
+            score += 50;
+          }
+          scoredList.push({ scenario: s, score });
+        }
+      }
+
+      scoredList.sort((a, b) => b.score - a.score);
+      filtered = scoredList.map(item => item.scenario);
     }
 
     const total = filtered.length;
