@@ -248,21 +248,22 @@ export class ToneDistributor {
 
       for (const k of toneKeys) {
         let current = toneMap[k];
-        let isInvalidOrDup = !current || current.trim().length < 3;
+        // Only consider invalid if genuinely empty or exact identical duplicate
+        let isMissingOrExactDup = !current || current.trim().length < 3;
 
-        if (!isInvalidOrDup) {
-          // Check for high similarity with previously accepted tones in this set
+        if (!isMissingOrExactDup) {
           for (const prev of seenReplies) {
+            // Only trigger replacement if virtually identical (> 0.95 similarity)
             const sim = PersianNormalizer.computeTrigramSimilarity(current, prev);
-            if (sim >= 0.72) {
-              isInvalidOrDup = true;
+            if (sim >= 0.95 || current.trim() === prev.trim()) {
+              isMissingOrExactDup = true;
               break;
             }
           }
         }
 
-        if (isInvalidOrDup) {
-          // Replace missing or repetitive tone with distinct synthesized persona variation
+        if (isMissingOrExactDup) {
+          // Fallback to synthesized persona variation only if original canonical reply was completely missing or duplicate
           toneMap[k] = variations[k];
         }
 

@@ -98,12 +98,13 @@ export class QueryMatcher {
     const distinctiveTokens = queryTokens.filter(t => !QueryMatcher.GENERIC_TOKENS.has(t) && !QueryMatcher.GENERIC_TOKENS.has(PersianNormalizer.stem(t)));
     const tokensForCandidates = distinctiveTokens.length > 0 ? distinctiveTokens : queryTokens;
     let candidates = this.index.getCandidatesForTokens(tokensForCandidates);
-    if (candidates.length > 300) {
-      candidates = candidates.slice(0, 300);
+    // Allow generous evaluation pool up to 1500 candidates so valid scenarios are never discarded prematurely
+    if (candidates.length > 1500) {
+      candidates = candidates.slice(0, 1500);
     }
     const candidateSet = new Set<string>(candidates.map(c => c.id));
 
-    // Ensure all exact matches are present at the beginning of candidate pool
+    // Ensure all exact matches are prioritized in candidate pool
     for (const em of exactMatches) {
       if (!candidateSet.has(em.scenario.id)) {
         candidates.unshift(em.scenario);
@@ -112,20 +113,8 @@ export class QueryMatcher {
     }
 
     if (containedMatch && !candidateSet.has(containedMatch.scenario.id)) {
-      candidates.push(containedMatch.scenario);
+      candidates.unshift(containedMatch.scenario);
       candidateSet.add(containedMatch.scenario.id);
-    }
-
-    // Always include core canonical scenarios in candidate evaluation pool so high-level concepts are always scored
-    const coreIds = ['scen_1', 'scen_2', 'scen_3', 'scen_4', 'scen_5', 'scen_6', 'scen_7', 'scen_8', 'scen_intimacy_request_1', 'scen_playful_gift_teasing_1'];
-    for (const coreId of coreIds) {
-      if (!candidateSet.has(coreId)) {
-        const coreSc = this.index.getById(coreId);
-        if (coreSc) {
-          candidates.push(coreSc);
-          candidateSet.add(coreId);
-        }
-      }
     }
 
     const scenariosToScore = candidates;

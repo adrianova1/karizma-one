@@ -1,11 +1,12 @@
 /**
  * Karizma Center DB
- * High-performance JSON File-backed persistent database with in-memory caching
+ * High-performance ACID-compliant SQLite Engine with WAL mode, prepared statements, and JSON backup sync
  */
 
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import Database from 'better-sqlite3';
 import { 
   User, Plan, Subscription, KnowledgeCard, PromptTemplate, PromptHistory, 
   Conversation, AuditLog, Setting, Notification, ContentItem, Receipt, 
@@ -18,111 +19,222 @@ if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
+// ==================== SECURE PASSWORD HASHING (SCRYPT + SALT) ====================
+
+/**
+ * Modern secure password hashing using Node.js crypto.scryptSync with 16-byte random salt.
+ */
 export function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password + 'karizma-salt-key-2026').digest('hex');
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return `scrypt:${salt}:${hash}`;
 }
 
-// In-Memory Cache for fast sub-millisecond table operations
-const tableCache = new Map<string, { data: any[]; mtime: number }>();
-// Per-table write lock queue to prevent race conditions during concurrent requests
-const tableWriteQueues = new Map<string, Promise<void>>();
+/**
+ * Validates password in constant time, supporting both modern scrypt hashes and legacy sha256 hashes.
+ */
+export function verifyPassword(password: string, storedHash: string): boolean {
+  if (!password || !storedHash) return false;
+  try {
+    if (storedHash.startsWith('scrypt:')) {
+      const parts = storedHash.split(':');
+      if (parts.length !== 3) return false;
+      const [, salt, expectedHash] = parts;
+      const testHash = crypto.scryptSync(password, salt, 64).toString('hex');
+      const testBuf = Buffer.from(testHash, 'hex');
+      const expBuf = Buffer.from(expectedHash, 'hex');
+      return testBuf.length === expBuf.length && crypto.timingSafeEqual(testBuf, expBuf);
+    }
+    // Fallback for legacy sha256 hashes
+    const legacyHash = crypto.createHash('sha256').update(password + 'karizma-salt-key-2026').digest('hex');
+    return legacyHash === storedHash;
+  } catch {
+    return false;
+  }
+}
+
+// ==================== SQLITE DATABASE INITIALIZATION ====================
+
+const dbPath = path.join(DATA_DIR, 'karizma.db');
+const sqlite = new Database(dbPath);
+
+// Enable Write-Ahead Logging (WAL) for high concurrency and sub-millisecond writes
+sqlite.pragma('journal_mode = WAL');
+sqlite.pragma('synchronous = NORMAL');
+sqlite.pragma('temp_store = MEMORY');
+
+// Main KV table storing all schema tables as structured JSON records
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS kv_records (
+    table_name TEXT NOT NULL,
+    id TEXT NOT NULL,
+    data TEXT NOT NULL,
+    updated_at INTEGER NOT NULL,
+    PRIMARY KEY (table_name, id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_kv_table ON kv_records(table_name);
+`);
+
+// Prepared statements for zero-overhead query execution
+const selectAllStmt = sqlite.prepare('SELECT data FROM kv_records WHERE table_name = ? ORDER BY updated_at ASC');
+const selectByIdStmt = sqlite.prepare('SELECT data FROM kv_records WHERE table_name = ? AND id = ?');
+const upsertStmt = sqlite.prepare(`
+  INSERT INTO kv_records (table_name, id, data, updated_at)
+  VALUES (?, ?, ?, ?)
+  ON CONFLICT(table_name, id) DO UPDATE SET
+    data = excluded.data,
+    updated_at = excluded.updated_at
+`);
+const deleteStmt = sqlite.prepare('DELETE FROM kv_records WHERE table_name = ? AND id = ?');
+const deleteAllTableStmt = sqlite.prepare('DELETE FROM kv_records WHERE table_name = ?');
+const countTableStmt = sqlite.prepare('SELECT COUNT(*) as count FROM kv_records WHERE table_name = ?');
+
+// Track migrated tables
+const migratedTables = new Set<string>();
+
+/**
+ * Transparently migrates existing JSON files into SQLite table on first access
+ */
+function ensureTableMigrated(tableName: string): void {
+  if (migratedTables.has(tableName)) return;
+  migratedTables.add(tableName);
+
+  try {
+    const row = countTableStmt.get(tableName) as { count: number } | undefined;
+    if (!row || row.count === 0) {
+      const jsonPath = path.join(DATA_DIR, `${tableName}.json`);
+      if (fs.existsSync(jsonPath)) {
+        const raw = fs.readFileSync(jsonPath, 'utf8');
+        if (raw && raw.trim().length > 0) {
+          const records: any[] = JSON.parse(raw);
+          if (Array.isArray(records) && records.length > 0) {
+            const insertTx = sqlite.transaction((items: any[]) => {
+              for (const item of items) {
+                const id = String(item.id || item.username || item.key || `rec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`);
+                upsertStmt.run(tableName, id, JSON.stringify(item), Date.now());
+              }
+            });
+            insertTx(records);
+            console.log(`[SQLite Migration] Migrated ${records.length} records for ${tableName} into SQLite.`);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn(`[SQLite Migration] Note during ${tableName} migration:`, err);
+  }
+}
+
+// Debounced background sync for disaster recovery / file backups
+const pendingBackups = new Map<string, NodeJS.Timeout>();
 
 export class DBEngine {
-  private static getFilePath(tableName: string): string {
-    return path.join(DATA_DIR, `${tableName}.json`);
+  private static scheduleJsonBackup(tableName: string, data: any[]): void {
+    const existing = pendingBackups.get(tableName);
+    if (existing) clearTimeout(existing);
+
+    const timeout = setTimeout(() => {
+      try {
+        const filePath = path.join(DATA_DIR, `${tableName}.json`);
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+      } catch (e) {
+        console.warn(`[DBEngine Backup] Could not write JSON backup for ${tableName}:`, e);
+      } finally {
+        pendingBackups.delete(tableName);
+      }
+    }, 2000); // 2 second debounce
+
+    pendingBackups.set(tableName, timeout);
   }
 
   static async readTable<T>(tableName: string): Promise<T[]> {
+    ensureTableMigrated(tableName);
     try {
-      const filePath = this.getFilePath(tableName);
-      if (!fs.existsSync(filePath)) {
-        return [];
+      const rows = selectAllStmt.all(tableName) as Array<{ data: string }>;
+      const result: T[] = [];
+      for (const row of rows) {
+        try {
+          result.push(JSON.parse(row.data) as T);
+        } catch {}
       }
-
-      const stat = fs.statSync(filePath);
-      const cached = tableCache.get(tableName);
-      if (cached && cached.mtime === stat.mtimeMs) {
-        return cached.data as T[];
-      }
-
-      const raw = fs.readFileSync(filePath, 'utf8');
-      if (!raw || raw.trim().length === 0) {
-        tableCache.set(tableName, { data: [], mtime: stat.mtimeMs });
-        return [];
-      }
-
-      let parsed: T[];
-      try {
-        parsed = JSON.parse(raw) as T[];
-      } catch (parseErr) {
-        const sanitized = raw.replace(/[\u0000-\u0009\u000B-\u001F\u007F-\u009F]/g, '');
-        parsed = JSON.parse(sanitized) as T[];
-      }
-
-      tableCache.set(tableName, { data: parsed, mtime: stat.mtimeMs });
-      return parsed as T[];
+      return result;
     } catch (e) {
-      console.warn(`[DBEngine] Error reading JSON table ${tableName}:`, e);
+      console.warn(`[DBEngine SQLite] Error reading table ${tableName}:`, e);
       return [];
     }
   }
 
   static async writeTable<T>(tableName: string, data: T[]): Promise<void> {
-    // Chain write operations sequentially per table to guarantee atomic writes
-    const prevTask = tableWriteQueues.get(tableName) || Promise.resolve();
-    const writeTask = prevTask.then(async () => {
-      try {
-        const filePath = this.getFilePath(tableName);
-        const tempPath = `${filePath}.tmp_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-        const jsonString = JSON.stringify(data, null, 2);
-        
-        fs.writeFileSync(tempPath, jsonString, 'utf8');
-        fs.renameSync(tempPath, filePath);
-        
-        const stat = fs.statSync(filePath);
-        tableCache.set(tableName, { data: JSON.parse(JSON.stringify(data)), mtime: stat.mtimeMs });
-      } catch (e) {
-        console.error(`[DBEngine] Error writing JSON table ${tableName}:`, e);
-        // Fallback direct write
-        try {
-          const filePath = this.getFilePath(tableName);
-          fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-        } catch (err) {
-          console.error(`[DBEngine] Direct write fallback failed for ${tableName}:`, err);
+    ensureTableMigrated(tableName);
+    try {
+      const replaceTx = sqlite.transaction((items: T[]) => {
+        deleteAllTableStmt.run(tableName);
+        for (const item of items) {
+          const rec = item as any;
+          const id = String(rec.id || rec.username || rec.key || `rec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`);
+          upsertStmt.run(tableName, id, JSON.stringify(item), Date.now());
         }
-      }
-    }).catch(err => {
-      console.error(`[DBEngine] Critical queue write error for ${tableName}:`, err);
-    });
-
-    tableWriteQueues.set(tableName, writeTask);
-    return writeTask;
+      });
+      replaceTx(data);
+      this.scheduleJsonBackup(tableName, data);
+    } catch (e) {
+      console.error(`[DBEngine SQLite] Error writing table ${tableName}:`, e);
+    }
   }
 
   static async findById<T extends { id?: string }>(tableName: string, id: string): Promise<T | null> {
-    const data = await this.readTable<T>(tableName);
-    return data.find(item => item.id === id) || null;
+    ensureTableMigrated(tableName);
+    try {
+      const row = selectByIdStmt.get(tableName, id) as { data: string } | undefined;
+      if (!row) return null;
+      return JSON.parse(row.data) as T;
+    } catch (e) {
+      console.warn(`[DBEngine SQLite] Error in findById for ${tableName}/${id}:`, e);
+      return null;
+    }
   }
 
   static async insertRecord<T extends { id?: string }>(tableName: string, record: T): Promise<void> {
-    const data = await this.readTable<T>(tableName);
-    data.push(record);
-    await this.writeTable(tableName, data);
+    ensureTableMigrated(tableName);
+    try {
+      const rec = record as any;
+      const id = String(rec.id || rec.username || rec.key || `rec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`);
+      upsertStmt.run(tableName, id, JSON.stringify(record), Date.now());
+      
+      // Async trigger table backup
+      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
+    } catch (e) {
+      console.error(`[DBEngine SQLite] Error inserting record into ${tableName}:`, e);
+    }
   }
 
   static async updateRecord<T extends { id?: string } = any>(tableName: string, id: string, partialData: Partial<T> | Record<string, any>): Promise<void> {
-    const data = await this.readTable<T>(tableName);
-    const index = data.findIndex((item: any) => item.id === id);
-    if (index !== -1) {
-      data[index] = { ...data[index], ...partialData };
-      await this.writeTable(tableName, data);
+    ensureTableMigrated(tableName);
+    try {
+      const updateTx = sqlite.transaction(() => {
+        const row = selectByIdStmt.get(tableName, id) as { data: string } | undefined;
+        if (row) {
+          const current = JSON.parse(row.data);
+          const merged = { ...current, ...partialData };
+          upsertStmt.run(tableName, id, JSON.stringify(merged), Date.now());
+        }
+      });
+      updateTx();
+
+      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
+    } catch (e) {
+      console.error(`[DBEngine SQLite] Error updating record in ${tableName}:`, e);
     }
   }
 
   static async deleteRecord(tableName: string, id: string): Promise<void> {
-    const data = await this.readTable<any>(tableName);
-    const filtered = data.filter(item => item.id !== id);
-    await this.writeTable(tableName, filtered);
+    ensureTableMigrated(tableName);
+    try {
+      deleteStmt.run(tableName, id);
+      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
+    } catch (e) {
+      console.error(`[DBEngine SQLite] Error deleting record from ${tableName}:`, e);
+    }
   }
 
   /**
@@ -132,13 +244,15 @@ export class DBEngine {
     try {
       // 1. Seed Users (admin & user)
       const users = await this.readTable<User>('users');
+      const adminPass = process.env.ADMIN_PASSWORD || '123456';
       const adminIdx = users.findIndex(u => u.username.toLowerCase() === 'admin');
+      
       if (adminIdx === -1) {
-        console.log('[DBEngine Seed] Seeding default admin user...');
+        console.log('[DBEngine Seed] Seeding default admin user with scrypt hash...');
         const adminUser: User = {
           id: 'u_1001',
           username: 'admin',
-          passwordHash: hashPassword('123456'),
+          passwordHash: hashPassword(adminPass),
           role: Role.ADMIN,
           phoneNumber: '09123456789',
           preferences: {
@@ -151,7 +265,7 @@ export class DBEngine {
         users.push(adminUser);
       } else {
         if (!users[adminIdx].passwordHash) {
-          users[adminIdx].passwordHash = hashPassword('123456');
+          users[adminIdx].passwordHash = hashPassword(adminPass);
         }
         users[adminIdx].role = Role.ADMIN;
       }
@@ -294,7 +408,6 @@ export class DBEngine {
       const fileAlreadyExists = fs.existsSync(scenariosPath) || fs.existsSync(coachScenariosPath) || fs.existsSync(backupScenariosPath);
 
       if (!fileAlreadyExists) {
-        // Only run on a completely fresh install when no scenario file exists at all on disk
         if (PRESEEDED_SCENARIOS && PRESEEDED_SCENARIOS.length > 0) {
           console.log(`[DBEngine Seed] Fresh installation detected. Seeding initial ${PRESEEDED_SCENARIOS.length} scenarios...`);
           const now = new Date().toISOString();
@@ -377,7 +490,7 @@ export class DBEngine {
         await this.writeTable('settings', settings);
       }
 
-      // 7. Seed Default High-Quality Prompt Templates
+      // 7. Seed Default Prompt Templates
       const prompts = await this.readTable<PromptTemplate>('prompts');
       if (prompts.length === 0) {
         console.log('[DBEngine Seed] Seeding default professional prompt templates...');
@@ -429,36 +542,6 @@ export class DBEngine {
 📌 نکته اجرا: (پوزخند خونسرد و شوخ‌طبعی)
 🧠 تحلیل مربی: (روانشناسی پشت این موقعیت و راهکار برتری در مکالمه)`,
             isActive: true,
-            createdAt: now,
-            updatedAt: now
-          },
-          {
-            id: 'pr_chat_flirt',
-            name: 'الگوی مکالمات چت، استوری و جذب عاطفی (Flirting & Banter)',
-            systemInstruction: `شما متخصص تعاملات چتی اینستاگرام و تلگرام، پاسخ به استوری‌ها، ایجاد کنجکاوی و شوخ‌طبعی جذاب هستید. پاسخ‌ها باید کوتاه، گیرا، دارای قلاب کلامی (Hook) و ایجادکننده میل به ادامه مکالمه باشند.`,
-            templateText: `[پایگاه دانش ارتباطی]:
-{{CONTEXT}}
-
-[پیام یا استوری مخاطب]:
-"{{QUESTION}}"
-
-پاسخ را در قالب ۵ لحن اختصاصی مرکز کاریزما بنویسید.`,
-            isActive: false,
-            createdAt: now,
-            updatedAt: now
-          },
-          {
-            id: 'pr_workplace_boundary',
-            name: 'الگوی کاریزما در محیط کار و مذاکره (قاطعیت و پرستیژ سازمانی)',
-            systemInstruction: `شما مشاور فن بیان حرفه‌ای در محیط کار، مذاکرات و جلسات اداری هستید. آموزش نه گفتن محکم و شیک، تعیین حد و مرز محترمانه و ارتقای پرستیژ بدون تنش یا ابراز ضعف.`,
-            templateText: `[پایگاه دانش مذاکره]:
-{{CONTEXT}}
-
-[موقعیت یا درخواست کاری]:
-"{{QUESTION}}"
-
-پاسخ را در قالب ۵ لحن اختصاصی مرکز کاریزما بنویسید.`,
-            isActive: false,
             createdAt: now,
             updatedAt: now
           }

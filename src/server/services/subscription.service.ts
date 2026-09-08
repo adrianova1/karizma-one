@@ -171,12 +171,11 @@ export class SubscriptionService {
     const subs = await DBEngine.readTable<Subscription>('subscriptions');
     
     // Expire any existing active subscriptions for this user
-    const updatedSubs = subs.map(s => {
+    for (const s of subs) {
       if (s.userId === userId && s.status === 'active') {
-        return { ...s, status: 'expired' as const };
+        await DBEngine.updateRecord('subscriptions', s.id, { status: 'expired' });
       }
-      return s;
-    });
+    }
 
     const startDate = new Date();
     const endDate = new Date(startDate.getTime() + durationDays * 24 * 60 * 60 * 1000);

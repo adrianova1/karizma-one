@@ -9,7 +9,7 @@ import path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
 import { createServer as createViteServer } from 'vite';
-import { DBEngine, hashPassword } from './src/server/db.js';
+import { DBEngine, hashPassword, verifyPassword } from './src/server/db.js';
 import { SubscriptionService } from './src/server/services/subscription.service.js';
 import { CleanupService } from './src/server/services/cleanup.service.js';
 import { normalizePersian } from './src/server/utils/persianNormalizer.js';
@@ -20,66 +20,49 @@ import aiRoutes from './src/server/routes/ai.routes.js';
 import adminRoutes from './src/server/routes/admin.routes.js';
 import scenarioRoutes from './src/server/routes/scenario.routes.js';
 
-// Persistent JWT secret key for session stability across restarts
-const JWT_SECRET = process.env.JWT_SECRET || 'karizma_center_stable_jwt_secret_key_2026';
+import { TokenService } from './src/server/services/token.service.js';
 
-// Simple secure custom Token service to replace JWT library
-class TokenService {
-  static sign(payload: { id: string; username: string; role: string }): string {
-    const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
-    const exp = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hours
-    const claims = Buffer.from(JSON.stringify({ ...payload, exp })).toString('base64url');
-    
-    const signature = crypto
-      .createHmac('sha256', JWT_SECRET)
-      .update(`${header}.${claims}`)
-      .digest('base64url');
-      
-    return `${header}.${claims}.${signature}`;
-  }
+// Scalable sliding-window Rate Limiter with memory leak cleanup
+const rateLimits = new Map<string, { count: number; resetTime: number }>();
 
-  static verify(token: string): { id: string; username: string; role: Role } | null {
-    try {
-      const parts = token.split('.');
-      if (parts.length !== 3) return null;
-      const [header, claims, signature] = parts;
-      
-      const expectedSignature = crypto
-        .createHmac('sha256', JWT_SECRET)
-        .update(`${header}.${claims}`)
-        .digest('base64url');
-        
-      if (signature !== expectedSignature) return null;
-      
-      const payload = JSON.parse(Buffer.from(claims, 'base64url').toString('utf8'));
-      if (payload.exp < Math.floor(Date.now() / 1000)) {
-        return null; // Expired
-      }
-      return payload;
-    } catch (e) {
-      return null;
+// Periodic sweep to evict expired rate limit keys and prevent memory growth
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, record] of rateLimits.entries()) {
+    if (now > record.resetTime) {
+      rateLimits.delete(key);
     }
   }
-}
+}, 60000);
 
-// Rate limiter in-memory
-const rateLimits: Record<string, { count: number; resetTime: number }> = {};
 function rateLimiterMiddleware(req: Request, res: Response, next: NextFunction) {
-  const rawIp = (req.headers['x-forwarded-for'] as string) || (req.headers['x-real-ip'] as string) || req.socket.remoteAddress || '127.0.0.1';
-  // Safely extract the original client IP in case of proxy chains (comma-separated list)
-  const ip = rawIp.split(',')[0].trim();
+  // Extract client IP safely (first non-internal IP in x-forwarded-for if present)
+  const forwarded = req.headers['x-forwarded-for'];
+  const rawIp = (typeof forwarded === 'string' ? forwarded.split(',')[0] : null) || 
+                (req.headers['x-real-ip'] as string) || 
+                req.socket.remoteAddress || 
+                '127.0.0.1';
+  const ip = rawIp.trim();
+  
+  // Distinguish sensitive auth routes from normal traffic
+  const isAuthRoute = req.path.includes('/auth/login') || req.path.includes('/auth/register');
+  const bucketKey = `${isAuthRoute ? 'auth' : 'api'}:${ip}`;
   const now = Date.now();
-  const windowMs = 60 * 1000; // 1 minute
-  const maxRequests = 2000; // Increased to allow high concurrent user loads
+  const windowMs = 60 * 1000; // 1 minute window
+  const maxRequests = isAuthRoute ? 40 : 400; // 40 attempts for auth, 400 for general API per minute
 
-  if (!rateLimits[ip] || now > rateLimits[ip].resetTime) {
-    rateLimits[ip] = { count: 1, resetTime: now + windowMs };
+  const record = rateLimits.get(bucketKey);
+  if (!record || now > record.resetTime) {
+    rateLimits.set(bucketKey, { count: 1, resetTime: now + windowMs });
     return next();
   }
 
-  rateLimits[ip].count++;
-  if (rateLimits[ip].count > maxRequests) {
-    return res.status(429).json({ error: 'تعداد درخواست‌ها بیش از حد مجاز است. لطفا چند لحظه دیگر تلاش کنید.' });
+  record.count++;
+  if (record.count > maxRequests) {
+    return res.status(429).json({ 
+      error: 'تعداد درخواست‌ها بیش از حد مجاز است. لطفاً یک دقیقه دیگر مجدداً تلاش فرمایید.',
+      code: 'RATE_LIMIT_EXCEEDED'
+    });
   }
   next();
 }
@@ -250,8 +233,15 @@ async function startServer() {
 
     const users = await DBEngine.readTable<User>('users');
     const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-    if (!user || user.passwordHash !== hashPassword(password)) {
+    if (!user || !verifyPassword(password, user.passwordHash)) {
       return res.status(400).json({ error: 'نام کاربری یا کلمه عبور اشتباه است.' });
+    }
+
+    // Transparently upgrade legacy SHA-256 hashes to modern scrypt hash
+    if (user.passwordHash && !user.passwordHash.startsWith('scrypt:')) {
+      const upgradedHash = hashPassword(password);
+      user.passwordHash = upgradedHash;
+      DBEngine.updateRecord('users', user.id, { passwordHash: upgradedHash }).catch(() => {});
     }
 
     await logAudit(user.id, user.username, 'ورود به سیستم', req.ip || '127.0.0.1', 'ورود موفقیت‌آمیز');

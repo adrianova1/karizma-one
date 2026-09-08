@@ -123,16 +123,19 @@ export class RankingEngine {
    */
   static rankAndSelect(candidates: ScenarioMatchCandidate[], rawQuery: string, rotationIndex: number = 0): RankingResult {
     if (candidates.length > 0) {
-      // Re-rank candidates taking richness and dialogue authenticity into account
+      // Re-rank candidates prioritizing semantic relevance as primary, and richness as tie-breaker
       const scoredCandidates = candidates.map(candidate => {
         const richness = this.getRichnessScore(candidate.scenario);
         const matchScore = candidate.scoreBreakdown.totalScore;
         
-        let finalRankScore = matchScore + (richness * 1.5);
+        // Relevance (matchScore * 10) is primary; richness (* 0.2) acts as subtle tie-breaker
+        let finalRankScore = (matchScore * 10) + (richness * 0.2);
         
         // Exact trigger match retains decisive weight
         if (candidate.matchedBy === 'exact_trigger' || candidate.scoreBreakdown.exactTriggerScore > 0) {
-          finalRankScore += 50.0;
+          finalRankScore += 100.0;
+        } else if (candidate.matchedBy === 'phrase_containment' || candidate.scoreBreakdown.phraseScore >= 4.0) {
+          finalRankScore += 30.0;
         }
 
         return {
@@ -144,11 +147,11 @@ export class RankingEngine {
 
       scoredCandidates.sort((a, b) => b.finalRankScore - a.finalRankScore);
 
-      // Candidate rotation among top cluster
+      // Candidate rotation among tight top cluster (>= 94% of top score)
       const topScore = scoredCandidates[0].finalRankScore;
       const topCluster = scoredCandidates.filter(c => 
-        c.finalRankScore >= topScore * 0.88 ||
-        (c.candidate.scoreBreakdown.exactTriggerScore > 0 && c.finalRankScore >= topScore - 25)
+        c.finalRankScore >= topScore * 0.94 ||
+        (c.candidate.scoreBreakdown.exactTriggerScore > 0 && c.finalRankScore >= topScore - 15)
       );
 
       const chosenIndex = topCluster.length > 1 ? (Math.abs(rotationIndex) % topCluster.length) : 0;
@@ -171,19 +174,19 @@ export class RankingEngine {
         return {
           matchedScenario: topCandidate.scenario,
           fallbackItem: null,
-          confidenceScore: Math.max(topCandidate.confidenceScore, 80),
+          confidenceScore: topCandidate.confidenceScore,
           isFallback: false,
           matchType: topCandidate.matchedBy
         };
       }
     }
 
-    // Select suitable Fallback matrix
+    // Select suitable Fallback matrix with transparent fallback confidence
     const fallbackItem = this.selectFallbackMatrix(rawQuery);
     return {
       matchedScenario: null,
       fallbackItem,
-      confidenceScore: 75,
+      confidenceScore: 35, // Honest fallback confidence indicating a general guideline
       isFallback: true,
       matchType: 'fallback_matrix'
     };
