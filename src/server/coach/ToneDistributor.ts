@@ -112,16 +112,39 @@ export class ToneDistributor {
   /**
    * Extracts dialogue text safely from a scenario or fallback pool and strips wrappers
    */
-  private static extractToneText(pool: any): string {
+  private static KNOWN_BOILERPLATES = [
+    'زیبایی و جذابیت واقعی در نگاه و کلام تحسین‌کننده شماست',
+    'انرژی مثبت و بیان سنجیده‌ت توجه من رو جلب کرد',
+    'گفتگوی حضوری همیشه حس و حال واقعی‌تری داره',
+    'کیفیت و تمرکز کامل روی مکالمه برام اولویت داره به سرعت پاسخگویی',
+    'سلیقه و نگاه دقیق شما در کلامت کاملاً پیداست',
+    'ارتباط با ارزش نیاز به حضور ذهن کامل داره',
+    'عمیق بودن گفتگو برام مهم‌تر از شتاب در پاسخ دادنه',
+    'پاسخهای متناسب',
+    'علت این تست',
+    'علت تست',
+    'اشتباه بزرگ',
+    'مرحله قرار اول به بعد'
+  ];
+
+  private static extractToneText(pool: any, rotationIndex: number = 0): string {
     if (!pool) return '';
     if (typeof pool === 'string') {
-      return this.stripToneWrappers(pool);
+      const stripped = this.stripToneWrappers(pool);
+      for (const bp of this.KNOWN_BOILERPLATES) {
+        if (stripped.includes(bp)) return '';
+      }
+      return stripped;
     }
     if (Array.isArray(pool)) {
-      for (const item of pool) {
-        if (typeof item === 'string' && item.trim().length > 0) {
-          return this.stripToneWrappers(item);
-        }
+      const valid = pool
+        .filter(item => typeof item === 'string' && item.trim().length > 0)
+        .map(item => this.stripToneWrappers(item))
+        .filter(item => !this.KNOWN_BOILERPLATES.some(bp => item.includes(bp)));
+
+      if (valid.length > 0) {
+        const idx = Math.abs(rotationIndex) % valid.length;
+        return valid[idx];
       }
     }
     return '';
@@ -172,14 +195,15 @@ export class ToneDistributor {
   }
 
   /**
-   * Strictly extracts the 5 Canonical Tones from the selected scenario
-   * WITHOUT cross-scenario mixing, synthetic substitution, or archetype overrides.
+   * Strictly extracts the 5 Canonical Tones from the selected scenario.
+   * Ensures distinct, authentic tone delivery with persona synthesis fallback for duplicate or missing tones.
    */
   static distribute(
     scenario: CoachScenario | null,
     fallback: CoachFallbackItem | null,
     contextKey: string,
-    userQuery?: string
+    userQuery?: string,
+    rotationIndex: number = 0
   ): DistributedToneResult {
     const isScenario = !!scenario;
     const scenarioId = isScenario ? scenario!.id : (fallback?.topic || 'fallback');
@@ -197,113 +221,109 @@ export class ToneDistributor {
     if (isScenario && scenario!.responses) {
       const res = scenario!.responses;
 
-      // Direct 1-to-1 extraction strictly from selected scenario responses with wrapper stripping
-      charismaticReply = this.extractToneText(res.charismatic);
-      funnyReply = this.extractToneText(res.funny);
-      confidentReply = this.extractToneText(res.confident);
-      mysteriousReply = this.extractToneText(res.mysterious);
-      matureReply = this.extractToneText(res.mature);
+      // Extract raw tones with wrapper stripping & boilerplate filtering
+      charismaticReply = this.extractToneText(res.charismatic, rotationIndex);
+      funnyReply = this.extractToneText(res.funny, rotationIndex);
+      confidentReply = this.extractToneText(res.confident, rotationIndex);
+      mysteriousReply = this.extractToneText(res.mysterious, rotationIndex);
+      matureReply = this.extractToneText(res.mature, rotationIndex);
 
-      // Check if all extracted replies are identical, missing or highly similar (legacy single-reply scenarios)
-      const baseClean = this.cleanDialogue(charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || scenario!.situation || scenario!.title);
+      const baseClean = this.cleanDialogue(
+        charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || scenario!.situation || scenario!.title
+      );
 
-      // collect non-empty extracted replies
-      const extracted = [charismaticReply, funnyReply, confidentReply, mysteriousReply, matureReply].filter(Boolean) as string[];
-      const similarities: number[] = [];
-      for (let i = 0; i < extracted.length; i++) {
-        for (let j = i + 1; j < extracted.length; j++) {
-          similarities.push(PersianNormalizer.computeTrigramSimilarity(extracted[i], extracted[j]));
-        }
-      }
-      const highSimCount = similarities.filter(s => s >= 0.82).length;
-      const totalPairs = Math.max(1, similarities.length);
-      const highSimFraction = highSimCount / totalPairs;
+      const variations = PersonaGenerator.generateVariations(baseClean, scenario, userQuery || '', rotationIndex);
 
-      // treat as single-reply if most pairs are highly similar
-      const isSingleReplyRecord = extracted.length === 0 || highSimFraction >= 0.75;
+      // Inspect extracted replies for pairwise similarity and duplicates
+      const toneMap: Record<string, string> = {
+        charismatic: charismaticReply,
+        funny: funnyReply,
+        confident: confidentReply,
+        mysterious: mysteriousReply,
+        mature: matureReply
+      };
 
-      if (isSingleReplyRecord) {
-        const variations = PersonaGenerator.generateVariations(baseClean, scenario, userQuery || '');
-        const cand = [variations.charismatic, variations.funny, variations.confident, variations.mysterious, variations.mature];
+      const toneKeys: Array<keyof typeof toneMap> = ['charismatic', 'funny', 'confident', 'mysterious', 'mature'];
+      const seenReplies: string[] = [];
 
-        // post-validate distinctness
-        let needRegen = false;
-        for (let i = 0; i < cand.length; i++) {
-          for (let j = i + 1; j < cand.length; j++) {
-            const sim = PersianNormalizer.computeTrigramSimilarity(cand[i], cand[j]);
-            if (sim >= 0.88) needRegen = true;
-          }
-        }
-        if (needRegen) {
-          // lightweight deterministic transforms to increase diversity
-          for (let k = 0; k < cand.length; k++) {
-            cand[k] = cand[k] + (k === 0 ? '' : k === 1 ? ' 😉' : k === 2 ? '.' : k === 3 ? ' …' : '');
+      for (const k of toneKeys) {
+        let current = toneMap[k];
+        let isInvalidOrDup = !current || current.trim().length < 3;
+
+        if (!isInvalidOrDup) {
+          // Check for high similarity with previously accepted tones in this set
+          for (const prev of seenReplies) {
+            const sim = PersianNormalizer.computeTrigramSimilarity(current, prev);
+            if (sim >= 0.72) {
+              isInvalidOrDup = true;
+              break;
+            }
           }
         }
 
-        charismaticReply = cand[0];
-        funnyReply = cand[1];
-        confidentReply = cand[2];
-        mysteriousReply = cand[3];
-        matureReply = cand[4];
-      } else {
-        const fallbackSameScenario = charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || baseClean;
-        if (!charismaticReply) charismaticReply = fallbackSameScenario;
-        if (!funnyReply) funnyReply = fallbackSameScenario;
-        if (!confidentReply) confidentReply = fallbackSameScenario;
-        if (!mysteriousReply) mysteriousReply = fallbackSameScenario;
-        if (!matureReply) matureReply = fallbackSameScenario;
+        if (isInvalidOrDup) {
+          // Replace missing or repetitive tone with distinct synthesized persona variation
+          toneMap[k] = variations[k];
+        }
+
+        seenReplies.push(toneMap[k]);
       }
+
+      charismaticReply = toneMap.charismatic;
+      funnyReply = toneMap.funny;
+      confidentReply = toneMap.confident;
+      mysteriousReply = toneMap.mysterious;
+      matureReply = toneMap.mature;
     } else if (fallback && fallback.responses) {
       const res = fallback.responses;
-      charismaticReply = this.extractToneText(res.charismatic);
-      funnyReply = this.extractToneText(res.funny);
-      confidentReply = this.extractToneText(res.confident);
-      mysteriousReply = this.extractToneText(res.mysterious);
-      matureReply = this.extractToneText(res.mature);
+      charismaticReply = this.extractToneText(res.charismatic, rotationIndex);
+      funnyReply = this.extractToneText(res.funny, rotationIndex);
+      confidentReply = this.extractToneText(res.confident, rotationIndex);
+      mysteriousReply = this.extractToneText(res.mysterious, rotationIndex);
+      matureReply = this.extractToneText(res.mature, rotationIndex);
 
-      const baseClean = this.cleanDialogue(charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || 'با وقار و کنترل فریم پاسخ دهید.');
-      const allExtracted = [charismaticReply, funnyReply, confidentReply, mysteriousReply, matureReply].filter(s => s && s.trim().length > 0);
-      const uniqueReplies = new Set(allExtracted.map(s => s.trim()));
-      
-      let pairwisePairs = 0;
-      let highSimilarityCount = 0;
-      if (allExtracted.length >= 2) {
-        for (let i = 0; i < allExtracted.length; i++) {
-          for (let j = i + 1; j < allExtracted.length; j++) {
-            pairwisePairs++;
-            const sim = PersianNormalizer.computeTrigramSimilarity(allExtracted[i], allExtracted[j]);
-            if (sim >= 0.82) highSimilarityCount++;
+      const baseClean = this.cleanDialogue(
+        charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || 'با وقار و کنترل فریم پاسخ دهید.'
+      );
+      const variations = PersonaGenerator.generateVariations(baseClean, null, userQuery || '', rotationIndex);
+
+      const toneMap: Record<string, string> = {
+        charismatic: charismaticReply,
+        funny: funnyReply,
+        confident: confidentReply,
+        mysterious: mysteriousReply,
+        mature: matureReply
+      };
+
+      const toneKeys: Array<keyof typeof toneMap> = ['charismatic', 'funny', 'confident', 'mysterious', 'mature'];
+      const seenReplies: string[] = [];
+
+      for (const k of toneKeys) {
+        let current = toneMap[k];
+        let isInvalidOrDup = !current || current.trim().length < 3;
+
+        if (!isInvalidOrDup) {
+          for (const prev of seenReplies) {
+            const sim = PersianNormalizer.computeTrigramSimilarity(current, prev);
+            if (sim >= 0.72) {
+              isInvalidOrDup = true;
+              break;
+            }
           }
         }
-      }
-      const isHighlyRedundant = pairwisePairs > 0 && (highSimilarityCount / pairwisePairs >= 0.5);
 
-      const isSingleReplyRecord = 
-        allExtracted.length <= 1 ||
-        uniqueReplies.size <= 1 ||
-        isHighlyRedundant ||
-        (
-          (!funnyReply || funnyReply === charismaticReply) &&
-          (!confidentReply || confidentReply === charismaticReply) &&
-          (!mysteriousReply || mysteriousReply === charismaticReply) &&
-          (!matureReply || matureReply === charismaticReply)
-        );
+        if (isInvalidOrDup) {
+          toneMap[k] = variations[k];
+        }
 
-      if (isSingleReplyRecord) {
-        const variations = PersonaGenerator.generateVariations(baseClean, null, userQuery || '');
-        charismaticReply = variations.charismatic;
-        funnyReply = variations.funny;
-        confidentReply = variations.confident;
-        mysteriousReply = variations.mysterious;
-        matureReply = variations.mature;
-      } else {
-        if (!charismaticReply) charismaticReply = baseClean;
-        if (!funnyReply) funnyReply = baseClean;
-        if (!confidentReply) confidentReply = baseClean;
-        if (!mysteriousReply) mysteriousReply = baseClean;
-        if (!matureReply) matureReply = baseClean;
+        seenReplies.push(toneMap[k]);
       }
+
+      charismaticReply = toneMap.charismatic;
+      funnyReply = toneMap.funny;
+      confidentReply = toneMap.confident;
+      mysteriousReply = toneMap.mysterious;
+      matureReply = toneMap.mature;
     }
 
     const allCandidates = this.extractAllCandidates(scenario, fallback);

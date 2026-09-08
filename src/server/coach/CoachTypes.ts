@@ -73,6 +73,7 @@ export interface ProcessedCoachQueryOptions {
   selectedTone?: string;
   tone?: string;
   mode?: string;
+  rotationSeed?: number;
 }
 
 export interface CoachResultStructured {

@@ -13,7 +13,8 @@ export class ResponseSelector {
     query: string,
     confidenceScore: number,
     options?: ProcessedCoachQueryOptions,
-    matchType: string = 'bm25_token'
+    matchType: string = 'bm25_token',
+    rotationIndex: number = 0
   ): CoachEngineResult {
     const isScenario = !!scenario;
     const selectedScenarioId = isScenario ? scenario!.id : (fallback?.topic || 'default_fallback');
@@ -22,7 +23,7 @@ export class ResponseSelector {
     const title = isScenario ? scenario!.title : (fallback?.topic || 'راهنمای هوش کلامی کاریزما');
 
     // Use ToneDistributor to strictly extract the 5 Canonical Tones from the selected scenario
-    const distributed = ToneDistributor.distribute(scenario, fallback, selectedScenarioId, query);
+    const distributed = ToneDistributor.distribute(scenario, fallback, selectedScenarioId, query, rotationIndex);
 
     const charismaticReply = distributed.charismaticReply;
     const funnyReply = distributed.funnyReply;

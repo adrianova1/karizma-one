@@ -10,7 +10,8 @@ export class PersonaGenerator {
   static generateVariations(
     baseDialogue: string,
     scenario: CoachScenario | null,
-    query: string
+    query: string,
+    rotationIndex: number = 0
   ): {
     charismatic: string;
     funny: string;
@@ -26,10 +27,10 @@ export class PersonaGenerator {
     const sSit = (scenario?.situation || '').trim();
     const combinedContext = `${q} ${sTitle} ${sSit} ${clean}`;
 
-    let variations = this.synthesizeVariations(clean, scenario, combinedContext);
+    let variations = this.synthesizeVariations(clean, scenario, combinedContext, rotationIndex);
 
-    // Post-validate distinctness: check pairwise trigram similarities between generated tones
-    variations = this.postValidateDistinctness(variations, clean);
+    // Post-validate distinctness: ensure all pairs are genuinely distinct (< 0.75 similarity)
+    variations = this.postValidateDistinctness(variations, clean, rotationIndex);
 
     return variations;
   }
@@ -37,7 +38,8 @@ export class PersonaGenerator {
   private static synthesizeVariations(
     clean: string,
     scenario: CoachScenario | null,
-    combinedContext: string
+    combinedContext: string,
+    rotationIndex: number = 0
   ): {
     charismatic: string;
     funny: string;
@@ -46,9 +48,9 @@ export class PersonaGenerator {
     mature: string;
   } {
     // 1. Direct High-Prestige Archetype Matching from PERSIAN_ARCHETYPES
-    const seed = scenario?.id 
+    const seed = (scenario?.id 
       ? scenario.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) 
-      : combinedContext.length;
+      : combinedContext.length) + rotationIndex;
 
     for (const [_, archDef] of Object.entries(PERSIAN_ARCHETYPES)) {
       if (archDef.pattern.test(combinedContext)) {
@@ -245,25 +247,39 @@ export class PersonaGenerator {
     }
 
     // 3. High-value persona synthesis from clean scenario retort if available
-    if (clean.length >= 4 && !clean.includes('علت تست') && !clean.includes('اشتباه بزرگ')) {
+    if (clean.length >= 4 && !clean.includes('علت تست') && !clean.includes('اشتباه بزرگ') && !clean.includes('مرحله قرار')) {
       const isQuestion = clean.endsWith('؟') || clean.endsWith('?');
+      const cleanCore = clean.replace(/[.؟!؛]+$/, '').trim();
       return {
-        charismatic: `با آرامش و یک لبخند خونسرد: «${clean}»؛ پرستیژ یعنی در کمال وقار فضا رو مدیریت کنی.`,
-        funny: isQuestion ? `${clean} 😉` : `${clean}؛ با یه شوخی بموقع یخ مکالمه رو بشکن 😉`,
-        confident: `موضع من کاملاً روشنه و بدون تعارف: «${clean}».`,
-        mysterious: `گاهی بهترین پاسخ همونیه که توی ذهن طرف علامت سوال ایجاد می‌کنه: «${clean}»...`,
-        mature: `اگر منطقی، سنجیده و بااحترام نگاه کنیم: «${clean}»؛ متانت همیشه بهترین مسیره.`
+        charismatic: `${cleanCore}؛ برای من همیشه اصالت و کیفیت گفتگو حرف اول رو میزنه.`,
+        funny: isQuestion 
+          ? `اتفاقاً ${cleanCore}، یا اینکه خواستی سر به سرم بذاری؟ 😉` 
+          : `${cleanCore}؛ بیا اعتراف کن جواب جذاب‌تری سراغ نداشتی 😉`,
+        confident: `${cleanCore}؛ موضع من کاملاً روشنه و نیازی به توجیه نداره.`,
+        mysterious: `${cleanCore}... البته شاید اصل ماجرا هنوز فاش نشده باشه.`,
+        mature: `${cleanCore}؛ درک متقابل و گفتگوی سنجیده همیشه بهترین مسیره.`
       };
     }
 
     // 4. Universal High-Caliber Persian Fallback
-    return {
-      charismatic: 'انرژی مثبت و بیان سنجیده‌ت توجه من رو جلب کرد؛ خوشحال میشم این گفتگوی جذاب رو با هم جلو ببریم.',
-      funny: 'داشتم فکر می‌کردم اگه قرار باشه جایزه خوش‌سلیقه‌ترین هم‌صحبت امروز رو بدیم، قطعاً به این پیام میرسه!',
-      confident: 'موضع و نگاه من همیشه روی اصالت و گفتگوی شفاف استواره؛ دقیقاً در همین مسیر با وقار پیش میریم.',
-      mysterious: 'همیشه جذاب‌ترین بخش یک داستان همونیه که توی نگاه اول فاش نمیشه؛ زمان همه چیز رو مشخص می‌کنه.',
-      mature: 'ارتباط موثر با درک متقابل و احترام شکل می‌گیره؛ قدردان این تبادل نظر هوشمندانه هستم.'
-    };
+    const fallbackSets = [
+      {
+        charismatic: 'انرژی مثبت و بیان سنجیده‌ت توجه من رو جلب کرد؛ خوشحال میشم این گفتگوی جذاب رو با هم جلو ببریم.',
+        funny: 'داشتم فکر می‌کردم اگه قرار باشه جایزه خوش‌سلیقه‌ترین هم‌صحبت امروز رو بدیم، قطعاً به این پیام میرسه!',
+        confident: 'موضع و نگاه من همیشه روی اصالت و گفتگوی شفاف استواره؛ دقیقاً در همین مسیر با وقار پیش میریم.',
+        mysterious: 'همیشه جذاب‌ترین بخش یک داستان همونیه که توی نگاه اول فاش نمیشه؛ زمان همه چیز رو مشخص می‌کنه.',
+        mature: 'ارتباط موثر با درک متقابل و احترام شکل می‌گیره؛ قدردان این تبادل نظر هوشمندانه هستم.'
+      },
+      {
+        charismatic: 'وقار در کلام همیشه نشان‌دهنده شخصیت استواره؛ با کمال میل این گفتگو رو ادامه میدم.',
+        funny: 'ریتم مکالمه‌ت جالبه؛ فقط امیدوارم این شوخ‌طبعی دائمی باشه نه موقتی! 😉',
+        confident: 'من همیشه شفاف و محکم روی مواضعم هستم؛ احترام به طرف مقابل هم اصل اول منه.',
+        mysterious: 'کلماتی که ناگفته می‌مونن گاهی تاثیرگذارتر از هزاران جمله هستن...',
+        mature: 'یک گفتگوی سازنده نیازمند شنیدن و درک عمیقه؛ من کاملاً پذیرا هستم.'
+      }
+    ];
+
+    return fallbackSets[Math.abs(rotationIndex) % fallbackSets.length];
   }
 
   private static cleanCoreDialogue(text: string): string {
@@ -284,12 +300,13 @@ export class PersonaGenerator {
   }
 
   /**
-   * Post-validate that variations are genuinely distinct (pairwise trigram similarity < 0.85).
-   * If any pair is too similar, apply distinct structural adjustments.
+   * Post-validate that variations are genuinely distinct (pairwise trigram similarity < 0.75).
+   * If any pair is too similar, replace the redundant tone with an authentic, distinct response.
    */
   private static postValidateDistinctness(
     vars: { charismatic: string; funny: string; confident: string; mysterious: string; mature: string },
-    clean: string
+    clean: string,
+    rotationIndex: number = 0
   ): { charismatic: string; funny: string; confident: string; mysterious: string; mature: string } {
     const tones: Array<keyof typeof vars> = ['charismatic', 'funny', 'confident', 'mysterious', 'mature'];
     
@@ -300,18 +317,17 @@ export class PersonaGenerator {
         const toneB = tones[j];
         const sim = PersianNormalizer.computeTrigramSimilarity(vars[toneA], vars[toneB]);
         
-        if (sim >= 0.85) {
-          // Differentiate toneB with distinct stylistic tone structure
+        if (sim >= 0.75) {
           if (toneB === 'funny') {
-            vars.funny = `${vars.funny.replace(/[.؟!؛]+$/, '')}؛ با چاشنی خنده و شوخی 😉`;
+            vars.funny = 'بیا خوش‌بین باشیم؛ شوخی نمک مکالمه‌ست ولی نه وقتی که زیادی شور بشه! 😉';
           } else if (toneB === 'confident') {
-            vars.confident = `من موضعم روشنه و پای حرفم هستم: ${vars.confident}`;
+            vars.confident = 'من ترجیح میدم بدون تعارف و کاملاً شفاف چارچوبم رو حفظ کنم.';
           } else if (toneB === 'mysterious') {
-            vars.mysterious = `${vars.mysterious.replace(/[.؟!؛]+$/, '')}... بقیه‌ش بمونه برای اهلش.`;
+            vars.mysterious = 'همیشه جذابیت گفتگو در اینه که همه کارت‌هات رو روی میز نذاری...';
           } else if (toneB === 'mature') {
-            vars.mature = `با نگاهی عمیق و اصولی: ${vars.mature}`;
+            vars.mature = 'احترام متقابل و آرامش، نشانه یک ارتباط پخته و استواره.';
           } else if (toneB === 'charismatic') {
-            vars.charismatic = `با وقار و پرستیژ کامل: ${vars.charismatic}`;
+            vars.charismatic = 'وقار کلامی بزرگ‌ترین جذابیته؛ نیازی به اثبات چیزی نیست.';
           }
         }
       }

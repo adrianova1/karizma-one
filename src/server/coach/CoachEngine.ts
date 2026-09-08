@@ -10,6 +10,7 @@ export class CoachEngine {
   private static instance: CoachEngine;
   private index: CoachIndex;
   private matcher: QueryMatcher;
+  private queryCounters: Map<string, number> = new Map();
   private initialized = false;
 
   private constructor() {
@@ -71,11 +72,16 @@ export class CoachEngine {
       tone: options?.tone || options?.selectedTone || (extractedTone as any)
     };
 
+    const normKey = PersianNormalizer.normalize(cleanQuery);
+    const prevCount = this.queryCounters.get(normKey) || 0;
+    this.queryCounters.set(normKey, prevCount + 1);
+    const rotationIndex = options?.rotationSeed !== undefined ? options.rotationSeed : prevCount;
+
     // Layered Matching
     const candidates = this.matcher.match(cleanQuery);
 
     // Ranking and Selection
-    const ranked = RankingEngine.rankAndSelect(candidates, cleanQuery);
+    const ranked = RankingEngine.rankAndSelect(candidates, cleanQuery, rotationIndex);
 
     // Format & Return Result
     return ResponseSelector.formatResult(
@@ -84,7 +90,8 @@ export class CoachEngine {
       cleanQuery,
       ranked.confidenceScore,
       resolvedOptions,
-      ranked.matchType
+      ranked.matchType,
+      rotationIndex
     );
   }
 }

@@ -14,17 +14,35 @@ export interface RankingResult {
 export class RankingEngine {
   private static MIN_CONFIDENCE_THRESHOLD = 40;
 
+  private static KNOWN_BOILERPLATES = [
+    'زیبایی و جذابیت واقعی در نگاه و کلام تحسین‌کننده شماست',
+    'انرژی مثبت و بیان سنجیده‌ت توجه من رو جلب کرد',
+    'گفتگوی حضوری همیشه حس و حال واقعی‌تری داره',
+    'کیفیت و تمرکز کامل روی مکالمه برام اولویت داره به سرعت پاسخگویی',
+    'سلیقه و نگاه دقیق شما در کلامت کاملاً پیداست',
+    'ارتباط با ارزش نیاز به حضور ذهن کامل داره',
+    'عمیق بودن گفتگو برام مهم‌تر از شتاب در پاسخ دادنه',
+    'پاسخهای متناسب',
+    'علت این تست',
+    'علت تست',
+    'اشتباه بزرگ',
+    'مرحله قرار اول به بعد'
+  ];
+
   /**
    * Calculates a richness score for a scenario based on:
    * 1. 5-tone structure completeness
-   * 2. Canonical / Featured status
-   * 3. Usable dialogue candidates pool size (>= 3)
-   * 4. Presence of technique, tips, bodyLanguage, and nextMove metadata
+   * 2. Canonical / Core foundation status
+   * 3. Authentic non-boilerplate dialogue
+   * 4. Usable dialogue candidates pool size (>= 3)
+   * 5. Presence of technique, tips, bodyLanguage, and nextMove metadata
    */
   static getRichnessScore(scenario: CoachScenario): number {
     if (!scenario) return 0;
 
     let distinctCount = 0;
+    let hasBoilerplate = false;
+
     if (scenario.responses) {
       const seenResp = new Set<string>();
       const toneKeys = [
@@ -39,6 +57,12 @@ export class RankingEngine {
           if (clean.length >= 3 && !seenResp.has(clean)) {
             seenResp.add(clean);
           }
+          for (const bp of RankingEngine.KNOWN_BOILERPLATES) {
+            if (val.includes(bp)) {
+              hasBoilerplate = true;
+              break;
+            }
+          }
         }
       }
       distinctCount = seenResp.size;
@@ -48,55 +72,65 @@ export class RankingEngine {
 
     // 1. Structure completeness (5 tones)
     if (distinctCount >= 5) {
-      richness += 5.0;
+      richness += 25.0;
     } else if (distinctCount >= 4) {
-      richness += 4.0;
+      richness += 18.0;
     } else if (distinctCount >= 3) {
-      richness += 3.0;
+      richness += 10.0;
     } else if (distinctCount >= 2) {
-      richness += 1.5;
-    } else if (distinctCount === 1) {
-      richness += 0.5;
-    }
-
-    // 2. Canonical status
-    const isCanonical = scenario.id.startsWith('scen_');
-    if (isCanonical) {
       richness += 3.0;
+    } else if (distinctCount <= 1) {
+      richness -= 10.0;
     }
 
-    // 3. Dialogue candidate pool size
+    // 2. Penalize test boilerplate and truncated titles
+    if (hasBoilerplate) {
+      richness -= 35.0;
+    }
+    if (scenario.title && (scenario.title.endsWith(' خی') || scenario.title.endsWith('...'))) {
+      richness -= 15.0;
+    }
+    if (scenario.situation && scenario.situation.includes('مگه نه؟')) {
+      richness -= 10.0;
+    }
+
+    // 3. Foundation Core Status
+    const isCore = ['scen_1', 'scen_2', 'scen_3', 'scen_4', 'scen_5', 'scen_6', 'scen_7', 'scen_8', 'scen_intimacy_request_1', 'scen_playful_gift_teasing_1', 'scen_distress_hopelessness_1'].includes(scenario.id);
+    if (isCore) {
+      richness += 20.0;
+    }
+
+    // 4. Usable dialogue candidate pool size
     const candidatesList = ToneDistributor.extractAllCandidates(scenario, null);
     if (candidatesList.length >= 4) {
-      richness += 2.0;
+      richness += 4.0;
     } else if (candidatesList.length >= 3) {
-      richness += 1.0;
+      richness += 2.0;
     }
 
-    // 4. Metadata completeness
-    if (scenario.technique && scenario.technique.trim().length > 3) richness += 0.5;
-    if (scenario.tips && scenario.tips.trim().length > 3) richness += 0.5;
-    if (scenario.bodyLanguage && scenario.bodyLanguage.trim().length > 3) richness += 0.5;
-    if (scenario.nextMove && scenario.nextMove.trim().length > 3) richness += 0.5;
+    // 5. Metadata completeness
+    if (scenario.technique && scenario.technique.trim().length > 3) richness += 1.0;
+    if (scenario.tips && scenario.tips.trim().length > 3) richness += 1.0;
+    if (scenario.bodyLanguage && scenario.bodyLanguage.trim().length > 3) richness += 1.0;
+    if (scenario.nextMove && scenario.nextMove.trim().length > 3) richness += 1.0;
 
     return Number(richness.toFixed(2));
   }
 
   /**
    * Evaluates candidates, applies richness boosting to prioritize comprehensive scenarios,
-   * and decides whether to return top candidate or fallback.
+   * performs rotation across high-scoring peers, and decides whether to return top candidate or fallback.
    */
-  static rankAndSelect(candidates: ScenarioMatchCandidate[], rawQuery: string): RankingResult {
+  static rankAndSelect(candidates: ScenarioMatchCandidate[], rawQuery: string, rotationIndex: number = 0): RankingResult {
     if (candidates.length > 0) {
-      // Re-rank candidates taking richness into account
+      // Re-rank candidates taking richness and dialogue authenticity into account
       const scoredCandidates = candidates.map(candidate => {
         const richness = this.getRichnessScore(candidate.scenario);
         const matchScore = candidate.scoreBreakdown.totalScore;
         
-        // Boost factor: gives rich scenarios preference over single-reply scenarios with similar relevance
         let finalRankScore = matchScore + (richness * 1.5);
         
-        // Exact trigger match retains significant weight
+        // Exact trigger match retains decisive weight
         if (candidate.matchedBy === 'exact_trigger' || candidate.scoreBreakdown.exactTriggerScore > 0) {
           finalRankScore += 50.0;
         }
@@ -110,8 +144,16 @@ export class RankingEngine {
 
       scoredCandidates.sort((a, b) => b.finalRankScore - a.finalRankScore);
 
-      const top = scoredCandidates[0];
-      const topCandidate = top.candidate;
+      // Candidate rotation among top cluster
+      const topScore = scoredCandidates[0].finalRankScore;
+      const topCluster = scoredCandidates.filter(c => 
+        c.finalRankScore >= topScore * 0.88 ||
+        (c.candidate.scoreBreakdown.exactTriggerScore > 0 && c.finalRankScore >= topScore - 25)
+      );
+
+      const chosenIndex = topCluster.length > 1 ? (Math.abs(rotationIndex) % topCluster.length) : 0;
+      const chosen = topCluster[chosenIndex];
+      const topCandidate = chosen.candidate;
 
       const isHighConfidence =
         topCandidate.matchedBy === 'exact_trigger' ||

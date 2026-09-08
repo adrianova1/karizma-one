@@ -11,14 +11,14 @@ export interface IndexedPhrase {
 
 export class CoachIndex {
   private invertedIndex: Map<string, Set<string>> = new Map(); // token -> Set<scenarioId>
-  private exactTriggerMap: Map<string, string> = new Map(); // normalizedTrigger -> scenarioId
-  private exactAliasMap: Map<string, string> = new Map(); // normalizedAlias -> scenarioId
+  private exactTriggerMap: Map<string, string[]> = new Map(); // normalizedTrigger -> scenarioId[]
+  private exactAliasMap: Map<string, string[]> = new Map(); // normalizedAlias -> scenarioId[]
   private phraseMap: Map<string, IndexedPhrase> = new Map(); // normalizedPhrase -> IndexedPhrase
   private sortedPhrases: IndexedPhrase[] = [];
   private scenarioMap: Map<string, CoachScenario> = new Map(); // scenarioId -> CoachScenario
 
   /**
-   * Helper to ensure only substantive phrases (not stop-words or generic question frames) are indexed for containment
+   * Helper to ensure only substantive phrases (not stop-words or generic single words) are indexed for containment
    */
   private static isSubstantivePhrase(phrase: string): boolean {
     const norm = PersianNormalizer.normalize(phrase).trim();
@@ -26,9 +26,9 @@ export class CoachIndex {
     if (PersianNormalizer.GENERIC_CARRIER_PHRASES.has(norm)) return false;
     const words = norm.split(' ').filter(Boolean);
     if (words.length === 1) {
-      return norm.length >= 4;
+      return norm.length >= 6 && !PersianNormalizer.isStopWord(norm);
     }
-    const nonGenericWords = words.filter(w => !PersianNormalizer.GENERIC_CARRIER_PHRASES.has(w));
+    const nonGenericWords = words.filter(w => !PersianNormalizer.GENERIC_CARRIER_PHRASES.has(w) && !PersianNormalizer.isStopWord(w));
     return nonGenericWords.length > 0;
   }
 
@@ -49,10 +49,15 @@ export class CoachIndex {
       for (const trigger of scenario.triggers || []) {
         const normTrigger = PersianNormalizer.normalize(trigger);
         if (normTrigger) {
-          const isCanonical = scenario.id.startsWith('scen_');
-          if (!this.exactTriggerMap.has(normTrigger) || isCanonical) {
-            this.exactTriggerMap.set(normTrigger, scenario.id);
+          const isCore = ['scen_1', 'scen_2', 'scen_3', 'scen_4', 'scen_5', 'scen_6', 'scen_7', 'scen_8'].includes(scenario.id);
+          const trigList = this.exactTriggerMap.get(normTrigger) || [];
+          if (isCore) {
+            trigList.unshift(scenario.id);
+          } else {
+            trigList.push(scenario.id);
           }
+          this.exactTriggerMap.set(normTrigger, trigList);
+
           if (CoachIndex.isSubstantivePhrase(normTrigger)) {
             const words = normTrigger.split(' ').filter(Boolean);
             const item: IndexedPhrase = {
@@ -63,7 +68,7 @@ export class CoachIndex {
               isTrigger: true
             };
             const existing = this.phraseMap.get(normTrigger);
-            if (!existing || isCanonical || item.wordCount > existing.wordCount) {
+            if (!existing || isCore || item.wordCount > existing.wordCount) {
               this.phraseMap.set(normTrigger, item);
             }
           }
@@ -74,7 +79,10 @@ export class CoachIndex {
       for (const alias of scenario.aliases || []) {
         const normAlias = PersianNormalizer.normalize(alias);
         if (normAlias) {
-          this.exactAliasMap.set(normAlias, scenario.id);
+          const aliasList = this.exactAliasMap.get(normAlias) || [];
+          aliasList.push(scenario.id);
+          this.exactAliasMap.set(normAlias, aliasList);
+
           if (CoachIndex.isSubstantivePhrase(normAlias)) {
             const words = normAlias.split(' ').filter(Boolean);
             const item: IndexedPhrase = {
@@ -123,22 +131,43 @@ export class CoachIndex {
   }
 
   /**
-   * Lookup scenario by exact normalized trigger or alias match
+   * Lookup scenario by exact normalized trigger or alias match (returns premier match)
    */
   findExact(normalizedQuery: string): { scenario: CoachScenario; isTrigger: boolean } | null {
-    const triggerScId = this.exactTriggerMap.get(normalizedQuery);
-    if (triggerScId) {
-      const sc = this.scenarioMap.get(triggerScId);
-      if (sc) return { scenario: sc, isTrigger: true };
+    const matches = this.findExactMatches(normalizedQuery);
+    return matches.length > 0 ? matches[0] : null;
+  }
+
+  /**
+   * Lookup all scenarios matching exact normalized trigger or alias
+   */
+  findExactMatches(normalizedQuery: string): Array<{ scenario: CoachScenario; isTrigger: boolean }> {
+    const results: Array<{ scenario: CoachScenario; isTrigger: boolean }> = [];
+    const seen = new Set<string>();
+
+    const triggerScIds = this.exactTriggerMap.get(normalizedQuery);
+    if (triggerScIds) {
+      for (const scId of triggerScIds) {
+        if (!seen.has(scId)) {
+          seen.add(scId);
+          const sc = this.scenarioMap.get(scId);
+          if (sc) results.push({ scenario: sc, isTrigger: true });
+        }
+      }
     }
 
-    const aliasScId = this.exactAliasMap.get(normalizedQuery);
-    if (aliasScId) {
-      const sc = this.scenarioMap.get(aliasScId);
-      if (sc) return { scenario: sc, isTrigger: false };
+    const aliasScIds = this.exactAliasMap.get(normalizedQuery);
+    if (aliasScIds) {
+      for (const scId of aliasScIds) {
+        if (!seen.has(scId)) {
+          seen.add(scId);
+          const sc = this.scenarioMap.get(scId);
+          if (sc) results.push({ scenario: sc, isTrigger: false });
+        }
+      }
     }
 
-    return null;
+    return results;
   }
 
   /**

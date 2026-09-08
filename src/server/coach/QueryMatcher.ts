@@ -88,27 +88,8 @@ export class QueryMatcher {
       }
     }
 
-    // LEVEL 1: Exact Normalized Trigger or Alias Match
-    const exactMatch = this.index.findExact(normalizedQuery);
-    if (exactMatch) {
-      const candidate: ScenarioMatchCandidate = {
-        scenario: exactMatch.scenario,
-        confidenceScore: exactMatch.isTrigger ? 99 : 95,
-        scoreBreakdown: {
-          exactTriggerScore: exactMatch.isTrigger ? 100 : 0,
-          phraseScore: 0,
-          aliasScore: exactMatch.isTrigger ? 0 : 95,
-          trigramSimilarityScore: 100,
-          tokenOverlapScore: 100,
-          keywordScore: 100,
-          categoryScore: 100,
-          penaltyScore: 0,
-          totalScore: 100
-        },
-        matchedBy: 'exact_trigger'
-      };
-      return [candidate];
-    }
+    // LEVEL 1: Exact Normalized Trigger or Alias Matches
+    const exactMatches = this.index.findExactMatches(normalizedQuery);
 
     // LEVEL 2: Phrase Containment Match
     const containedMatch = this.index.findContainedPhrase(normalizedQuery);
@@ -121,6 +102,15 @@ export class QueryMatcher {
       candidates = candidates.slice(0, 300);
     }
     const candidateSet = new Set<string>(candidates.map(c => c.id));
+
+    // Ensure all exact matches are present at the beginning of candidate pool
+    for (const em of exactMatches) {
+      if (!candidateSet.has(em.scenario.id)) {
+        candidates.unshift(em.scenario);
+        candidateSet.add(em.scenario.id);
+      }
+    }
+
     if (containedMatch && !candidateSet.has(containedMatch.scenario.id)) {
       candidates.push(containedMatch.scenario);
       candidateSet.add(containedMatch.scenario.id);
@@ -211,13 +201,20 @@ export class QueryMatcher {
             phraseScore = Math.max(phraseScore, 30.0);
             break;
           }
-          if (normalizedQuery.startsWith(normTrig + ' ') || normalizedQuery.endsWith(' ' + normTrig) || normalizedQuery.includes(' ' + normTrig + ' ')) {
-            phraseScore = Math.max(phraseScore, 12.0);
-            break;
+          const trigWords = normTrig.split(' ').filter(Boolean);
+          // Only multi-word trigger phrases qualify for phrase containment!
+          if (trigWords.length >= 2) {
+            if (normalizedQuery.startsWith(normTrig + ' ') || normalizedQuery.endsWith(' ' + normTrig) || normalizedQuery.includes(' ' + normTrig + ' ')) {
+              phraseScore = Math.max(phraseScore, 12.0);
+              break;
+            }
           }
-          if (normTrig.startsWith(normalizedQuery + ' ') || normTrig.endsWith(' ' + normalizedQuery) || normTrig.includes(' ' + normalizedQuery + ' ')) {
-            phraseScore = Math.max(phraseScore, 8.0);
-            break;
+          const queryWords = normalizedQuery.split(' ').filter(Boolean);
+          if (queryWords.length >= 2) {
+            if (normTrig.startsWith(normalizedQuery + ' ') || normTrig.endsWith(' ' + normalizedQuery) || normTrig.includes(' ' + normalizedQuery + ' ')) {
+              phraseScore = Math.max(phraseScore, 8.0);
+              break;
+            }
           }
         }
       }
@@ -279,8 +276,18 @@ export class QueryMatcher {
     const isStopJokingIntent = /بازی\s*در\s*نیار|در\s*نیار|لوده\s*بازی|مسخره\s*بازی|شوخی\s*نکن|جدی\s*باش/.test(normalizedQuery);
     const isSarcasticPraise = /بابا\s+(خوشمزه|خوشتیپ|جذاب|زرنگ|کاردرست|ایول|خفن)/.test(normalizedQuery);
     const isInsultQuery = /(?:^|[^\p{L}\p{N}])(بیشعور|بیشعوری|خر|خری|احمق|احمقی|عوضی|نفهم|لاشی|کثافت|روانی|دیوونه|اسکل|پلشت|بی\s*ادب|توهین|فحش)(?:[^\p{L}\p{N}]|$)/u.test(normalizedQuery);
+    const isRejectionOrDislike = /خوشم\s*نمیاد|خوشم\s*نیومد|بدم\s*میاد|بدم\s*اومد|حالم\s*(?:به\s*هم|بهم)\s*میخوره|میل\s*ندارم|علاقه‌ای\s*ندارم|نمیخوامت|به\s*دردم\s*نمیخوری|به\s*درد\s*من\s*نمیخوری/.test(normalizedQuery);
 
     const scenarioText = `${scenario.title} ${scenario.situation} ${(scenario.triggers || []).join(' ')}`;
+
+    if (isRejectionOrDislike) {
+      if (/رد\s*کردن|مرزگذاری|بی‌میلی|عدم\s*تمایل|سرد\s*شدن|نه\s*گفتن|به\s*درد\s*نخوردن|عدم\s*تناسب/.test(scenarioText)) {
+        keywordScore += 20.0;
+      }
+      if (/تعریف|تمجید|تحسین|خوشگل|جذاب|عاشقانه|دلبری/.test(scenarioText)) {
+        keywordScore -= 30.0; // Heavily penalize compliments when user is expressing dislike/rejection
+      }
+    }
 
     if (isStopJokingIntent) {
       if (/مسخره\s*بازی|بازی\s*در\s*نیار|لوده|لوس|جدی/.test(scenarioText)) {

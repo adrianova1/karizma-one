@@ -7,6 +7,10 @@ export class PersianNormalizer {
     'شدی', 'بودی', 'چقد', 'چقدر', 'بسیار'
   ]);
 
+  static isStopWord(word: string): boolean {
+    return PersianNormalizer.PERSIAN_STOP_WORDS.has(word);
+  }
+
   static readonly GENERIC_CARRIER_PHRASES = new Set([
     'چی بگم',
     'چی بگم بهش',
