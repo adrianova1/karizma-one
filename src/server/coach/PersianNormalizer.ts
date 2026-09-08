@@ -73,11 +73,14 @@ export class PersianNormalizer {
     const toneMatch = clean.match(/\[لحن انتخابی:\s*([^\]\n\r]+)/) || clean.match(/\[لحن انتخابی:\s*([^\]]+)\]/);
     if (toneMatch && toneMatch[1]) {
       const toneLabel = toneMatch[1].trim();
-      extractedTone = this.canonicalizeTone(toneLabel);
+      const canonical = this.canonicalizeTone(toneLabel);
+      if (canonical !== 'all') {
+        extractedTone = canonical;
+      }
     }
 
-    // Remove any [لحن انتخابی: ... (possibly unclosed until EOL)] patterns explicitly
-    clean = clean.replace(/\[لحن انتخابی:[^\]\n\r]*/g, ' ');
+    // Remove any [لحن انتخابی: ... (possibly unclosed until EOL or closed with ]) explicitly
+    clean = clean.replace(/\[لحن انتخابی:[^\]\n\r]*\]?/g, ' ');
 
     // Strip all other bracketed tags: [حالت کوچینگ: ...], [هر تگ دیگری: ...]
     clean = clean.replace(/\[[^\]]+\]/g, ' ');
@@ -121,11 +124,11 @@ export class PersianNormalizer {
     normalized = normalized.replace(/\s+/g, ' ');
 
     // Strip punctuations, emojis & non-word special characters
-    normalized = normalized.replace(/[.,\\/#!$%\\^&\\*;:{}=\\-_`~()?"'«»،؛؟\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ');
+    normalized = normalized.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'«»،؛؟\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ');
     normalized = normalized.replace(/\s+/g, ' ');
 
     // Collapse 3 or more repeated identical characters into 1 (e.g. سلامممم -> سلام, but keep 2 letters like ممنون, ببخشید)
-    normalized = normalized.replace(/(.)\\1{2,}/g, '$1');
+    normalized = normalized.replace(/(.)\1{2,}/g, '$1');
 
     // Safe normalization for common colloquial variations and typos in Persian chat
     normalized = normalized

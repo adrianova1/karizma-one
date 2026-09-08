@@ -45,8 +45,34 @@ export class PersonaGenerator {
     mysterious: string;
     mature: string;
   } {
+    // 1. Direct High-Prestige Archetype Matching from PERSIAN_ARCHETYPES
+    const seed = scenario?.id 
+      ? scenario.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) 
+      : combinedContext.length;
 
-    // 1. Direct Archetype / Pattern Matching across comprehensive conversational categories
+    for (const [_, archDef] of Object.entries(PERSIAN_ARCHETYPES)) {
+      if (archDef.pattern.test(combinedContext)) {
+        const toneSet = archDef.toneSets[0];
+        if (toneSet) {
+          const charis = toneSet.charismatic || [];
+          const fun = toneSet.funny || [];
+          const conf = toneSet.direct || [];
+          const myst = toneSet.emotional || [];
+          const mat = toneSet.friendly || [];
+          if (charis.length && fun.length && conf.length && myst.length && mat.length) {
+            return {
+              charismatic: charis[seed % charis.length],
+              funny: fun[(seed + 1) % fun.length],
+              confident: conf[(seed + 2) % conf.length],
+              mysterious: myst[(seed + 3) % myst.length],
+              mature: mat[(seed + 4) % mat.length],
+            };
+          }
+        }
+      }
+    }
+
+    // 2. Direct Pattern Matching across additional conversational categories
     
     // Category 1: Insult / Rudeness / Profanity (بیشعور، خر، احمق، عوضی، نفهم، روانی، اسکل، دیوونه...)
     if (/(?:^|[^\p{L}\p{N}])(بیشعور|بیشعوری|خر|خری|احمق|احمقی|عوضی|نفهم|لاشی|کثافت|روانی|دیوونه|اسکل|پلشت|بی\s*ادب|توهین|فحش|متلک)(?:[^\p{L}\p{N}]|$)/u.test(combinedContext)) {
@@ -218,18 +244,19 @@ export class PersonaGenerator {
       };
     }
 
-    // 2. High-value dynamic synthesis for clean dialogue if already rich
-    if (clean.length > 10 && !clean.includes('علت تست') && !clean.includes('اشتباه بزرگ')) {
+    // 3. High-value persona synthesis from clean scenario retort if available
+    if (clean.length >= 4 && !clean.includes('علت تست') && !clean.includes('اشتباه بزرگ')) {
+      const isQuestion = clean.endsWith('؟') || clean.endsWith('?');
       return {
-        charismatic: `درک این موقعیت نیازمند نگاهیه فراتر از معمول؛ ${clean}`,
-        funny: `خیلی جالب مطرحش کردی! ولی اگه از زاویه شوخ‌طبعانه نگاه کنی: ${clean}`,
-        confident: `موضع من در این مورد کاملاً مشخص و استواره: ${clean}`,
-        mysterious: `ابعاد پنهانی در این موضوع هست که با گذشت زمان روشن‌تر میشه: ${clean}`,
-        mature: `تحلیل منطقی و اصولی این ماجرا نشون میده که: ${clean}`
+        charismatic: `با آرامش و یک لبخند خونسرد: «${clean}»؛ پرستیژ یعنی در کمال وقار فضا رو مدیریت کنی.`,
+        funny: isQuestion ? `${clean} 😉` : `${clean}؛ با یه شوخی بموقع یخ مکالمه رو بشکن 😉`,
+        confident: `موضع من کاملاً روشنه و بدون تعارف: «${clean}».`,
+        mysterious: `گاهی بهترین پاسخ همونیه که توی ذهن طرف علامت سوال ایجاد می‌کنه: «${clean}»...`,
+        mature: `اگر منطقی، سنجیده و بااحترام نگاه کنیم: «${clean}»؛ متانت همیشه بهترین مسیره.`
       };
     }
 
-    // 3. Universal High-Caliber Persian Fallback
+    // 4. Universal High-Caliber Persian Fallback
     return {
       charismatic: 'انرژی مثبت و بیان سنجیده‌ت توجه من رو جلب کرد؛ خوشحال میشم این گفتگوی جذاب رو با هم جلو ببریم.',
       funny: 'داشتم فکر می‌کردم اگه قرار باشه جایزه خوش‌سلیقه‌ترین هم‌صحبت امروز رو بدیم، قطعاً به این پیام میرسه!',
@@ -276,15 +303,15 @@ export class PersonaGenerator {
         if (sim >= 0.85) {
           // Differentiate toneB with distinct stylistic tone structure
           if (toneB === 'funny') {
-            vars.funny = `خیلی بامزه بود! راستش اگه بخوام بی‌تعارف بگم: ${clean || vars.funny}`;
+            vars.funny = `${vars.funny.replace(/[.؟!؛]+$/, '')}؛ با چاشنی خنده و شوخی 😉`;
           } else if (toneB === 'confident') {
-            vars.confident = `قاطعانه و مشخص بگم: خطوط قرمز من روشنه، ${clean || vars.confident}`;
+            vars.confident = `من موضعم روشنه و پای حرفم هستم: ${vars.confident}`;
           } else if (toneB === 'mysterious') {
-            vars.mysterious = `نکته جالب اینجاست که حقیقت همیشه توی نگاه اول مشخص نمیشه؛ ${clean || vars.mysterious}`;
+            vars.mysterious = `${vars.mysterious.replace(/[.؟!؛]+$/, '')}... بقیه‌ش بمونه برای اهلش.`;
           } else if (toneB === 'mature') {
-            vars.mature = `با دیدی منطقی و عمیق به قضیه نگاه کنیم: ${clean || vars.mature}`;
+            vars.mature = `با نگاهی عمیق و اصولی: ${vars.mature}`;
           } else if (toneB === 'charismatic') {
-            vars.charismatic = `با وقار و پرستیژ کامل: ترجیح میدم کیفیت صحبت حفظ بشه؛ ${clean || vars.charismatic}`;
+            vars.charismatic = `با وقار و پرستیژ کامل: ${vars.charismatic}`;
           }
         }
       }
