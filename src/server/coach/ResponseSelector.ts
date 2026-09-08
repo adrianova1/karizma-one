@@ -121,18 +121,16 @@ export class ResponseSelector {
     let finalResponsesArray = responsesArray;
     if (options?.selectedTone && options.selectedTone !== 'all') {
       const toneMap: Record<string, string> = {
+        // canonical english keys
         'charismatic': 'charismatic',
         'funny': 'funny',
         'confident': 'confident',
         'mysterious': 'mysterious',
         'mature': 'mature',
-        // Persian mappings
+        // Persian labels / synonyms
         'کاریزماتیک': 'charismatic',
         'باکلاس': 'charismatic',
-        'جذاب': 'charismatic',
         'شوخ': 'funny',
-        'شوخ‌طبع': 'funny',
-        'شوخ طبع': 'funny',
         'طنز': 'funny',
         'رندانه': 'funny',
         'مقتدر': 'confident',
@@ -141,9 +139,8 @@ export class ResponseSelector {
         'مرموز': 'mysterious',
         'پرکشش': 'mysterious',
         'متین': 'mature',
-        'متین و پخته': 'mature',
         'پخته': 'mature',
-        // Backward compatibility mappings
+        // backward english mappings
         'direct': 'confident',
         'alpha': 'confident',
         'friendly': 'charismatic',
@@ -155,12 +152,13 @@ export class ResponseSelector {
         'deep': 'mature',
         'diplomatic': 'mature'
       };
-      const mappedTone = toneMap[options.selectedTone] || options.selectedTone;
+
+      const key = String(options.selectedTone).toLowerCase();
+      const mappedTone = toneMap[key] || toneMap[options.selectedTone] || options.selectedTone;
       const filtered = responsesArray.filter(r => r.tone === mappedTone);
-      if (filtered.length > 0) {
-        finalResponsesArray = filtered;
-      } else {
-        console.warn(`[ResponseSelector] Telemetry warning: options.selectedTone '${options.selectedTone}' could not be matched in canonical tones array.`);
+      if (filtered.length > 0) finalResponsesArray = filtered;
+      else {
+        console.warn(`[ResponseSelector] selectedTone '${options.selectedTone}' could not be mapped to a canonical tone. Returning all responses.`);
       }
     }
 

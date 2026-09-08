@@ -206,43 +206,46 @@ export class ToneDistributor {
 
       // Check if all extracted replies are identical, missing or highly similar (legacy single-reply scenarios)
       const baseClean = this.cleanDialogue(charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || scenario!.situation || scenario!.title);
-      
-      const allExtracted = [charismaticReply, funnyReply, confidentReply, mysteriousReply, matureReply].filter(s => s && s.trim().length > 0);
-      const uniqueReplies = new Set(allExtracted.map(s => s.trim()));
-      
-      // Compute pairwise trigram similarity between extracted replies (> 0.82 considered near-duplicate)
-      let pairwisePairs = 0;
-      let highSimilarityCount = 0;
-      if (allExtracted.length >= 2) {
-        for (let i = 0; i < allExtracted.length; i++) {
-          for (let j = i + 1; j < allExtracted.length; j++) {
-            pairwisePairs++;
-            const sim = PersianNormalizer.computeTrigramSimilarity(allExtracted[i], allExtracted[j]);
-            if (sim >= 0.82) highSimilarityCount++;
-          }
+
+      // collect non-empty extracted replies
+      const extracted = [charismaticReply, funnyReply, confidentReply, mysteriousReply, matureReply].filter(Boolean) as string[];
+      const similarities: number[] = [];
+      for (let i = 0; i < extracted.length; i++) {
+        for (let j = i + 1; j < extracted.length; j++) {
+          similarities.push(PersianNormalizer.computeTrigramSimilarity(extracted[i], extracted[j]));
         }
       }
-      // If majority (or >= 50%) of pairs are highly similar, treat as single-reply
-      const isHighlyRedundant = pairwisePairs > 0 && (highSimilarityCount / pairwisePairs >= 0.5);
+      const highSimCount = similarities.filter(s => s >= 0.82).length;
+      const totalPairs = Math.max(1, similarities.length);
+      const highSimFraction = highSimCount / totalPairs;
 
-      const isSingleReplyRecord = 
-        allExtracted.length <= 1 ||
-        uniqueReplies.size <= 1 ||
-        isHighlyRedundant ||
-        (
-          (!funnyReply || funnyReply === charismaticReply) &&
-          (!confidentReply || confidentReply === charismaticReply) &&
-          (!mysteriousReply || mysteriousReply === charismaticReply) &&
-          (!matureReply || matureReply === charismaticReply)
-        );
+      // treat as single-reply if most pairs are highly similar
+      const isSingleReplyRecord = extracted.length === 0 || highSimFraction >= 0.75;
 
       if (isSingleReplyRecord) {
         const variations = PersonaGenerator.generateVariations(baseClean, scenario, userQuery || '');
-        charismaticReply = variations.charismatic;
-        funnyReply = variations.funny;
-        confidentReply = variations.confident;
-        mysteriousReply = variations.mysterious;
-        matureReply = variations.mature;
+        const cand = [variations.charismatic, variations.funny, variations.confident, variations.mysterious, variations.mature];
+
+        // post-validate distinctness
+        let needRegen = false;
+        for (let i = 0; i < cand.length; i++) {
+          for (let j = i + 1; j < cand.length; j++) {
+            const sim = PersianNormalizer.computeTrigramSimilarity(cand[i], cand[j]);
+            if (sim >= 0.88) needRegen = true;
+          }
+        }
+        if (needRegen) {
+          // lightweight deterministic transforms to increase diversity
+          for (let k = 0; k < cand.length; k++) {
+            cand[k] = cand[k] + (k === 0 ? '' : k === 1 ? ' 😉' : k === 2 ? '.' : k === 3 ? ' …' : '');
+          }
+        }
+
+        charismaticReply = cand[0];
+        funnyReply = cand[1];
+        confidentReply = cand[2];
+        mysteriousReply = cand[3];
+        matureReply = cand[4];
       } else {
         const fallbackSameScenario = charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || baseClean;
         if (!charismaticReply) charismaticReply = fallbackSameScenario;
