@@ -4,6 +4,7 @@ import { CoachScenario, CoachFallbackItem, CoachCategory, CoachToneResponses } f
 import { PersianNormalizer } from './PersianNormalizer.js';
 import { CANONICAL_FEATURED_SCENARIOS } from './CanonicalScenarios.js';
 import { DBEngine } from '../db.js';
+import { ToneDistributor } from './ToneDistributor.js';
 
 /**
  * Safely parse JSON from a file with graceful error handling
@@ -63,12 +64,17 @@ export class CoachLoader {
       };
     }
 
-    // Extract the 5 Canonical Tones from raw dataset
-    const rawCharismatic = s.responses?.charismatic || s.responses?.tone_1 || s.responses?.tone_3 || s.responses?.friendly || '';
-    const rawFunny = s.responses?.funny || s.responses?.tone_2 || '';
-    const rawConfident = s.responses?.confident || s.responses?.direct || s.responses?.tone_3 || '';
-    const rawMysterious = s.responses?.mysterious || s.responses?.emotional || s.responses?.tone_4 || '';
-    const rawMature = s.responses?.mature || s.responses?.psychology || s.responses?.tone_5 || '';
+    // Extract the 5 Canonical Tones from raw dataset and strip any synthetic residuals
+    const cleanDialogue = (txt: string) => {
+      if (!txt || typeof txt !== 'string') return '';
+      return ToneDistributor.cleanDialogue(ToneDistributor.stripToneWrappers(txt));
+    };
+
+    const rawCharismatic = cleanDialogue(s.responses?.charismatic || s.responses?.tone_1 || s.responses?.tone_3 || s.responses?.friendly || '');
+    const rawFunny = cleanDialogue(s.responses?.funny || s.responses?.tone_2 || '');
+    const rawConfident = cleanDialogue(s.responses?.confident || s.responses?.direct || s.responses?.tone_3 || '');
+    const rawMysterious = cleanDialogue(s.responses?.mysterious || s.responses?.emotional || s.responses?.tone_4 || '');
+    const rawMature = cleanDialogue(s.responses?.mature || s.responses?.psychology || s.responses?.tone_5 || '');
 
     const responses: CoachToneResponses = {
       charismatic: rawCharismatic || rawConfident || 'با متانت و کنترل فریم فضا را مدیریت کنید.',
@@ -146,10 +152,27 @@ export class CoachLoader {
       this.scenarioChunkMap.set(scenarioId, chunkName);
     }
 
+    const normalizeCatName = (cat?: string) => {
+      if (!cat) return 'عمومی';
+      const c = cat.trim();
+      if (c === 'جواب و زبون‌ریختن ترکی') return 'جواب و زبون ریختن ترکی';
+      if (c === 'تیکه سبک / بادگیر / نِگ' || c === 'نگ') return 'تیکه سبک / بادگیر / نگ';
+      if (c === 'چیستان‌های جذاب') return 'چیستان های جذاب';
+      if (c === 'پوش‌پول / حمایتگری') return 'پوش پول حمایتگری';
+      if (c === 'شوخی دوپهلو') return 'شوخی دو پهلو';
+      if (c === 'جوک و شوخی با پسر و دختر') return 'جوک ناب و شوخی با پسر و دختر';
+      if (c === 'اشعار') return 'شعر';
+      if (c === 'استوری تلنگ') return 'استوری تلنگر';
+      if (c === 'شت تست، مکالمات با دختر') return 'شیت تست، مکالمات با دختر';
+      if (c === 'زبون ریزی') return 'زبون ریختن';
+      if (c === '...') return 'شرایط آلفا';
+      return c;
+    };
+
     return {
       id: scenarioId,
       title: s.title || s.situation || 'سناریوی بدون عنوان',
-      category: s.category || s.environment || 'عمومی',
+      category: normalizeCatName(s.category || s.environment),
       situation: s.situation || s.title || '',
       context: s.context || s.situation || '',
       user_input_patterns: userInputPatterns,
