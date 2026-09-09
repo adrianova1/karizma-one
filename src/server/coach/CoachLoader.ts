@@ -3,6 +3,7 @@ import path from 'path';
 import { CoachScenario, CoachFallbackItem, CoachCategory, CoachToneResponses } from './CoachTypes.js';
 import { PersianNormalizer } from './PersianNormalizer.js';
 import { CANONICAL_FEATURED_SCENARIOS } from './CanonicalScenarios.js';
+import { DBEngine } from '../db.js';
 
 /**
  * Safely parse JSON from a file with graceful error handling
@@ -77,20 +78,40 @@ export class CoachLoader {
       mature: rawMature || 'با وقار، پرستیژ و آرامش ارتباط را پیش ببرید.'
     };
 
-    const triggers = Array.isArray(s.triggers) && s.triggers.length > 0
-      ? s.triggers
-      : [s.title || s.situation || ''];
+    let triggers: string[] = [];
+    if (Array.isArray(s.triggers)) {
+      triggers = s.triggers.map(String).map(t => t.trim()).filter(Boolean);
+    } else if (typeof s.triggers === 'string' && s.triggers.trim()) {
+      triggers = s.triggers.split(/[,\n;|،]+/).map(t => t.trim()).filter(Boolean);
+    }
+    if (triggers.length === 0) {
+      triggers = [s.title || s.situation || ''];
+    }
 
-    const aliases = Array.isArray(s.aliases) && s.aliases.length > 0
-      ? s.aliases
-      : [s.situation || ''];
+    let aliases: string[] = [];
+    if (Array.isArray(s.aliases)) {
+      aliases = s.aliases.map(String).map(a => a.trim()).filter(Boolean);
+    } else if (typeof s.aliases === 'string' && s.aliases.trim()) {
+      aliases = s.aliases.split(/[,\n;|،]+/).map(a => a.trim()).filter(Boolean);
+    }
+    if (aliases.length === 0) {
+      aliases = [s.situation || ''];
+    }
 
-    const userInputPatterns = Array.isArray(s.user_input_patterns) && s.user_input_patterns.length > 0
-      ? s.user_input_patterns
-      : [...triggers, ...aliases];
+    let userInputPatterns: string[] = [];
+    if (Array.isArray(s.user_input_patterns) && s.user_input_patterns.length > 0) {
+      userInputPatterns = s.user_input_patterns.map(String).map(p => p.trim()).filter(Boolean);
+    } else {
+      userInputPatterns = [...triggers, ...aliases];
+    }
 
     // Extract rich, non-generic keywords
-    const rawKeywords = Array.isArray(s.keywords) ? s.keywords : [];
+    let rawKeywords: string[] = [];
+    if (Array.isArray(s.keywords)) {
+      rawKeywords = s.keywords.map(String).map(k => k.trim()).filter(Boolean);
+    } else if (typeof s.keywords === 'string' && s.keywords.trim()) {
+      rawKeywords = s.keywords.split(/[,\n;|،]+/).map(k => k.trim()).filter(Boolean);
+    }
     const isJunkKeywords = rawKeywords.length === 0 || (rawKeywords.length === 1 && (rawKeywords[0] === 'شیت تست' || rawKeywords[0] === 'عمومی'));
     
     let keywords: string[] = isJunkKeywords ? [] : [...rawKeywords];
@@ -209,6 +230,36 @@ export class CoachLoader {
       for (const canonical of CANONICAL_FEATURED_SCENARIOS) {
         scenarioMap.set(canonical.id, canonical);
         this.scenarioChunkMap.set(canonical.id, 'canonical_core.json');
+      }
+
+      // Also merge custom / imported scenarios from SQLite DB if present
+      try {
+        const dbScenarios = DBEngine.readTableSync<any>('scenarios');
+        if (Array.isArray(dbScenarios) && dbScenarios.length > 0) {
+          for (const s of dbScenarios) {
+            const normalized = this.normalizeScenario(s, 'db_scenarios');
+            scenarioMap.set(normalized.id, normalized);
+            this.scenarioChunkMap.set(normalized.id, 'db_scenarios');
+          }
+        } else {
+          // Fallback to scenarios.json if SQLite has not been seeded yet
+          const dbScenariosJsonPath = path.join(process.cwd(), 'data', 'scenarios.json');
+          if (fs.existsSync(dbScenariosJsonPath)) {
+            const rawDb = fs.readFileSync(dbScenariosJsonPath, 'utf8');
+            if (rawDb && rawDb.trim().length > 0) {
+              const dbList = JSON.parse(rawDb);
+              if (Array.isArray(dbList)) {
+                for (const s of dbList) {
+                  const normalized = this.normalizeScenario(s, 'db_scenarios.json');
+                  scenarioMap.set(normalized.id, normalized);
+                  this.scenarioChunkMap.set(normalized.id, 'db_scenarios.json');
+                }
+              }
+            }
+          }
+        }
+      } catch (dbErr) {
+        console.warn('[CoachLoader] Note while loading db scenarios:', dbErr);
       }
 
       this.scenarios = Array.from(scenarioMap.values());

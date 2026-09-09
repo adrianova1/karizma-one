@@ -17,13 +17,27 @@ export class CoachIndex {
   private sortedPhrases: IndexedPhrase[] = [];
   private scenarioMap: Map<string, CoachScenario> = new Map(); // scenarioId -> CoachScenario
 
+  private static readonly VULGAR_REGEX = /کیر|کسکش|جنده|کونی|ممه|سکس|سیکتیر|تریاک|شیره|هروئین|شیشه|کراک|کوکائین|حشیش|عرق سگی|پفیوز|گاومیش|عنتر/i;
+
   /**
    * Helper to ensure only substantive phrases (not stop-words or generic single words) are indexed for containment
    */
-  private static isSubstantivePhrase(phrase: string): boolean {
+  public static isSubstantivePhrase(phrase: string): boolean {
     const norm = PersianNormalizer.normalize(phrase).trim();
     if (!norm || norm.length < 4) return false;
+    if (this.VULGAR_REGEX.test(norm)) return false;
     if (PersianNormalizer.GENERIC_CARRIER_PHRASES.has(norm)) return false;
+
+    // Check if phrase ends with or equals a pure question carrier like 'چی بگم' or 'چیکار کنم'
+    for (const carrier of PersianNormalizer.GENERIC_CARRIER_PHRASES) {
+      if (norm === carrier || norm.endsWith(' ' + carrier)) {
+        const remaining = norm.slice(0, norm.length - carrier.length).trim();
+        if (!remaining || remaining.length < 4 || PersianNormalizer.GENERIC_CARRIER_PHRASES.has(remaining)) {
+          return false;
+        }
+      }
+    }
+
     const words = norm.split(' ').filter(Boolean);
     if (words.length === 1) {
       return norm.length >= 6 && !PersianNormalizer.isStopWord(norm);
@@ -42,13 +56,46 @@ export class CoachIndex {
     this.phraseMap.clear();
     this.sortedPhrases = [];
 
+    const JUNK_CARRIER_TITLES = new Set([
+      'چی بگم',
+      'راستی چی بگم',
+      'آخه چی بگم',
+      'خدایی چی بگم',
+      'یه سوال، چی بگم',
+      'یه سوال چی بگم',
+      'چیکار کنم',
+      'چی جواب بدم'
+    ]);
+
     for (const scenario of scenarios) {
+      // 1. Skip vulgar / inappropriate scenarios
+      const combinedText = `${scenario.title} ${scenario.situation} ${JSON.stringify(scenario.responses || {})}`;
+      if (CoachIndex.VULGAR_REGEX.test(combinedText)) {
+        continue;
+      }
+
+      // 2. Skip junk scenarios that are purely carrier phrases or meme shit-tests
+      const cleanTitle = scenario.title.trim();
+      if (JUNK_CARRIER_TITLES.has(cleanTitle)) {
+        continue;
+      }
+
+      // Skip uncurated meme test-sheets with identical repetitive retorts
+      if (scenario.category === 'شیت تست' && scenario.responses) {
+        const res = scenario.responses as any;
+        if (res.charismatic && res.charismatic === res.funny && res.charismatic === res.confident) {
+          if (cleanTitle.startsWith('یه سوال، مگه') || cleanTitle.includes('چی میچسبه') || cleanTitle.includes('خوب شد نیستی')) {
+            continue;
+          }
+        }
+      }
+
       this.scenarioMap.set(scenario.id, scenario);
 
       // Index Triggers
       for (const trigger of scenario.triggers || []) {
         const normTrigger = PersianNormalizer.normalize(trigger);
-        if (normTrigger) {
+        if (normTrigger && CoachIndex.isSubstantivePhrase(normTrigger)) {
           const isCore = ['scen_1', 'scen_2', 'scen_3', 'scen_4', 'scen_5', 'scen_6', 'scen_7', 'scen_8'].includes(scenario.id);
           const trigList = this.exactTriggerMap.get(normTrigger) || [];
           if (isCore) {
@@ -58,19 +105,17 @@ export class CoachIndex {
           }
           this.exactTriggerMap.set(normTrigger, trigList);
 
-          if (CoachIndex.isSubstantivePhrase(normTrigger)) {
-            const words = normTrigger.split(' ').filter(Boolean);
-            const item: IndexedPhrase = {
-              phrase: normTrigger,
-              scenarioId: scenario.id,
-              wordCount: words.length,
-              length: normTrigger.length,
-              isTrigger: true
-            };
-            const existing = this.phraseMap.get(normTrigger);
-            if (!existing || isCore || item.wordCount > existing.wordCount) {
-              this.phraseMap.set(normTrigger, item);
-            }
+          const words = normTrigger.split(' ').filter(Boolean);
+          const item: IndexedPhrase = {
+            phrase: normTrigger,
+            scenarioId: scenario.id,
+            wordCount: words.length,
+            length: normTrigger.length,
+            isTrigger: true
+          };
+          const existing = this.phraseMap.get(normTrigger);
+          if (!existing || isCore || item.wordCount > existing.wordCount) {
+            this.phraseMap.set(normTrigger, item);
           }
         }
       }
@@ -78,23 +123,21 @@ export class CoachIndex {
       // Index Aliases
       for (const alias of scenario.aliases || []) {
         const normAlias = PersianNormalizer.normalize(alias);
-        if (normAlias) {
+        if (normAlias && CoachIndex.isSubstantivePhrase(normAlias)) {
           const aliasList = this.exactAliasMap.get(normAlias) || [];
           aliasList.push(scenario.id);
           this.exactAliasMap.set(normAlias, aliasList);
 
-          if (CoachIndex.isSubstantivePhrase(normAlias)) {
-            const words = normAlias.split(' ').filter(Boolean);
-            const item: IndexedPhrase = {
-              phrase: normAlias,
-              scenarioId: scenario.id,
-              wordCount: words.length,
-              length: normAlias.length,
-              isTrigger: false
-            };
-            if (!this.phraseMap.has(normAlias)) {
-              this.phraseMap.set(normAlias, item);
-            }
+          const words = normAlias.split(' ').filter(Boolean);
+          const item: IndexedPhrase = {
+            phrase: normAlias,
+            scenarioId: scenario.id,
+            wordCount: words.length,
+            length: normAlias.length,
+            isTrigger: false
+          };
+          if (!this.phraseMap.has(normAlias)) {
+            this.phraseMap.set(normAlias, item);
           }
         }
       }

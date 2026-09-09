@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   MessagesSquare, Plus, Search, Edit2, Trash2, CloudUpload, FileSpreadsheet, 
   Check, X, RefreshCw, AlertCircle, Layers, Filter, Eye, ChevronDown, CheckCircle2,
-  Sparkles, Flame, Smile, Heart, Brain, Shield, ArrowRight
+  Sparkles, Flame, Smile, Heart, Brain, Shield, ArrowRight, Download
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { ScenarioItem } from '../types.js';
@@ -31,6 +31,8 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
     title: '',
     situation: '',
     opponentLine: '',
+    triggers: '',
+    keywords: '',
     environment: MASTER_CATEGORIES[0].title,
     difficulty: 'medium' as 'easy' | 'medium' | 'hard',
     goal: 'جذابیت و کنترل مکالمه',
@@ -44,13 +46,15 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
     teachingNote: ''
   });
 
-  // Excel / CSV Import State
+  // Excel / CSV Import & Export State
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
   const [parsedRows, setParsedRows] = useState<any[]>([]);
   const [importDefaultCategory, setImportDefaultCategory] = useState(MASTER_CATEGORIES[0].title);
   const [importLoading, setImportLoading] = useState(false);
+  const [importProgress, setImportProgress] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<{ message: string; importedCount: number; updatedCount: number } | null>(null);
+  const [exportLoading, setExportLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const getCategoryBadgeClass = (categoryTitle: string) => {
@@ -102,6 +106,8 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
       title: '',
       situation: '',
       opponentLine: '',
+      triggers: '',
+      keywords: '',
       environment: MASTER_CATEGORIES[0].title,
       difficulty: 'medium',
       goal: 'جذابیت و کنترل مکالمه',
@@ -131,6 +137,8 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
       title: scen.title || '',
       situation: scen.situation || '',
       opponentLine: scen.opponentLine || '',
+      triggers: Array.isArray(scen.triggers) ? scen.triggers.join('، ') : (scen.triggers || ''),
+      keywords: Array.isArray(scen.keywords) ? scen.keywords.join('، ') : (scen.keywords || ''),
       environment: getMasterCategoryTitle(scen.environment || ''),
       difficulty: scen.difficulty || 'medium',
       goal: scen.goal || 'جذابیت و کنترل مکالمه',
@@ -167,6 +175,8 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
         environment: formData.environment,
         difficulty: formData.difficulty,
         goal: formData.goal,
+        triggers: formData.triggers ? formData.triggers.split(/[,\n;|،]+/).map(t => t.trim()).filter(Boolean) : undefined,
+        keywords: formData.keywords ? formData.keywords.split(/[,\n;|،]+/).map(k => k.trim()).filter(Boolean) : undefined,
         responses: {
           charismatic: formData.charismatic,
           funny: formData.funny,
@@ -283,34 +293,126 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
 
     setImportLoading(true);
     setImportResult(null);
+    setImportProgress(null);
+
+    const CHUNK_SIZE = 4000;
+    const totalRows = parsedRows.length;
+    let totalImported = 0;
+    let totalUpdated = 0;
 
     try {
-      const res = await fetch('/api/scenarios/import-excel', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          rows: parsedRows,
-          defaultCategory: importDefaultCategory
-        })
-      });
+      if (totalRows <= CHUNK_SIZE) {
+        setImportProgress(`در حال پردازش ${totalRows.toLocaleString('fa-IR')} سطر...`);
+        const res = await fetch('/api/scenarios/import-excel', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            rows: parsedRows,
+            defaultCategory: importDefaultCategory
+          })
+        });
 
-      if (res.ok) {
-        const data = await parseSafeJson(res);
-        if (data) {
-          setImportResult(data);
-          fetchScenarios();
+        if (res.ok) {
+          const data = await parseSafeJson(res);
+          if (data) {
+            setImportResult(data);
+            fetchScenarios();
+          }
+        } else {
+          const data = await parseSafeJson(res);
+          alert(data?.error || 'خطا در درون‌ریزی فایل.');
         }
       } else {
-        const data = await parseSafeJson(res);
-        alert(data?.error || 'خطا در درون‌ریزی فایل.');
+        // Multi-chunk sequential import for large files (e.g., 23,000+ scenarios)
+        for (let offset = 0; offset < totalRows; offset += CHUNK_SIZE) {
+          const chunk = parsedRows.slice(offset, offset + CHUNK_SIZE);
+          const currentEnd = Math.min(offset + CHUNK_SIZE, totalRows);
+          setImportProgress(`در حال پردازش و ثبت سطرهای ${offset + 1} تا ${currentEnd} از ${totalRows.toLocaleString('fa-IR')}...`);
+
+          const res = await fetch('/api/scenarios/import-excel', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              rows: chunk,
+              defaultCategory: importDefaultCategory
+            })
+          });
+
+          if (!res.ok) {
+            const data = await parseSafeJson(res);
+            throw new Error(data?.error || `خطا در پردازش سطر ${offset + 1}`);
+          }
+
+          const data = await parseSafeJson(res);
+          if (data) {
+            totalImported += data.importedCount || 0;
+            totalUpdated += data.updatedCount || 0;
+          }
+        }
+
+        setImportResult({
+          message: `عملیات کامل شد. مجموعاً ${totalImported.toLocaleString('fa-IR')} سناریوی جدید افزوده و ${totalUpdated.toLocaleString('fa-IR')} سناریو به‌روزرسانی شد.`,
+          importedCount: totalImported,
+          updatedCount: totalUpdated
+        });
+        fetchScenarios();
       }
     } catch (err: any) {
       alert('خطا در ارسال داده‌ها: ' + err.message);
     } finally {
       setImportLoading(false);
+      setImportProgress(null);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    setExportLoading(true);
+    try {
+      const res = await fetch('/api/scenarios?limit=50000', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('خطا در دریافت اطلاعات سناریوها');
+      const data = await parseSafeJson(res);
+      const list = data?.scenarios || [];
+      if (list.length === 0) {
+        alert('هیچ سناریویی برای خروجی گرفتن وجود ندارد.');
+        return;
+      }
+      const exportRows = list.map((s: ScenarioItem) => ({
+        'شناسه': s.id,
+        'عنوان سناریو': s.title,
+        'موقعیت': s.situation,
+        'پیام مخاطب': s.opponentLine || '',
+        'دسته‌بندی': s.environment || '',
+        'سطح دشواری': s.difficulty || 'medium',
+        'هدف مکالمه': s.goal || '',
+        'عبارت‌های جستجو (تریگرها)': Array.isArray(s.triggers) ? s.triggers.join(', ') : '',
+        'کلمات کلیدی': Array.isArray(s.keywords) ? s.keywords.join(', ') : '',
+        'پاسخ کاریزماتیک': typeof s.responses?.charismatic === 'string' ? s.responses.charismatic : '',
+        'پاسخ شوخ‌طبع': typeof s.responses?.funny === 'string' ? s.responses.funny : '',
+        'پاسخ مقتدر': typeof s.responses?.confident === 'string' ? s.responses.confident : '',
+        'پاسخ مرموز': typeof s.responses?.mysterious === 'string' ? s.responses.mysterious : '',
+        'پاسخ متین': typeof s.responses?.mature === 'string' ? s.responses.mature : '',
+        'تکنیک': s.technique || '',
+        'زبان بدن': s.bodyLanguage || '',
+        'نکته آموزشی': s.teachingNote || ''
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(exportRows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Scenarios');
+      XLSX.writeFile(wb, `karizma_scenarios_${Date.now()}.xlsx`);
+    } catch (err: any) {
+      console.error('Export error:', err);
+      alert('خطا در دانلود فایل اکسل: ' + err.message);
+    } finally {
+      setExportLoading(false);
     }
   };
 
@@ -330,6 +432,16 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleExportExcel}
+            disabled={exportLoading}
+            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm disabled:opacity-50"
+            title="دانلود بانک سناریوها در قالب فایل اکسل استاندارد"
+          >
+            {exportLoading ? <RefreshCw className="w-4 h-4 animate-spin text-sky-400" /> : <Download className="w-4 h-4 text-sky-400" />}
+            <span>{exportLoading ? 'در حال آماده‌سازی...' : 'خروجی اکسل (Export)'}</span>
+          </button>
+
           <button
             onClick={() => { setIsImportOpen(true); setImportResult(null); setParsedRows([]); setImportFile(null); }}
             className="px-4 py-2.5 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm"
@@ -566,6 +678,35 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white"
                   />
                 </div>
+
+                <div className="md:col-span-3">
+                  <label className="block text-sky-400 font-bold mb-1">
+                    🎯 عبارت‌های جستجوی کاربر (تریگرها / Triggers) - با کاما جدا کنید
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.triggers}
+                    onChange={(e) => setFormData({ ...formData, triggers: e.target.value })}
+                    placeholder="مثال: حقوقت چقدره، چقدر حقوق میگیری، درآمدم، سوال درباره درآمد"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    اگر کاربر این عبارات را در هوش مصنوعی یا بخش چی بگم سرچ کند، این سناریو مستقیماً با اولویت بالا شناسایی می‌شود.
+                  </p>
+                </div>
+
+                <div className="md:col-span-3">
+                  <label className="block text-purple-400 font-bold mb-1">
+                    🏷️ کلمات کلیدی سناریو (Keywords) - با کاما جدا کنید
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.keywords}
+                    onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
+                    placeholder="مثال: درآمد، فضولی، مرزبندی مالی، خط قرمز، کار"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs"
+                  />
+                </div>
               </div>
 
               {/* 5 Tone Responses Input Section */}
@@ -734,6 +875,14 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
                   {parsedRows.length > 0 ? `${parsedRows.length} مورد شناسایی شد.` : 'فرمت‌های پشتیبانی‌شده: .xlsx , .xls , .csv , .json'}
                 </span>
               </div>
+
+              {/* Import Progress Notification */}
+              {importProgress && (
+                <div className="p-3 bg-sky-500/15 border border-sky-500/30 text-sky-300 rounded-2xl flex items-center gap-2">
+                  <RefreshCw className="w-4 h-4 animate-spin text-sky-400" />
+                  <span className="text-[12px] font-medium">{importProgress}</span>
+                </div>
+              )}
 
               {/* Import Result Notification */}
               {importResult && (

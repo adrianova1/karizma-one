@@ -1,18 +1,5 @@
 [
   {
-    "id": "u_1001",
-    "username": "admin",
-    "passwordHash": "4caf927c528b77c6b2067abdae5e6638434764072609ff794250023e5dea54b5",
-    "role": "admin",
-    "phoneNumber": "09123456789",
-    "preferences": {
-      "autoCopy": true,
-      "gender": "unspecified"
-    },
-    "createdAt": "2026-08-21T06:59:41.004Z",
-    "updatedAt": "2026-08-21T06:59:41.005Z"
-  },
-  {
     "id": "u_1002",
     "username": "user",
     "passwordHash": "4caf927c528b77c6b2067abdae5e6638434764072609ff794250023e5dea54b5",
@@ -23,6 +10,19 @@
       "gender": "unspecified"
     },
     "createdAt": "2026-08-21T06:59:41.005Z",
+    "updatedAt": "2026-08-21T06:59:41.005Z"
+  },
+  {
+    "id": "u_1001",
+    "username": "admin",
+    "passwordHash": "scrypt:57bcb6314e571256121cf3e9d47929ae:9924d09f1fac3762b4ca1edbdd5e1a99712539be7eb510f47dd9f58384ec5158c42534dd5ca7890621511a57c4cc0ed2b14ab4cb7acca453efe76c6decc12e25",
+    "role": "admin",
+    "phoneNumber": "09123456789",
+    "preferences": {
+      "autoCopy": true,
+      "gender": "unspecified"
+    },
+    "createdAt": "2026-08-21T06:59:41.004Z",
     "updatedAt": "2026-08-21T06:59:41.005Z"
   }
 ]

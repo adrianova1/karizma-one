@@ -147,11 +147,11 @@ export class RankingEngine {
 
       scoredCandidates.sort((a, b) => b.finalRankScore - a.finalRankScore);
 
-      // Candidate rotation among tight top cluster (>= 94% of top score)
+      // Candidate rotation among tight top cluster (>= 98% of top score or exact matches)
       const topScore = scoredCandidates[0].finalRankScore;
       const topCluster = scoredCandidates.filter(c => 
-        c.finalRankScore >= topScore * 0.94 ||
-        (c.candidate.scoreBreakdown.exactTriggerScore > 0 && c.finalRankScore >= topScore - 15)
+        c.finalRankScore >= topScore * 0.98 ||
+        (c.candidate.scoreBreakdown.exactTriggerScore > 0 && c.finalRankScore >= topScore - 5)
       );
 
       const chosenIndex = topCluster.length > 1 ? (Math.abs(rotationIndex) % topCluster.length) : 0;
@@ -164,11 +164,7 @@ export class RankingEngine {
         topCandidate.scoreBreakdown.phraseScore >= 4.0 ||
         topCandidate.scoreBreakdown.aliasScore >= 3.0 ||
         topCandidate.scoreBreakdown.keywordScore >= 3.0 ||
-        topCandidate.scoreBreakdown.totalScore >= 3.0 ||
-        (topCandidate.confidenceScore >= this.MIN_CONFIDENCE_THRESHOLD &&
-          (topCandidate.scoreBreakdown.keywordScore >= 1.5 ||
-           topCandidate.scoreBreakdown.tokenOverlapScore >= 1.5 ||
-           topCandidate.scoreBreakdown.trigramSimilarityScore >= 0.35));
+        (topCandidate.scoreBreakdown.totalScore >= 4.0 && topCandidate.scoreBreakdown.tokenOverlapScore >= 2.0);
 
       if (isHighConfidence) {
         return {

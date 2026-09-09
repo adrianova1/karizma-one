@@ -234,8 +234,12 @@ export class ToneDistributor {
 
       const variations = PersonaGenerator.generateVariations(baseClean, scenario, userQuery || '', rotationIndex);
 
+      const isDomainSpecific = /قیاف|قیافت|به دلم نمیشین|زشت|لاغر|چاق|قد کوتا|کم\s*حرف|ساکت|چرا حرف نمیزنی|قهر|سرد شده|دلخور|سرسنگین|مسخره|مسخرم|تیکه|بی دست و پا|حقوق|درآمد|چقدر میگیری/.test(userQuery || '');
+      const isIdenticalSet = charismaticReply && charismaticReply === funnyReply && charismaticReply === confidentReply;
+      const isMemeContent = /خوب شد نیستی|لوله کشی داره|اندازه وقتی که خودمو تو آینه|تریاک|معتادی|شیت تست/.test(charismaticReply);
+
       // Inspect extracted replies for pairwise similarity and duplicates
-      const toneMap: Record<string, string> = {
+      let toneMap: Record<string, string> = {
         charismatic: charismaticReply,
         funny: funnyReply,
         confident: confidentReply,
@@ -243,31 +247,41 @@ export class ToneDistributor {
         mature: matureReply
       };
 
-      const toneKeys: Array<keyof typeof toneMap> = ['charismatic', 'funny', 'confident', 'mysterious', 'mature'];
-      const seenReplies: string[] = [];
+      if ((isDomainSpecific && (isIdenticalSet || isMemeContent)) || isMemeContent) {
+        toneMap = {
+          charismatic: variations.charismatic,
+          funny: variations.funny,
+          confident: variations.confident,
+          mysterious: variations.mysterious,
+          mature: variations.mature
+        };
+      } else {
+        const toneKeys: Array<keyof typeof toneMap> = ['charismatic', 'funny', 'confident', 'mysterious', 'mature'];
+        const seenReplies: string[] = [];
 
-      for (const k of toneKeys) {
-        let current = toneMap[k];
-        // Only consider invalid if genuinely empty or exact identical duplicate
-        let isMissingOrExactDup = !current || current.trim().length < 3;
+        for (const k of toneKeys) {
+          let current = toneMap[k];
+          // Only consider invalid if genuinely empty or exact identical duplicate
+          let isMissingOrExactDup = !current || current.trim().length < 3;
 
-        if (!isMissingOrExactDup) {
-          for (const prev of seenReplies) {
-            // Only trigger replacement if virtually identical (> 0.95 similarity)
-            const sim = PersianNormalizer.computeTrigramSimilarity(current, prev);
-            if (sim >= 0.95 || current.trim() === prev.trim()) {
-              isMissingOrExactDup = true;
-              break;
+          if (!isMissingOrExactDup) {
+            for (const prev of seenReplies) {
+              // Only trigger replacement if virtually identical (> 0.95 similarity)
+              const sim = PersianNormalizer.computeTrigramSimilarity(current, prev);
+              if (sim >= 0.95 || current.trim() === prev.trim()) {
+                isMissingOrExactDup = true;
+                break;
+              }
             }
           }
-        }
 
-        if (isMissingOrExactDup) {
-          // Fallback to synthesized persona variation only if original canonical reply was completely missing or duplicate
-          toneMap[k] = variations[k];
-        }
+          if (isMissingOrExactDup) {
+            // Fallback to synthesized persona variation only if original canonical reply was completely missing or duplicate
+            toneMap[k] = variations[k];
+          }
 
-        seenReplies.push(toneMap[k]);
+          seenReplies.push(toneMap[k]);
+        }
       }
 
       charismaticReply = toneMap.charismatic;

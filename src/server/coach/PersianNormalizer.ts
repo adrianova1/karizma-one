@@ -15,11 +15,21 @@ export class PersianNormalizer {
     'چی بگم',
     'چی بگم بهش',
     'چی بگم به',
+    'چی بهش بگم',
+    'بهش چی بگم',
     'چی جواب بدم',
+    'چی جواب بدم بهش',
+    'چی بهش جواب بدم',
+    'چه جوابی بدم',
+    'چه جوابی بهش بدم',
+    'جوابش چی بدم',
     'چی بفرستم',
+    'چی بفرستم براش',
     'چی بنویسم',
+    'چی بنویسم براش',
     'چی کار کنم',
     'چیکار کنم',
+    'چکار کنم',
     'چطور بگم',
     'چطوری بگم',
     'به نظرت',
@@ -30,9 +40,21 @@ export class PersianNormalizer {
     'چطور بگم بهش',
     'چطوری بگم بهش',
     'چطور رفتار کنم',
+    'چطوری رفتار کنم',
+    'چطور برخورد کنم',
+    'چطوری برخورد کنم',
+    'چه واکنشی نشون بدم',
+    'واکنش مناسب چیه',
+    'واکنش درست چیه',
+    'بهترین جواب چیه',
+    'بهترین پاسخ چیه',
+    'جواب دندان شکن چی بدم',
+    'جواب باکلاس چی بدم',
+    'پاسخ کاریزماتیک چی بدم',
+    'باید چی بگم',
+    'چی باید بگم',
     'چی بگم به دختری',
     'چی بگم به پسری',
-    'چی بهش بگم',
     'دختره میگه',
     'پسره میگه',
     'طرف میگه',
@@ -45,10 +67,54 @@ export class PersianNormalizer {
     'بهم میگه',
     'بهم گفت',
     'بهم پیام داد',
+    'راستی چی بگم',
+    'آخه چی بگم',
+    'یه سوال چی بگم',
+    'خدایی چی بگم',
     'دوست دارم',
     'ببین دوست دارم',
     'من دوست دارم'
   ]);
+
+  /**
+   * Extracts the situational core of a user query by removing conversational carrier prefixes,
+   * trailing question phrases, and modal metadata.
+   */
+  static extractCoreQuery(rawQuery: string): { coreQuery: string; originalQuery: string } {
+    if (!rawQuery || typeof rawQuery !== 'string') {
+      return { coreQuery: '', originalQuery: '' };
+    }
+
+    let text = rawQuery.trim();
+
+    // 1. If this is an Emergency Coach Modal prompt, extract the partner statement or situation directly
+    const emergencyMatch = text.match(/اتفاق\s*\/\s*پیام\s*طرف\s*مقابل:\s*["«']?([^"\n\r»']+)["»']?/);
+    if (emergencyMatch && emergencyMatch[1]?.trim().length >= 3) {
+      text = emergencyMatch[1].trim();
+    } else {
+      // Strip bracketed UI metadata
+      const { cleanText } = this.stripMetadataTags(text);
+      text = cleanText;
+    }
+
+    const norm = this.normalize(text);
+
+    // 2. Strip trailing question carrier frames (e.g. "... چی بگم بهش؟", "... چیکار کنم؟")
+    let core = norm.replace(/\s*(چی بگم بهش|چی بهش بگم|بهش چی بگم|چی بگم|چی جواب بدم بهش|چی بهش جواب بدم|چی جواب بدم|چه جوابی بدم|جوابش چی بدم|چیکار کنم|چی کار کنم|چکار کنم|چی بنویسم بهش|چی بنویسم|چی بفرستم براش|چی بفرستم|چی ارسال کنم|چطور بگم بهش|چطوری بگم بهش|چطور بگم|چطوری بگم|چطور رفتار کنم|چطوری رفتار کنم|چطور برخورد کنم|چطوری برخورد کنم|چه واکنشی نشون بدم|واکنش مناسب چیه|واکنش درست چیه|بهترین جواب چیه|بهترین پاسخ چیه|جواب دندان شکن چی بدم|جواب باکلاس چی بدم|پاسخ کاریزماتیک چی بدم|باید چی بگم|چی باید بگم|باید چی جواب بدم|چی باید جواب بدم|راهنماییم کن|کمکم کن|یه راهنمایی بکن)\s*$/g, '').trim();
+
+    // 3. Strip leading situational carrier prefaces (e.g. "وقتی یکی میپرسه...", "طرف گفت...", "دختره گفت...")
+    core = core.replace(/^(وقتی یکی میپرسه|وقتی یکی میگه|وقتی طرف میگه|وقتی طرف گفت|وقتی ازم میپرسه|وقتی میپرسه|وقتی پرسید|طرف گفت|طرف میگه|طرف پیام داده|طرف نوشت|طرف استوری گذاشته|دختره گفت|دختره میگه|دختره پیام داده|پسره گفت|پسره میگه|پسره پیام داده|کراشم گفت|کراشم میگه|همکارم گفت|همکارم میگه|پارتنرم گفت|پارتنرم میگه|دوستم گفت|دوستم میگه|رفیقم گفت|رفیقم میگه|یکی بهم گفت|یکی گفت|یکی میگه|یه نفر گفت|بهم گفت|بهم میگه|بهم پیام داد|بهم پیام داده|در جواب اینکه|در پاسخ به اینکه|در جواب|در پاسخ به|توی چت گفت|تو چت گفت|تو استوری گفت|تو دایرکت گفت|گفت)\s*/g, '').trim();
+
+    // If core became too short, keep the normalized query
+    if (core.length < 3) {
+      core = norm;
+    }
+
+    return {
+      coreQuery: core,
+      originalQuery: rawQuery.trim()
+    };
+  }
 
   /**
    * Canonicalize tone label (Persian/English variants) to one of the canonical keys

@@ -10,6 +10,7 @@ import { MASTER_CATEGORIES, getMasterCategoryTitle } from '../../data/scenarios.
 import { CoachDataPipeline } from '../coach/CoachDataPipeline.js';
 import { coachEngine, CoachEngine } from '../coach/CoachEngine.js';
 import { CoachLoader } from '../coach/CoachLoader.js';
+import { PersonaGenerator } from '../coach/PersonaGenerator.js';
 
 const router = Router();
 
@@ -242,13 +243,40 @@ router.post('/:id/like', async (req: AuthenticatedRequest, res: Response) => {
 // POST /api/scenarios - Create Scenario (Admin/Moderator)
 router.post('/', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { title, situation, opponentLine, environment, difficulty, responses, technique, bodyLanguage, teachingNote, goal } = req.body;
+    const { title, situation, opponentLine, environment, difficulty, responses, technique, bodyLanguage, teachingNote, goal, triggers, keywords, aliases } = req.body;
 
     if (!title || !situation) {
       return res.status(400).json({ error: 'عنوان و موقعیت سناریو الزامی است.' });
     }
 
     const now = new Date().toISOString();
+
+    let parsedTriggers: string[] = [];
+    if (Array.isArray(triggers)) {
+      parsedTriggers = triggers.map(String).map(t => t.trim()).filter(Boolean);
+    } else if (typeof triggers === 'string' && triggers.trim()) {
+      parsedTriggers = triggers.split(/[,\n;|،]+/).map(t => t.trim()).filter(Boolean);
+    }
+    if (parsedTriggers.length === 0) {
+      parsedTriggers = [title.trim()];
+      if (opponentLine && opponentLine.trim() !== title.trim()) {
+        parsedTriggers.push(opponentLine.trim());
+      }
+    }
+
+    let parsedKeywords: string[] = [];
+    if (Array.isArray(keywords)) {
+      parsedKeywords = keywords.map(String).map(k => k.trim()).filter(Boolean);
+    } else if (typeof keywords === 'string' && keywords.trim()) {
+      parsedKeywords = keywords.split(/[,\n;|،]+/).map(k => k.trim()).filter(Boolean);
+    }
+
+    let parsedAliases: string[] = [];
+    if (Array.isArray(aliases)) {
+      parsedAliases = aliases.map(String).map(a => a.trim()).filter(Boolean);
+    } else if (typeof aliases === 'string' && aliases.trim()) {
+      parsedAliases = aliases.split(/[,\n;|،]+/).map(a => a.trim()).filter(Boolean);
+    }
 
     const newScenario: ScenarioItem = {
       id: 'scen_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
@@ -258,6 +286,9 @@ router.post('/', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), a
       environment: environment ? environment.trim() : 'شیت‌تست و سنجش عیار',
       difficulty: difficulty || 'medium',
       goal: goal || 'جذابیت و کنترل مکالمه',
+      triggers: parsedTriggers,
+      keywords: parsedKeywords,
+      aliases: parsedAliases,
       responses: {
         charismatic: responses?.charismatic || '',
         funny: responses?.funny || '',
@@ -289,7 +320,7 @@ router.post('/', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), a
 router.put('/:id', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, situation, opponentLine, environment, difficulty, responses, technique, bodyLanguage, teachingNote, goal } = req.body;
+    const { title, situation, opponentLine, environment, difficulty, responses, technique, bodyLanguage, teachingNote, goal, triggers, keywords, aliases } = req.body;
 
     const scenarios = await getCanonicalScenarios();
     const scenario = scenarios.find(s => s.id === id);
@@ -299,6 +330,33 @@ router.put('/:id', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]),
 
     const now = new Date().toISOString();
 
+    let parsedTriggers: string[] | undefined = undefined;
+    if (triggers !== undefined) {
+      if (Array.isArray(triggers)) {
+        parsedTriggers = triggers.map(String).map(t => t.trim()).filter(Boolean);
+      } else if (typeof triggers === 'string') {
+        parsedTriggers = triggers.split(/[,\n;|،]+/).map(t => t.trim()).filter(Boolean);
+      }
+    }
+
+    let parsedKeywords: string[] | undefined = undefined;
+    if (keywords !== undefined) {
+      if (Array.isArray(keywords)) {
+        parsedKeywords = keywords.map(String).map(k => k.trim()).filter(Boolean);
+      } else if (typeof keywords === 'string') {
+        parsedKeywords = keywords.split(/[,\n;|،]+/).map(k => k.trim()).filter(Boolean);
+      }
+    }
+
+    let parsedAliases: string[] | undefined = undefined;
+    if (aliases !== undefined) {
+      if (Array.isArray(aliases)) {
+        parsedAliases = aliases.map(String).map(a => a.trim()).filter(Boolean);
+      } else if (typeof aliases === 'string') {
+        parsedAliases = aliases.split(/[,\n;|،]+/).map(a => a.trim()).filter(Boolean);
+      }
+    }
+
     const updatedData: Partial<ScenarioItem> = {
       title: title !== undefined ? title.trim() : scenario.title,
       situation: situation !== undefined ? situation.trim() : scenario.situation,
@@ -306,6 +364,9 @@ router.put('/:id', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]),
       environment: environment !== undefined ? environment.trim() : scenario.environment,
       difficulty: difficulty !== undefined ? difficulty : scenario.difficulty,
       goal: goal !== undefined ? goal : scenario.goal,
+      triggers: parsedTriggers !== undefined ? parsedTriggers : scenario.triggers,
+      keywords: parsedKeywords !== undefined ? parsedKeywords : scenario.keywords,
+      aliases: parsedAliases !== undefined ? parsedAliases : scenario.aliases,
       responses: {
         charismatic: responses?.charismatic !== undefined ? responses.charismatic : scenario.responses.charismatic,
         funny: responses?.funny !== undefined ? responses.funny : scenario.responses.funny,
@@ -354,18 +415,27 @@ router.post('/import-excel', authenticateToken, requireRole([Role.ADMIN]), async
 
     if (!Array.isArray(rows) || rows.length === 0) {
       return res.status(400).json({ 
-        error: 'داده‌های وارد شده خالی یا نامعتبر هستند. لطفاً فایل اکسل معتبر با حداقل یک سطر آپلود کنید.' 
+        error: 'داده‌های وارد شده خالی یا نامعتبر هستند. لطفاً فایل اکسل یا جیسون معتبر با حداقل یک سطر آپلود کنید.' 
       });
     }
 
-    if (rows.length > 2000) {
+    if (rows.length > 100000) {
       return res.status(400).json({ 
-        error: 'تعداد سطرهای فایل بیش از حد مجاز است (حداکثر ۲۰۰۰ سطر). لطفاً فایل را تقسیم کنید.' 
+        error: 'تعداد سطرهای ارسالی بیش از ۱۰۰,۰۰۰ سطر است. لطفاً داده‌ها را در دسته‌های کوچک‌تر بارگذاری فرمایید.' 
       });
     }
 
     const scenarios = await DBEngine.readTable<ScenarioItem>('scenarios');
     const now = new Date().toISOString();
+    
+    // Fast O(1) lookup Map for deduplication
+    const existingMap = new Map<string, ScenarioItem>();
+    for (const s of scenarios) {
+      if (s.title) existingMap.set(normalizePersian(s.title).toLowerCase(), s);
+      if (s.situation) existingMap.set(normalizePersian(s.situation).toLowerCase(), s);
+    }
+
+    const recordsToBatchUpsert: ScenarioItem[] = [];
     let importedCount = 0;
     let updatedCount = 0;
     const errors: string[] = [];
@@ -388,70 +458,123 @@ router.post('/import-excel', authenticateToken, requireRole([Role.ADMIN]), async
         const rawCat = row.environment || row.category || row['دسته‌بندی'] || row['دسته بندی'] || row['دسته'] || defaultCategory || '';
         const mappedCategory = getMasterCategoryTitle(rawCat);
 
-        // Extract Responses
-        const charismatic = (row.charismatic || row.tone_charismatic || row['پاسخ کاریزماتیک'] || row['کاریزماتیک'] || row['باکلاس'] || '').toString().trim();
-        const funny = (row.funny || row.tone_funny || row['پاسخ شوخ‌طبع'] || row['شوخ طبع'] || row['شوخ‌طبع'] || row['طنز'] || row['فان'] || row['رندانه'] || '').toString().trim();
-        const confident = (row.confident || row.tone_confident || row['پاسخ مقتدر'] || row['مقتدر'] || row['قاطع'] || row['با اعتماد به نفس'] || row['با اعتمادبه‌نفس'] || row['آلفا'] || '').toString().trim();
-        const mysterious = (row.mysterious || row.tone_mysterious || row['پاسخ مرموز'] || row['مرموز'] || row['پرکشش'] || row['چندلایه'] || '').toString().trim();
-        const mature = (row.mature || row.tone_mature || row['پاسخ متین'] || row['متین'] || row['پخته'] || row['بالغ'] || row['دیپلماتیک'] || '').toString().trim();
+        // Extract raw responses from multiple potential column names
+        let charismatic = (row.charismatic || row.tone_charismatic || row.tone_1 || row['پاسخ کاریزماتیک'] || row['کاریزماتیک'] || row['باکلاس'] || row['پاسخ باکلاس'] || '').toString().trim();
+        let funny = (row.funny || row.tone_funny || row.tone_2 || row['پاسخ شوخ‌طبع'] || row['شوخ طبع'] || row['شوخ‌طبع'] || row['طنز'] || row['فان'] || row['رندانه'] || '').toString().trim();
+        let confident = (row.confident || row.tone_confident || row.tone_3 || row.direct || row['پاسخ مقتدر'] || row['مقتدر'] || row['قاطع'] || row['با اعتماد به نفس'] || row['با اعتمادبه‌نفس'] || row['آلفا'] || '').toString().trim();
+        let mysterious = (row.mysterious || row.tone_mysterious || row.tone_4 || row.emotional || row['پاسخ مرموز'] || row['مرموز'] || row['پرکشش'] || row['چندلایه'] || '').toString().trim();
+        let mature = (row.mature || row.tone_mature || row.tone_5 || row.psychology || row['پاسخ متین'] || row['متین'] || row['پخته'] || row['بالغ'] || row['دیپلماتیک'] || '').toString().trim();
+
+        // If any of the 5 canonical tones is missing, dynamically synthesize distinct Persian tone variations
+        const hasMissingTone = !charismatic || !funny || !confident || !mysterious || !mature;
+        if (hasMissingTone) {
+          const baseText = charismatic || confident || funny || mysterious || mature || finalSituation;
+          const synthesized = PersonaGenerator.generateVariations(baseText, null, finalTitle, i);
+          if (!charismatic) charismatic = synthesized.charismatic;
+          if (!funny) funny = synthesized.funny;
+          if (!confident) confident = synthesized.confident;
+          if (!mysterious) mysterious = synthesized.mysterious;
+          if (!mature) mature = synthesized.mature;
+        }
 
         const opponentLine = (row.opponentLine || row.opponent_line || row['پیام مخاطب'] || row['کلام طرف مقابل'] || '').toString().trim();
-        const technique = (row.technique || row['تکنیک'] || row['روانشناسی'] || '').toString().trim();
-        const bodyLanguage = (row.bodyLanguage || row.body_language || row['زبان بدن'] || '').toString().trim();
-        const teachingNote = (row.teachingNote || row.teaching_note || row['نکته آموزشی'] || row['گام بعدی'] || '').toString().trim();
+        const technique = (row.technique || row['تکنیک'] || row['روانشناسی'] || 'کنترل فریم کلامی و حفظ ارزش بدون نیاز به تایید.').toString().trim();
+        const bodyLanguage = (row.bodyLanguage || row.body_language || row['زبان بدن'] || 'نگاه مستقیم، لبخند خونسرد و مکث آرام.').toString().trim();
+        const teachingNote = (row.teachingNote || row.teaching_note || row['نکته آموزشی'] || row['گام بعدی'] || 'مکث کوتاه، لبخند خونسرد و هدایت هوشمندانه مکالمه.').toString().trim();
         const difficulty = row.difficulty === 'hard' || row['دشواری'] === 'چالش‌برانگیز' ? 'hard' : (row.difficulty === 'easy' || row['دشواری'] === 'آسان' ? 'easy' : 'medium');
 
-        // Check if duplicate exists by title or situation
-        const existingIdx = scenarios.findIndex(s => 
-          normalizePersian(s.title).toLowerCase() === normalizePersian(finalTitle).toLowerCase() ||
-          (s.situation && normalizePersian(s.situation).toLowerCase() === normalizePersian(finalSituation).toLowerCase())
-        );
+        // Extract Triggers / Keywords / Aliases from Excel columns
+        let triggers: string[] = [];
+        const rawTriggers = row.triggers || row.trigger || row['عبارت‌های جستجو'] || row['تریگر'] || row['نمونه سوال'] || row['پیام‌ها'] || row['عبارات کلیدی'];
+        if (Array.isArray(rawTriggers)) {
+          triggers = rawTriggers.map(String).map(t => t.trim()).filter(Boolean);
+        } else if (typeof rawTriggers === 'string' && rawTriggers.trim()) {
+          triggers = rawTriggers.split(/[,\n;|،]+/).map(t => t.trim()).filter(Boolean);
+        }
+        if (triggers.length === 0) {
+          triggers = [finalTitle];
+          if (opponentLine && opponentLine !== finalTitle) {
+            triggers.push(opponentLine);
+          }
+        }
 
-        if (existingIdx !== -1) {
-          // Update existing scenario with new details
-          const updatedData = {
-            ...scenarios[existingIdx],
-            environment: mappedCategory || scenarios[existingIdx].environment,
+        let keywords: string[] = [];
+        const rawKeywords = row.keywords || row.keyword || row['کلمات کلیدی'] || row['کلمات'] || row['تگ‌ها'] || row['برچسب‌ها'];
+        if (Array.isArray(rawKeywords)) {
+          keywords = rawKeywords.map(String).map(k => k.trim()).filter(Boolean);
+        } else if (typeof rawKeywords === 'string' && rawKeywords.trim()) {
+          keywords = rawKeywords.split(/[,\n;|،]+/).map(k => k.trim()).filter(Boolean);
+        }
+
+        let aliases: string[] = [];
+        const rawAliases = row.aliases || row.alias || row['مترادف'] || row['هم‌معنی'];
+        if (Array.isArray(rawAliases)) {
+          aliases = rawAliases.map(String).map(a => a.trim()).filter(Boolean);
+        } else if (typeof rawAliases === 'string' && rawAliases.trim()) {
+          aliases = rawAliases.split(/[,\n;|،]+/).map(a => a.trim()).filter(Boolean);
+        }
+
+        // Check if duplicate exists via fast Map lookup
+        const normTitle = normalizePersian(finalTitle).toLowerCase();
+        const normSit = normalizePersian(finalSituation).toLowerCase();
+        const existing = existingMap.get(normTitle) || existingMap.get(normSit);
+
+        if (existing) {
+          const updatedItem: ScenarioItem = {
+            ...existing,
+            title: finalTitle,
+            situation: finalSituation,
+            opponentLine: opponentLine || existing.opponentLine,
+            environment: mappedCategory || existing.environment,
+            triggers: triggers.length > 0 ? triggers : existing.triggers,
+            keywords: keywords.length > 0 ? keywords : existing.keywords,
+            aliases: aliases.length > 0 ? aliases : existing.aliases,
             responses: {
-              charismatic: charismatic || scenarios[existingIdx].responses.charismatic,
-              funny: funny || scenarios[existingIdx].responses.funny,
-              confident: confident || scenarios[existingIdx].responses.confident,
-              mysterious: mysterious || scenarios[existingIdx].responses.mysterious,
-              mature: mature || scenarios[existingIdx].responses.mature
+              charismatic: charismatic || existing.responses.charismatic,
+              funny: funny || existing.responses.funny,
+              confident: confident || existing.responses.confident,
+              mysterious: mysterious || existing.responses.mysterious,
+              mature: mature || existing.responses.mature
             },
-            technique: technique || scenarios[existingIdx].technique,
-            bodyLanguage: bodyLanguage || scenarios[existingIdx].bodyLanguage,
-            teachingNote: teachingNote || scenarios[existingIdx].teachingNote,
+            technique: technique || existing.technique,
+            bodyLanguage: bodyLanguage || existing.bodyLanguage,
+            teachingNote: teachingNote || existing.teachingNote,
             updatedAt: now
           };
-          await DBEngine.updateRecord('scenarios', scenarios[existingIdx].id, updatedData);
+          recordsToBatchUpsert.push(updatedItem);
+          existingMap.set(normTitle, updatedItem);
+          existingMap.set(normSit, updatedItem);
           updatedCount++;
         } else {
-          // Create new scenario
           const newScenario: ScenarioItem = {
-            id: 'scen_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+            id: row.id ? String(row.id) : ('scen_' + Date.now() + '_' + i + '_' + Math.random().toString(36).substr(2, 5)),
             title: finalTitle,
             situation: finalSituation,
             opponentLine: opponentLine || undefined,
             environment: mappedCategory,
             difficulty,
-            goal: 'جذابیت و کنترل مکالمه',
+            goal: row.goal || 'جذابیت و کنترل مکالمه',
+            triggers,
+            keywords,
+            aliases,
             responses: {
-              charismatic: charismatic || 'پاسخ پیش‌فرض کاریزماتیک با حفظ چارچوب قدرتمند.',
-              funny: funny || 'پاسخ شوخ‌طبعانه و رندانه با چاشنی طنز موقعیتی.',
-              confident: confident || 'پاسخ صمیمانه و گرم با همدلی موثر.',
-              mysterious: mysterious || 'پاسخ تحلیلی و عمیق همراه با جذابیت کلامی.',
-              mature: mature || 'پاسخ دیپلماتیک و باوقار برای مدیریت منطقی گفتگو.'
+              charismatic,
+              funny,
+              confident,
+              mysterious,
+              mature
             },
-            technique: technique || '',
-            bodyLanguage: bodyLanguage || '',
-            teachingNote: teachingNote || '',
+            technique,
+            bodyLanguage,
+            teachingNote,
             createdAt: now,
             updatedAt: now,
             views: 0,
             likes: 0
           };
-          await DBEngine.insertRecord('scenarios', newScenario);
+          recordsToBatchUpsert.push(newScenario);
+          existingMap.set(normTitle, newScenario);
+          existingMap.set(normSit, newScenario);
           importedCount++;
         }
       } catch (rowErr: any) {
@@ -459,20 +582,27 @@ router.post('/import-excel', authenticateToken, requireRole([Role.ADMIN]), async
       }
     }
 
-    // Re-index coach engine
-    coachEngine.reindex();
+    // Execute atomic batch upsert
+    if (recordsToBatchUpsert.length > 0) {
+      await DBEngine.batchUpsertRecords('scenarios', recordsToBatchUpsert);
+      
+      // Synchronize Coach in-memory index
+      CoachLoader.reload();
+      coachEngine.reindex();
+    }
 
     res.json({
       success: true,
-      message: `عملیات تمام شد. ${importedCount} سناریو جدید اضافه و ${updatedCount} سناریو به‌روزرسانی شد.`,
+      message: `عملیات با موفقیت انجام شد. ${importedCount} سناریو افزوده و ${updatedCount} سناریو به‌روزرسانی شد. تمام سناریوها با ۵ لحن متمایز آماده هستند.`,
       importedCount,
       updatedCount,
+      totalProcessed: recordsToBatchUpsert.length,
       errors: errors.slice(0, 20)
     });
   } catch (error: any) {
     console.error('Import Excel Error:', error);
     res.status(500).json({ 
-      error: 'خطا در درون‌ریزی فایل اکسل: ' + (error.message || 'خطای داخلی سرور') 
+      error: 'خطا در درون‌ریزی فایل: ' + (error.message || 'خطای داخلی سرور') 
     });
   }
 });

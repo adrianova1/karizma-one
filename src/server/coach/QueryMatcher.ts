@@ -8,7 +8,9 @@ export class QueryMatcher {
   private static GENERIC_TOKENS = new Set([
     'پیام', 'جواب', 'سلام', 'دیدم', 'عکس', 'امروز', 'الان', 'خوب', 'وقت', 'روز', 'حرف',
     'صحبت', 'مکالمه', 'جذاب', 'گفت', 'میگه', 'بگم', 'بدم', 'چت', 'طرف', 'بهتر', 'باکلاس',
-    'رفتار', 'برخورد', 'ارتباط', 'کسی', 'نوشت', 'فرستاد'
+    'رفتار', 'برخورد', 'ارتباط', 'کسی', 'نوشت', 'فرستاد', 'بعد', 'قبل', 'چی', 'چیکار',
+    'کنم', 'بکنم', 'دو', 'هفته', 'ماه', 'سال', 'داده', 'بهش', 'بهم', 'واسه', 'براش', 'برا',
+    'این', 'اون', 'همکارم', 'دختره', 'پسره', 'چیه', 'هست', 'بود', 'شد', 'یه', 'سوالی', 'سوال'
   ]);
 
   // Non-dating / Out-of-Domain topics that must immediately trigger Fallback
@@ -67,16 +69,20 @@ export class QueryMatcher {
    * Matches query against index using layered strategy
    */
   match(rawQuery: string): ScenarioMatchCandidate[] {
+    const { coreQuery } = PersianNormalizer.extractCoreQuery(rawQuery);
     const normalizedQuery = PersianNormalizer.normalize(rawQuery);
     const queryTokens = PersianNormalizer.tokenize(rawQuery);
+    const coreTokens = coreQuery && coreQuery !== normalizedQuery ? PersianNormalizer.tokenize(coreQuery) : [];
 
-    if (!normalizedQuery) {
+    if (!normalizedQuery && !coreQuery) {
       return [];
     }
 
+    const primaryQuery = (coreQuery && coreQuery.length >= 3) ? coreQuery : normalizedQuery;
+
     // GUARD 1: Out-of-domain adversarial queries
     for (const pattern of QueryMatcher.OUT_OF_DOMAIN_PATTERNS) {
-      if (pattern.test(normalizedQuery)) {
+      if (pattern.test(normalizedQuery) || pattern.test(primaryQuery)) {
         return [];
       }
     }
@@ -88,15 +94,22 @@ export class QueryMatcher {
       }
     }
 
-    // LEVEL 1: Exact Normalized Trigger or Alias Matches
-    const exactMatches = this.index.findExactMatches(normalizedQuery);
+    // LEVEL 1: Exact Normalized Trigger or Alias Matches (Core query prioritized)
+    let exactMatches = this.index.findExactMatches(primaryQuery);
+    if (exactMatches.length === 0 && primaryQuery !== normalizedQuery) {
+      exactMatches = this.index.findExactMatches(normalizedQuery);
+    }
 
-    // LEVEL 2: Phrase Containment Match
-    const containedMatch = this.index.findContainedPhrase(normalizedQuery);
+    // LEVEL 2: Phrase Containment Match (Core query prioritized)
+    let containedMatch = this.index.findContainedPhrase(primaryQuery);
+    if (!containedMatch && primaryQuery !== normalizedQuery) {
+      containedMatch = this.index.findContainedPhrase(normalizedQuery);
+    }
 
     // LEVEL 3: Semantic Concept Scoring & Multi-Layer Composite Scoring
-    const distinctiveTokens = queryTokens.filter(t => !QueryMatcher.GENERIC_TOKENS.has(t) && !QueryMatcher.GENERIC_TOKENS.has(PersianNormalizer.stem(t)));
-    const tokensForCandidates = distinctiveTokens.length > 0 ? distinctiveTokens : queryTokens;
+    const combinedTokens = Array.from(new Set([...coreTokens, ...queryTokens]));
+    const distinctiveTokens = combinedTokens.filter(t => !QueryMatcher.GENERIC_TOKENS.has(t) && !QueryMatcher.GENERIC_TOKENS.has(PersianNormalizer.stem(t)));
+    const tokensForCandidates = distinctiveTokens.length > 0 ? distinctiveTokens : combinedTokens;
     let candidates = this.index.getCandidatesForTokens(tokensForCandidates);
     // Allow generous evaluation pool up to 1500 candidates so valid scenarios are never discarded prematurely
     if (candidates.length > 1500) {
@@ -123,8 +136,9 @@ export class QueryMatcher {
     for (const scenario of scenariosToScore) {
       const breakdown = this.computeScoreBreakdown(
         scenario,
+        primaryQuery,
         normalizedQuery,
-        queryTokens,
+        tokensForCandidates,
         containedMatch?.scenario.id === scenario.id ? containedMatch : null
       );
 
@@ -163,6 +177,7 @@ export class QueryMatcher {
    */
   private computeScoreBreakdown(
     scenario: CoachScenario,
+    primaryQuery: string,
     normalizedQuery: string,
     queryTokens: string[],
     containedMatch: { scenario: CoachScenario; phrase: string; isTrigger: boolean } | null
@@ -171,9 +186,11 @@ export class QueryMatcher {
     let exactTriggerScore = 0;
     for (const trigger of scenario.triggers || []) {
       const normTrig = PersianNormalizer.normalize(trigger);
-      if (normTrig && normalizedQuery === normTrig) {
-        exactTriggerScore = 100;
-        break;
+      if (normTrig && CoachIndex.isSubstantivePhrase(normTrig)) {
+        if (primaryQuery === normTrig || normalizedQuery === normTrig) {
+          exactTriggerScore = 100;
+          break;
+        }
       }
     }
 
@@ -185,22 +202,23 @@ export class QueryMatcher {
     } else {
       for (const trigger of scenario.triggers || []) {
         const normTrig = PersianNormalizer.normalize(trigger);
-        if (normTrig && normTrig.length >= 3) {
-          if (normTrig === normalizedQuery) {
+        if (normTrig && normTrig.length >= 4 && CoachIndex.isSubstantivePhrase(normTrig)) {
+          if (normTrig === primaryQuery || normTrig === normalizedQuery) {
             phraseScore = Math.max(phraseScore, 30.0);
             break;
           }
           const trigWords = normTrig.split(' ').filter(Boolean);
-          // Only multi-word trigger phrases qualify for phrase containment!
+          // Only substantive multi-word trigger phrases qualify for phrase containment!
           if (trigWords.length >= 2) {
-            if (normalizedQuery.startsWith(normTrig + ' ') || normalizedQuery.endsWith(' ' + normTrig) || normalizedQuery.includes(' ' + normTrig + ' ')) {
+            if (primaryQuery.startsWith(normTrig + ' ') || primaryQuery.endsWith(' ' + normTrig) || primaryQuery.includes(' ' + normTrig + ' ') ||
+                normalizedQuery.startsWith(normTrig + ' ') || normalizedQuery.endsWith(' ' + normTrig) || normalizedQuery.includes(' ' + normTrig + ' ')) {
               phraseScore = Math.max(phraseScore, 12.0);
               break;
             }
           }
-          const queryWords = normalizedQuery.split(' ').filter(Boolean);
+          const queryWords = primaryQuery.split(' ').filter(Boolean);
           if (queryWords.length >= 2) {
-            if (normTrig.startsWith(normalizedQuery + ' ') || normTrig.endsWith(' ' + normalizedQuery) || normTrig.includes(' ' + normalizedQuery + ' ')) {
+            if (normTrig.startsWith(primaryQuery + ' ') || normTrig.endsWith(' ' + primaryQuery) || normTrig.includes(' ' + primaryQuery + ' ')) {
               phraseScore = Math.max(phraseScore, 8.0);
               break;
             }
@@ -304,6 +322,51 @@ export class QueryMatcher {
       }
     }
 
+    // Specific Domain Intents
+    const isSalaryQuery = /حقوق|درامد|چقدر درمیاری|چقدر پول|حقوقت چقدره|میزان درامد|چقدر حقوق/.test(primaryQuery) || /حقوق|درامد/.test(normalizedQuery);
+    if (isSalaryQuery) {
+      if (/حقوق|درامد|میزان پول|درآمد|حقوقش|وضع مالی/.test(scenarioText)) {
+        keywordScore += 25.0;
+      }
+    }
+
+    const isMockeryOrTease = /مسخره|مسخرم|تیکه|ضایع|ضایعم|کنایه|تحقیر|تحقیرم|دست انداختن|بی دست و پا/.test(primaryQuery);
+    if (isMockeryOrTease) {
+      if (/دوست داشتن|عاشق|دوستم داری|محبت|علاقه/.test(scenarioText)) {
+        keywordScore -= 40.0;
+      }
+      if (/تیکه|کنایه|مسخره|حاضرجوابی|طعنه|شوخی تند|پررویی|بچه ای|دست انداختن/.test(scenarioText)) {
+        keywordScore += 20.0;
+      }
+    }
+
+    const isAppearanceCriticism = /قیاف|قیافت|ظاهر|تیپ|به دلم نمیشین|زشت|لاغر|چاق|قد کوتا|کچل/.test(primaryQuery);
+    if (isAppearanceCriticism) {
+      if (/تعریف|تمجید|تحسین|خوشگل|جذاب|خوشتیپ|به دلم نشست|ازت خوشم اومد/.test(scenarioText)) {
+        keywordScore -= 40.0;
+      }
+      if (/قیافه|ظاهر|چهره|خوشگل|زشت|جذابیت ظاهری|تیپ|به دلم/.test(scenarioText)) {
+        keywordScore += 20.0;
+      }
+    }
+
+    const isQuietnessQuery = /کم\s*حرف|ساکت|چرا حرف نمیزنی|حرفی برای گفتن|اروم و کم حرف/.test(primaryQuery);
+    if (isQuietnessQuery) {
+      if (/کم حرف|ساکت|اروم|حرف زدن|سکوت/.test(scenarioText)) {
+        keywordScore += 20.0;
+      }
+    }
+
+    const isColdOrSulking = /قهر|سرد شده|سرد شدی|دلخور|سرسنگین/.test(primaryQuery);
+    if (isColdOrSulking) {
+      if (/مگه من توعم|خوب شد نیستی|شیت تست/.test(scenarioText)) {
+        keywordScore -= 40.0;
+      }
+      if (/قهر|دلخور|سرد|سرسنگین|ناراحت|دعوا/.test(scenarioText)) {
+        keywordScore += 20.0;
+      }
+    }
+
     for (const token of queryTokens) {
       const tokenStem = PersianNormalizer.stem(token);
       for (const kw of normKeywords) {
@@ -383,7 +446,7 @@ export class QueryMatcher {
           return 8.5;
         }
 
-        const hasDelaySignal = /دیر|چند ساعت|چهار ساعت|پنج ساعت|چند روز|دو روز|سه روز|دیروز|دیشب|یه روز در میون|صبح|عصر|طول کشید|تاخیر|شبانه روز|بی خبری|بی پاسخی|تیک ابی|ابی خورد|ساعت ها روی خط/.test(query);
+        const hasDelaySignal = /دیر|چند ساعت|چهار ساعت|پنج ساعت|چند روز|دو روز|سه روز|چند هفته|دو هفته|یک ماه|ماه ها|دیروز|دیشب|یه روز در میون|صبح|عصر|طول کشید|تاخیر|شبانه روز|بی خبری|بی پاسخی|تیک ابی|ابی خورد|ساعت ها روی خط|بی خبر/.test(query);
         const hasChatAction = /جواب|پیام|سین|پاسخ|انلاین|روی خط|تایپ|سلام|پی وی|پیامتو|پیامامو|نوشته/.test(query);
         const hasUnreadOrIgnored = (/سین|دید|تیک دوم|تیک ابی|خوند/.test(query) && /جواب نداد|هیچی ننوشت|بی پاسخ|بازش نمیکنه|نمیکنه|نکرد|ندیدم|جواب نمیده|پاسخی نداده/.test(query));
         const hasOnlineIgnored = (/انلاین|افلاین|روی خط/.test(query) && /جواب نداد|پیام منو|سین نمیکنه|پی وی|پاسخ نداد|پیام نداد|پاسخی نداده/.test(query));
@@ -426,14 +489,14 @@ export class QueryMatcher {
         if (/^(پرو|پررو|پررویی|گستاخ|دور نگیر|زیادی دور نگیر|فاز نگیر|جو نگیرتت)$/.test(query) || /\b(پررو|پرو|پررویی|دور نگیر|فاز نگیر|جو نگیر|رو نگیر)\b/.test(query)) {
           return 8.5;
         }
-        if (/زیادی دور نگیر|دور نگیر|دور برت نداره|جو نگیرتت|فاز نگیر|زیادی فاز نگیر|رو نگیر|پررو نشو|جواب تیکه|کنایه زد|تحویل میگیری|پررو هستی|پرو هستی|جواب کل کل|مسخره کرد|طاقچه بالا|شوخی سنگین|بچه ای|بچگون|بچه بازی|بچه شدی|ادعات میشه|طعنه|خودشیفته|خاکی باش|ادعاها به قیافت|چقدر خودشیفته|اعتماد به نفست|فکر کردی خیلی زرنگی|لحن تمسخر|چقدر خوش خیالی/.test(query)) {
+        if (/زیادی دور نگیر|دور نگیر|دور برت نداره|جو نگیرتت|فاز نگیر|زیادی فاز نگیر|رو نگیر|پررو نشو|جواب تیکه|کنایه زد|تحویل میگیری|پررو هستی|پرو هستی|جواب کل کل|مسخره کرد|مسخرم کرد|مسخرم میکنه|مسخره میکنه|دست انداختن|دستم انداخته|ضایعم کرد|ضایع کرد|بی دست و پا|بی دست و پایی|طاقچه بالا|شوخی سنگین|بچه ای|بچگون|بچه بازی|بچه شدی|ادعات میشه|طعنه|خودشیفته|خاکی باش|ادعاها به قیافت|چقدر خودشیفته|اعتماد به نفست|فکر کردی خیلی زرنگی|لحن تمسخر|چقدر خوش خیالی/.test(query)) {
           return 8.5;
         }
         if (/فکر میکنی از بقیه بهتری|اعتماد به نفست کاذبه|قیافه میگیری|کسی تحویلت میگیره|تو رو چه به این حرفای گنده|بچه سالی|هنوز بزرگ نشدی|خودشو میندازه وسط|لحنش کاملا تیکه دار|چقد پرویی|شوخی زننده|ادای ادمای مغرور|طعنه و کنایه|فکر کردی کی هستی|قیافه گرفتی|زرنگی که اینطوری|خوش خیالی که فکر میکنی/.test(query)) {
           return 8.0;
         }
 
-        const hasTeaseLabel = /تیکه|کنایه|مسخره|تمسخر|کل کل|طاقچه بالا|پرو|پررو|تحویل|ادعا|بچه|بچگونه|بچه سال|قیافه|طعنه|خودشیفته|مغرور|خاکی باش|پروی|پرروی|دست انداختن|زرنگ|زرنگی|خوش خیال|خوش خیالی|دور نگیر|فاز نگیر|جو نگیر|رو نگیر/.test(query);
+        const hasTeaseLabel = /تیکه|کنایه|مسخره|مسخرم|تمسخر|کل کل|طاقچه بالا|پرو|پررو|تحویل|ادعا|بچه|بچگونه|بچه سال|قیافه|طعنه|خودشیفته|مغرور|خاکی باش|پروی|پرروی|دست انداختن|دست انداخت|ضایع|ضایعم|تحقیر|تحقیرم|بی دست و پا|زرنگ|زرنگی|خوش خیال|خوش خیالی|دور نگیر|فاز نگیر|جو نگیر|رو نگیر/.test(query);
         const hasTeaseActionContext = /زد|گفت|نوشت|انداخت|کرد|میگیری|میشه|هستی|شدی|چی بگم|جواب|لحنش|گف|درنیار|اطرافیان|فکر میکنی|فکر کردی|به قیافت|پیام داده که فکر کردی|لحن تمسخر|زیادی/.test(query);
         if (hasTeaseLabel && (hasTeaseActionContext || query.length < 25) && !/استوری/.test(query)) return 7.0;
         return 0;
@@ -464,8 +527,8 @@ export class QueryMatcher {
 
       case 'scen_6': {
         // ۶. پذیرش و پاسخ به تعریف و تمجید (عطر، استایل، صدا، موزیک، مهارت، بیان، تسلط و تیپ)
-        // Guard against generic theory
-        if (/اصول|راهنمایی کلی|تئوری|مشاوره/.test(query)) return 0;
+        // Guard against generic theory or criticism/rejection
+        if (/اصول|راهنمایی کلی|تئوری|مشاوره|به دلم نمیشین|به دلم ننشست|خوشم نمیاد|زشت|بدتیپ|لاغر|چاق|نمیخوام|قیافت|قیافه/.test(query)) return 0;
 
         if (/تعریف کرد|تعریف از|گفت خوشتیپ|گفت جذاب|گفت نازی|نازی هستی|خوش برخورد|تعریف از هیکل|از لباسم تعریف|پاسخ به تعریف|تحسین کرد|تحسین از|تمجید از|از تیپ و پوشش|اسم ادکلنت|سلیقه موسیقیت|عطرت خوشبو|تسلطت روی کنفرانس|عطری که زدی|چقدر خوش صحبتی/.test(query)) {
           return 8.5;
