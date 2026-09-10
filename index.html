@@ -1,61 +1,18 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#09090b" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>مرکز کاریزما | بزرگترین مرجع هوشمند کاریزما و مهارت گفتگو</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مرکز کاریزما</title>
     <meta name="description" content="بزرگترین مرجع تخصصی فارسی کاریزما، مهارت گفتگو، جذابیت فردی و موتور هوشمند سناریوهای ارتباطی" />
-    <meta property="og:title" content="مرکز کاریزما | بزرگترین مرجع هوشمند کاریزما و مهارت گفتگو" />
+    <meta property="og:title" content="مرکز کاریزما" />
     <meta property="og:description" content="بزرگترین مرجع تخصصی فارسی کاریزما، مهارت گفتگو، جذابیت فردی و موتور هوشمند سناریوهای ارتباطی" />
-    <script>
-      // 1. Intercept fetch to automatically support subdirectory deployment under /app
-      const originalFetch = window.fetch;
-      window.fetch = function (input, init) {
-        if (typeof input === 'string' && input.startsWith('/api/')) {
-          const basePath = window.location.pathname.startsWith('/app') ? '/app' : '';
-          input = basePath + input;
-        }
-        return originalFetch(input, init);
-      };
-
-      // 2. Capture and show fatal client-side JS syntax/runtime crashes on screen if page goes white
-      window.addEventListener('error', function (event) {
-        var msg = event.message ? event.message.toString() : '';
-        if (msg.includes('WebSocket') || msg.includes('vite') || msg.includes('HMR') || msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
-          return;
-        }
-        var fallback = document.getElementById('error-fallback');
-        var text = document.getElementById('error-fallback-text');
-        if (fallback && text) {
-          fallback.style.display = 'block';
-          text.textContent += '\n[' + new Date().toLocaleTimeString() + '] ' + event.message + ' at ' + event.filename + ':' + event.lineno + ':' + event.colno;
-        }
-      });
-      window.addEventListener('unhandledrejection', function (event) {
-        var reason = event.reason ? (event.reason.message || event.reason).toString() : '';
-        if (reason.includes('WebSocket') || reason.includes('vite') || reason.includes('HMR') || reason.includes('Failed to fetch') || reason.includes('NetworkError') || reason.includes('Load failed')) {
-          return;
-        }
-        var fallback = document.getElementById('error-fallback');
-        var text = document.getElementById('error-fallback-text');
-        if (fallback && text) {
-          fallback.style.display = 'block';
-          text.textContent += '\n[' + new Date().toLocaleTimeString() + '] Unhandled Rejection: ' + (event.reason ? (event.reason.message || event.reason) : 'Unknown reason');
-        }
-      });
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   </head>
-  <body style="background-color: #09090b; color: #f8fafc; margin: 0; padding: 0; width: 100%; min-height: 100dvh; overflow-x: hidden; overscroll-behavior: none;">
-    <div id="error-fallback" style="display:none; padding: 20px; background: #18181b; color: #f87171; border: 1px solid #7f1d1d; margin: 20px; font-family: monospace; border-radius: 12px; direction: ltr; text-align: left;">
-      <h3 style="margin-top:0; direction: rtl; text-align: right; color: #ef4444;">⚠️ خطای بارگذاری برنامه (Application Load Error)</h3>
-      <p style="direction: rtl; text-align: right; color: #fca5a5;">صفحه به دلیل یک خطای جاوااسکریپت یا بارگذاری منابع متوقف شده است. جزئیات خطا:</p>
-      <pre id="error-fallback-text" style="white-space: pre-wrap; word-break: break-all; font-size: 13px; color: #f87171; background: #09090b; padding: 10px; border-radius: 8px;"></pre>
-    </div>
+  <body class="bg-neutral-950 text-neutral-100 font-sans antialiased min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

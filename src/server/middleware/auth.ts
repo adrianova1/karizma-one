@@ -1,15 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
+import { TokenService } from '../services/token.service.js';
 import { Role } from '../../types.js';
-import { TokenService, TokenPayload } from '../services/token.service.js';
 
-export { TokenService };
+export interface AuthenticatedUser {
+  id: string;
+  username: string;
+  role: Role | string;
+  [key: string]: any;
+}
 
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    username: string;
-    role: Role;
-  };
+  user?: AuthenticatedUser;
 }
 
 export function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -17,22 +18,23 @@ export function authenticateToken(req: AuthenticatedRequest, res: Response, next
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ code: 'AUTH_REQUIRED', error: 'دسترسی غیرمجاز. لطفاً وارد حساب کاربری خود شوید.' });
+    return res.status(401).json({ error: 'توکن ورود ارسال نشده است.' });
   }
 
-  const user = TokenService.verify(token);
-  if (!user) {
-    return res.status(401).json({ code: 'AUTH_EXPIRED', error: 'نشست کاربری شما منقضی شده است. لطفاً مجدداً وارد حساب کاربری خود شوید.' });
+  const decoded = TokenService.verify(token);
+  if (!decoded) {
+    return res.status(403).json({ error: 'توکن ورود نامعتبر یا منقضی شده است.' });
   }
 
-  req.user = user;
+  req.user = decoded as AuthenticatedUser;
   next();
 }
 
-export function requireRole(allowedRoles: Role[]) {
+export function requireRole(roles: (Role | string)[]) {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    if (!req.user || !allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ code: 'ROLE_FORBIDDEN', error: 'شما سطح دسترسی لازم برای انجام این عملیات را ندارید.' });
+    const user = req.user;
+    if (!user || !roles.includes(user.role)) {
+      return res.status(403).json({ error: 'شما سطح دسترسی مناسب برای انجام این کار را ندارید.' });
     }
     next();
   };
