@@ -196,7 +196,7 @@ export class CoachLoader {
    * Load the 60K bank from data/chunks/ as the Sole Canonical Source of Truth
    */
   static loadData(): { scenarios: CoachScenario[]; fallbacks: CoachFallbackItem[]; categories: CoachCategory[] } {
-    if (this.loaded && this.scenarios.length === 60000) {
+    if (this.loaded && this.scenarios.length > 0) {
       return { scenarios: this.scenarios, fallbacks: this.fallbacks, categories: this.categories };
     }
 
