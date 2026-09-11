@@ -12,10 +12,12 @@ const router = Router();
 
 // POST /api/ai/query
 router.post('/query', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
-  const { question, customSystemPrompt, conversationId, history } = req.body;
+  const { customSystemPrompt, conversationId, history } = req.body;
+  const rawQuestion = req.body.question || req.body.query;
+  const question = typeof rawQuestion === 'string' ? rawQuestion.trim() : '';
   const user = req.user!;
 
-  if (!question || typeof question !== 'string') {
+  if (!question) {
     return res.status(400).json({ error: 'ارسال سوال یا متن موقعیت کاربر الزامی است.' });
   }
 

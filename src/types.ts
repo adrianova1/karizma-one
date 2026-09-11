@@ -12,7 +12,10 @@ export type CoachingMode =
   | 'body_language' 
   | 'story_starter' 
   | 'shit_test'
-  | 'emergency';
+  | 'emergency'
+  | 'live_coach'
+  | 'scenario'
+  | 'analyzer';
 
 export interface CoachingModeInfo {
   id: string;
@@ -57,7 +60,7 @@ export interface Plan {
   academyAccess?: string;
   historyRetentionDays?: number;
   badge?: string;
-  features: string[];
+  features?: string[];
   createdAt?: string;
 }
 
@@ -68,7 +71,8 @@ export interface Subscription {
   status: 'active' | 'expired' | 'pending' | 'canceled';
   startDate: string;
   endDate: string;
-  queriesUsed: number;
+  queriesUsed?: number;
+  queryCount?: number;
   receiptNumber?: string;
   paymentProofUrl?: string;
   createdAt?: string;
@@ -100,18 +104,13 @@ export interface ScenarioItem {
   difficulty?: string;
   goal?: string;
   context?: string;
+  genderContext?: string;
   category?: string;
-  triggers: string[];
-  keywords: string[];
-  aliases: string[];
+  triggers?: string[];
+  keywords?: string[];
+  aliases?: string[];
   user_input_patterns?: string[];
-  responses: {
-    charismatic: string;
-    funny: string;
-    confident: string;
-    mysterious: string;
-    mature: string;
-  };
+  responses: Record<string, string>;
   technique?: string;
   bodyLanguage?: string;
   teachingNote?: string;
@@ -129,6 +128,7 @@ export interface PromptTemplate {
   systemInstruction: string;
   templateText: string;
   searchThreshold?: number;
+  isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -147,13 +147,14 @@ export interface Conversation {
   userId: string;
   title: string;
   mode?: CoachingMode | string;
+  messages?: Message[];
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface Message {
-  id: string;
-  conversationId: string;
+  id?: string;
+  conversationId?: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
   mode?: string;
@@ -166,7 +167,10 @@ export interface Message {
     mature?: string;
   };
   matchedScenarioId?: string;
-  createdAt: string;
+  timestamp?: string;
+  isSubscriptionAlert?: boolean;
+  structuredData?: any;
+  createdAt?: string;
 }
 
 export interface AuditLog {
@@ -183,6 +187,7 @@ export interface Setting {
   id: string;
   key: string;
   value: any;
+  description?: string;
   updatedAt?: string;
 }
 
@@ -208,12 +213,16 @@ export interface ContentItem {
 export interface Receipt {
   id: string;
   userId: string;
-  planId: string;
+  planId?: string;
   amount: number;
-  receiptNumber: string;
-  status: 'pending' | 'approved' | 'rejected';
+  receiptNumber?: string;
+  status: 'pending' | 'approved' | 'rejected' | 'success' | 'failed';
   paymentDate?: string;
   adminNote?: string;
+  traceNumber?: string;
+  senderCard?: string;
+  subscriptionId?: string;
+  refId?: string;
   createdAt: string;
 }
 
@@ -249,7 +258,9 @@ export interface StatisticsRecord {
 
 export interface TrackingEvent {
   id?: string;
-  eventType: string;
+  eventType?: string;
+  eventName?: string;
+  category?: string;
   timestamp?: string;
   userId?: string;
   metadata?: Record<string, any>;
@@ -258,7 +269,8 @@ export interface TrackingEvent {
 export interface Ticket {
   id: string;
   userId: string;
-  title: string;
+  title?: string;
+  subject?: string;
   status: 'open' | 'answered' | 'closed';
   createdAt: string;
   updatedAt?: string;
@@ -280,4 +292,22 @@ export interface AITraceRecord {
   response: string;
   latencyMs: number;
   timestamp: string;
+}
+
+export interface AIScenarioQueryResponse {
+  reply?: string;
+  nextMove?: string;
+  whyWorks?: string;
+  structuredResponses?: {
+    charismatic?: string;
+    funny?: string;
+    confident?: string;
+    mysterious?: string;
+    mature?: string;
+  };
+  responses?: Record<string, string>;
+  matchedScenario?: any;
+  confidenceScore?: number;
+  sources?: any[];
+  [key: string]: any;
 }

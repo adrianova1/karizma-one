@@ -264,6 +264,14 @@ export class DBEngine {
     }
   }
 
+  static list<T>(tableName: string): T[] {
+    return this.readTableSync<T>(tableName);
+  }
+
+  static async delete(tableName: string, id: string): Promise<void> {
+    return this.deleteRecord(tableName, id);
+  }
+
   static async deleteRecord(tableName: string, id: string): Promise<void> {
     ensureTableMigrated(tableName);
     try {
@@ -281,7 +289,7 @@ export class DBEngine {
     try {
       // 1. Seed Users (admin & user)
       const users = await this.readTable<User>('users');
-      const adminPass = process.env.ADMIN_PASSWORD || '123456';
+      const adminPass = (process.env.ADMIN_PASSWORD || '').trim() || '123456';
       const adminIdx = users.findIndex(u => u.username.toLowerCase() === 'admin');
       
       if (adminIdx === -1) {
@@ -301,7 +309,10 @@ export class DBEngine {
         };
         users.push(adminUser);
       } else {
-        if (!users[adminIdx].passwordHash) {
+        // Synchronize admin password if ADMIN_PASSWORD is set in environment, or if hash missing
+        if (process.env.ADMIN_PASSWORD) {
+          users[adminIdx].passwordHash = hashPassword(adminPass);
+        } else if (!users[adminIdx].passwordHash) {
           users[adminIdx].passwordHash = hashPassword(adminPass);
         }
         users[adminIdx].role = Role.ADMIN;

@@ -4,18 +4,39 @@
  */
 
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import { Role } from '../../types.js';
 
 // Resolve JWT secret: prefer process.env.JWT_SECRET.
-// In production without JWT_SECRET, generate an ephemeral cryptographically strong secret and warn.
-let resolvedSecret = process.env.JWT_SECRET;
+// If not provided in environment, persist a high-entropy secret to data/.jwt_secret
+// so that server reboots / PM2 restarts do not invalidate existing client sessions and tokens.
+const DATA_DIR = path.join(process.cwd(), 'data');
+const secretFile = path.join(DATA_DIR, '.jwt_secret');
+
+let resolvedSecret = (process.env.JWT_SECRET || '').trim();
 if (!resolvedSecret) {
-  if (process.env.NODE_ENV === 'production') {
-    console.warn('[SECURITY WARNING] JWT_SECRET is not set in environment variables! Using auto-generated high-entropy key for this process. Sessions will invalidate across restarts.');
-    resolvedSecret = crypto.randomBytes(32).toString('hex');
-  } else {
-    // Stable development secret for seamless local dev server restarts
-    resolvedSecret = 'karizma_center_dev_secret_key_138592_secure_token';
+  try {
+    if (fs.existsSync(secretFile)) {
+      const fileSecret = fs.readFileSync(secretFile, 'utf8').trim();
+      if (fileSecret.length >= 16) {
+        resolvedSecret = fileSecret;
+      }
+    }
+  } catch (e) {
+    // ignore read error
+  }
+}
+
+if (!resolvedSecret) {
+  resolvedSecret = 'karizma_center_secret_key_' + crypto.randomBytes(32).toString('hex');
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(secretFile, resolvedSecret, 'utf8');
+  } catch (e) {
+    // fallback in-memory
   }
 }
 
@@ -33,12 +54,18 @@ export class TokenService {
   /**
    * Signs a payload into a secure HMAC-SHA256 JWT string
    */
-  static sign(payload: { id: string; username: string; role: Role | string }, expiresInSeconds: number = 24 * 60 * 60): string {
+  static sign(payload: { id: string; username: string; role: Role | string }, expiresInSeconds: number = 30 * 24 * 60 * 60): string {
     const now = Math.floor(Date.now() / 1000);
     const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
     
-    // Ensure role is valid
-    const validRole = Object.values(Role).includes(payload.role as Role) ? (payload.role as Role) : Role.USER;
+    // Normalize role case-insensitively
+    const rawRole = String(payload.role || '').toLowerCase().trim();
+    let validRole: Role = Role.USER;
+    if (rawRole === 'admin') {
+      validRole = Role.ADMIN;
+    } else if (rawRole === 'moderator') {
+      validRole = Role.MODERATOR;
+    }
     
     const claims: TokenPayload = {
       id: String(payload.id),
@@ -102,8 +129,15 @@ export class TokenService {
         return null; // Missing mandatory claims
       }
 
-      // 4. Validate role against standard Role enum
-      if (!Object.values(Role).includes(payload.role)) {
+      // 4. Validate and normalize role against standard Role enum (case-insensitive)
+      const rawRole = String(payload.role || '').toLowerCase().trim();
+      if (rawRole === 'admin') {
+        payload.role = Role.ADMIN;
+      } else if (rawRole === 'moderator') {
+        payload.role = Role.MODERATOR;
+      } else if (rawRole === 'user') {
+        payload.role = Role.USER;
+      } else {
         return null;
       }
 
