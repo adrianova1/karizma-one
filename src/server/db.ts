@@ -1,12 +1,13 @@
 /**
  * Karizma Center DB
- * High-performance ACID-compliant SQLite Engine with WAL mode, prepared statements, and JSON backup sync
+ * 100% Pure JavaScript High-Performance In-Memory DB with Atomic JSON Persistence.
+ * Zero native C++ dependencies, zero compilation, zero node-gyp.
+ * Fast O(1) in-memory lookups and debounced atomic disk persistence.
  */
 
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import Database from 'better-sqlite3';
 import { 
   User, Plan, Subscription, KnowledgeCard, PromptTemplate, PromptHistory, 
   Conversation, AuditLog, Setting, Notification, ContentItem, Receipt, 
@@ -53,121 +54,98 @@ export function verifyPassword(password: string, storedHash: string): boolean {
   }
 }
 
-// ==================== SQLITE DATABASE INITIALIZATION ====================
+// ==================== 100% PURE JS IN-MEMORY ENGINE & ATOMIC STORE ====================
 
-const dbPath = path.join(DATA_DIR, 'karizma.db');
-const sqlite = new Database(dbPath);
+// In-Memory store for all tables: tableName -> Map<id, item>
+const tableStore = new Map<string, Map<string, any>>();
+// Debounce timers for disk writing: tableName -> Timeout
+const saveTimers = new Map<string, NodeJS.Timeout>();
 
-// Enable Write-Ahead Logging (WAL) for high concurrency and sub-millisecond writes
-sqlite.pragma('journal_mode = WAL');
-sqlite.pragma('synchronous = NORMAL');
-sqlite.pragma('temp_store = MEMORY');
+function getRecordId(item: any): string {
+  return String(item.id || item.username || item.key || `rec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`);
+}
 
-// Main KV table storing all schema tables as structured JSON records
-sqlite.exec(`
-  CREATE TABLE IF NOT EXISTS kv_records (
-    table_name TEXT NOT NULL,
-    id TEXT NOT NULL,
-    data TEXT NOT NULL,
-    updated_at INTEGER NOT NULL,
-    PRIMARY KEY (table_name, id)
-  );
-  CREATE INDEX IF NOT EXISTS idx_kv_table ON kv_records(table_name);
-`);
-
-// Prepared statements for zero-overhead query execution
-const selectAllStmt = sqlite.prepare('SELECT data FROM kv_records WHERE table_name = ? ORDER BY updated_at ASC');
-const selectByIdStmt = sqlite.prepare('SELECT data FROM kv_records WHERE table_name = ? AND id = ?');
-const upsertStmt = sqlite.prepare(`
-  INSERT INTO kv_records (table_name, id, data, updated_at)
-  VALUES (?, ?, ?, ?)
-  ON CONFLICT(table_name, id) DO UPDATE SET
-    data = excluded.data,
-    updated_at = excluded.updated_at
-`);
-const deleteStmt = sqlite.prepare('DELETE FROM kv_records WHERE table_name = ? AND id = ?');
-const deleteAllTableStmt = sqlite.prepare('DELETE FROM kv_records WHERE table_name = ?');
-const countTableStmt = sqlite.prepare('SELECT COUNT(*) as count FROM kv_records WHERE table_name = ?');
-
-// Track migrated tables
-const migratedTables = new Set<string>();
-
-/**
- * Transparently migrates existing JSON files into SQLite table on first access
- */
-function ensureTableMigrated(tableName: string): void {
-  if (migratedTables.has(tableName)) return;
-  migratedTables.add(tableName);
-
+function loadTableFromDiskSync(tableName: string): Map<string, any> {
+  const map = new Map<string, any>();
   try {
-    const row = countTableStmt.get(tableName) as { count: number } | undefined;
-    if (!row || row.count === 0) {
-      const jsonPath = path.join(DATA_DIR, `${tableName}.json`);
-      if (fs.existsSync(jsonPath)) {
-        const raw = fs.readFileSync(jsonPath, 'utf8');
-        if (raw && raw.trim().length > 0) {
-          const records: any[] = JSON.parse(raw);
-          if (Array.isArray(records) && records.length > 0) {
-            const insertTx = sqlite.transaction((items: any[]) => {
-              for (const item of items) {
-                const id = String(item.id || item.username || item.key || `rec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`);
-                upsertStmt.run(tableName, id, JSON.stringify(item), Date.now());
-              }
-            });
-            insertTx(records);
-            console.log(`[SQLite Migration] Migrated ${records.length} records for ${tableName} into SQLite.`);
+    const filePath = path.join(DATA_DIR, `${tableName}.json`);
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, 'utf8');
+      if (raw && raw.trim().length > 0) {
+        const records = JSON.parse(raw);
+        if (Array.isArray(records)) {
+          for (const item of records) {
+            if (item) {
+              const id = getRecordId(item);
+              map.set(id, item);
+            }
           }
         }
       }
     }
   } catch (err) {
-    console.warn(`[SQLite Migration] Note during ${tableName} migration:`, err);
+    console.warn(`[DBEngine] Warning reading table ${tableName} from disk:`, err);
+  }
+  return map;
+}
+
+function getTableMap(tableName: string): Map<string, any> {
+  let map = tableStore.get(tableName);
+  if (!map) {
+    map = loadTableFromDiskSync(tableName);
+    tableStore.set(tableName, map);
+  }
+  return map;
+}
+
+function scheduleSaveToDisk(tableName: string): void {
+  const existing = saveTimers.get(tableName);
+  if (existing) clearTimeout(existing);
+
+  const debounceMs = tableName === 'scenarios' ? 3000 : 800;
+
+  const timer = setTimeout(() => {
+    try {
+      const map = tableStore.get(tableName);
+      if (!map) return;
+      const records = Array.from(map.values());
+      const targetPath = path.join(DATA_DIR, `${tableName}.json`);
+      const tempPath = `${targetPath}.${Date.now()}.${Math.random().toString(36).substring(2, 6)}.tmp`;
+      fs.writeFileSync(tempPath, JSON.stringify(records, null, 2), 'utf8');
+      fs.renameSync(tempPath, targetPath);
+    } catch (err) {
+      console.error(`[DBEngine] Failed to persist ${tableName} to disk:`, err);
+    } finally {
+      saveTimers.delete(tableName);
+    }
+  }, debounceMs);
+
+  saveTimers.set(tableName, timer);
+}
+
+function flushSaveToDiskSync(tableName: string): void {
+  const existing = saveTimers.get(tableName);
+  if (existing) {
+    clearTimeout(existing);
+    saveTimers.delete(tableName);
+  }
+  try {
+    const map = tableStore.get(tableName);
+    if (!map) return;
+    const records = Array.from(map.values());
+    const targetPath = path.join(DATA_DIR, `${tableName}.json`);
+    const tempPath = `${targetPath}.${Date.now()}.${Math.random().toString(36).substring(2, 6)}.tmp`;
+    fs.writeFileSync(tempPath, JSON.stringify(records, null, 2), 'utf8');
+    fs.renameSync(tempPath, targetPath);
+  } catch (err) {
+    console.error(`[DBEngine] Failed to flush ${tableName} to disk:`, err);
   }
 }
 
-// Debounced background sync for disaster recovery / file backups
-const pendingBackups = new Map<string, NodeJS.Timeout>();
-
 export class DBEngine {
-  private static scheduleJsonBackup(tableName: string, data: any[]): void {
-    // For large tables like 'scenarios' with over 5,000 records, do not serialize entire array into a massive JSON file on every write
-    // This prevents thread locking, huge string allocations, and RAM spikes. SQLite WAL is the persistent store.
-    if (tableName === 'scenarios' && data.length > 5000) {
-      return;
-    }
-
-    const existing = pendingBackups.get(tableName);
-    if (existing) clearTimeout(existing);
-
-    const timeout = setTimeout(() => {
-      try {
-        const filePath = path.join(DATA_DIR, `${tableName}.json`);
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-      } catch (e) {
-        console.warn(`[DBEngine Backup] Could not write JSON backup for ${tableName}:`, e);
-      } finally {
-        pendingBackups.delete(tableName);
-      }
-    }, 2000); // 2 second debounce
-
-    pendingBackups.set(tableName, timeout);
-  }
-
   static readTableSync<T>(tableName: string): T[] {
-    ensureTableMigrated(tableName);
-    try {
-      const rows = selectAllStmt.all(tableName) as Array<{ data: string }>;
-      const result: T[] = [];
-      for (const row of rows) {
-        try {
-          result.push(JSON.parse(row.data) as T);
-        } catch {}
-      }
-      return result;
-    } catch (e) {
-      console.warn(`[DBEngine SQLite] Error in readTableSync for ${tableName}:`, e);
-      return [];
-    }
+    const map = getTableMap(tableName);
+    return Array.from(map.values()) as T[];
   }
 
   static async readTable<T>(tableName: string): Promise<T[]> {
@@ -175,92 +153,55 @@ export class DBEngine {
   }
 
   static async writeTable<T>(tableName: string, data: T[]): Promise<void> {
-    ensureTableMigrated(tableName);
-    try {
-      const replaceTx = sqlite.transaction((items: T[]) => {
-        deleteAllTableStmt.run(tableName);
-        for (const item of items) {
-          const rec = item as any;
-          const id = String(rec.id || rec.username || rec.key || `rec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`);
-          upsertStmt.run(tableName, id, JSON.stringify(item), Date.now());
+    const map = new Map<string, any>();
+    if (Array.isArray(data)) {
+      for (const item of data) {
+        if (item) {
+          const id = getRecordId(item);
+          map.set(id, item);
         }
-      });
-      replaceTx(data);
-      this.scheduleJsonBackup(tableName, data);
-    } catch (e) {
-      console.error(`[DBEngine SQLite] Error writing table ${tableName}:`, e);
+      }
     }
+    tableStore.set(tableName, map);
+    scheduleSaveToDisk(tableName);
   }
 
   static async findById<T extends { id?: string }>(tableName: string, id: string): Promise<T | null> {
-    ensureTableMigrated(tableName);
-    try {
-      const row = selectByIdStmt.get(tableName, id) as { data: string } | undefined;
-      if (!row) return null;
-      return JSON.parse(row.data) as T;
-    } catch (e) {
-      console.warn(`[DBEngine SQLite] Error in findById for ${tableName}/${id}:`, e);
-      return null;
-    }
+    const map = getTableMap(tableName);
+    const item = map.get(id);
+    return item ? (item as T) : null;
   }
 
   static async insertRecord<T extends { id?: string }>(tableName: string, record: T): Promise<void> {
-    ensureTableMigrated(tableName);
-    try {
-      const rec = record as any;
-      const id = String(rec.id || rec.username || rec.key || `rec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`);
-      upsertStmt.run(tableName, id, JSON.stringify(record), Date.now());
-      
-      // Async trigger table backup
-      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
-    } catch (e) {
-      console.error(`[DBEngine SQLite] Error inserting record into ${tableName}:`, e);
-    }
+    const map = getTableMap(tableName);
+    const id = getRecordId(record);
+    map.set(id, record);
+    scheduleSaveToDisk(tableName);
   }
 
   /**
-   * High-performance batch upsert in a single atomic SQLite transaction
-   * Capable of inserting 50,000+ records in ~1 second with a single debounced backup
+   * High-performance batch upsert directly into in-memory Map with single debounced write
    */
   static async batchUpsertRecords<T extends { id?: string }>(tableName: string, records: T[]): Promise<number> {
     if (!records || records.length === 0) return 0;
-    ensureTableMigrated(tableName);
-    try {
-      const batchTx = sqlite.transaction((items: T[]) => {
-        const now = Date.now();
-        for (const item of items) {
-          const rec = item as any;
-          const id = String(rec.id || rec.username || rec.key || `rec_${now}_${Math.random().toString(36).substring(2, 6)}`);
-          upsertStmt.run(tableName, id, JSON.stringify(item), now);
-        }
-      });
-      batchTx(records);
-      
-      // Schedule single backup after batch completes
-      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
-      return records.length;
-    } catch (e) {
-      console.error(`[DBEngine SQLite] Error batch upserting into ${tableName}:`, e);
-      throw e;
+    const map = getTableMap(tableName);
+    for (const record of records) {
+      if (record) {
+        const id = getRecordId(record);
+        map.set(id, record);
+      }
     }
+    scheduleSaveToDisk(tableName);
+    return records.length;
   }
 
   static async updateRecord<T extends { id?: string } = any>(tableName: string, id: string, partialData: Partial<T> | Record<string, any>): Promise<void> {
-    ensureTableMigrated(tableName);
-    try {
-      const updateTx = sqlite.transaction(() => {
-        const row = selectByIdStmt.get(tableName, id) as { data: string } | undefined;
-        if (row) {
-          const current = JSON.parse(row.data);
-          const merged = { ...current, ...partialData };
-          upsertStmt.run(tableName, id, JSON.stringify(merged), Date.now());
-        }
-      });
-      updateTx();
-
-      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
-    } catch (e) {
-      console.error(`[DBEngine SQLite] Error updating record in ${tableName}:`, e);
+    const map = getTableMap(tableName);
+    const current = map.get(id);
+    if (current) {
+      const merged = { ...current, ...partialData };
+      map.set(id, merged);
+      scheduleSaveToDisk(tableName);
     }
   }
 
@@ -273,13 +214,9 @@ export class DBEngine {
   }
 
   static async deleteRecord(tableName: string, id: string): Promise<void> {
-    ensureTableMigrated(tableName);
-    try {
-      deleteStmt.run(tableName, id);
-      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
-    } catch (e) {
-      console.error(`[DBEngine SQLite] Error deleting record from ${tableName}:`, e);
-    }
+    const map = getTableMap(tableName);
+    map.delete(id);
+    scheduleSaveToDisk(tableName);
   }
 
   /**
@@ -496,8 +433,6 @@ export class DBEngine {
       } else {
         console.log('[DBEngine Seed] Existing Scenario Bank detected on disk. Preserving production data without seeding.');
       }
-      // Ensure existing scenarios JSON file is migrated into SQLite table
-      ensureTableMigrated('scenarios');
 
       // 5. Seed Knowledge Cards for Leitner and RAG
       const knowledgeCards = await this.readTable<KnowledgeCard>('knowledge_cards');
