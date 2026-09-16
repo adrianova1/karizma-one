@@ -23,10 +23,7 @@ router.post('/query', authenticateToken, async (req: AuthenticatedRequest, res: 
 
   const isAdmin = (
     user.role === Role.ADMIN ||
-    (user.role as string) === 'admin' ||
-    user.id === 'u1' ||
-    user.id === 'u_1001' ||
-    user.username === 'admin'
+    (user.role as string) === 'admin'
   );
 
   // Check active subscription & query limits with tamper-proof validation

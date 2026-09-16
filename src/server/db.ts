@@ -220,7 +220,9 @@ export class DBEngine {
       upsertStmt.run(tableName, id, JSON.stringify(record), Date.now());
       
       // Async trigger table backup
-      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
+      this.readTable(tableName)
+        .then(all => this.scheduleJsonBackup(tableName, all))
+        .catch(err => console.warn(`[DBEngine Backup] Async backup error for ${tableName}:`, err));
     } catch (e) {
       console.error(`[DBEngine SQLite] Error inserting record into ${tableName}:`, e);
     }
@@ -247,7 +249,9 @@ export class DBEngine {
       batchTx(records);
       
       // Schedule single backup after batch completes
-      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
+      this.readTable(tableName)
+        .then(all => this.scheduleJsonBackup(tableName, all))
+        .catch(err => console.warn(`[DBEngine Backup] Async backup error for ${tableName}:`, err));
       return records.length;
     } catch (e) {
       console.error(`[DBEngine SQLite] Error batch upserting into ${tableName}:`, e);
@@ -268,7 +272,9 @@ export class DBEngine {
       });
       updateTx();
 
-      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
+      this.readTable(tableName)
+        .then(all => this.scheduleJsonBackup(tableName, all))
+        .catch(err => console.warn(`[DBEngine Backup] Async backup error for ${tableName}:`, err));
     } catch (e) {
       console.error(`[DBEngine SQLite] Error updating record in ${tableName}:`, e);
     }
@@ -286,7 +292,9 @@ export class DBEngine {
     ensureTableMigrated(tableName);
     try {
       deleteStmt.run(tableName, id);
-      this.readTable(tableName).then(all => this.scheduleJsonBackup(tableName, all));
+      this.readTable(tableName)
+        .then(all => this.scheduleJsonBackup(tableName, all))
+        .catch(err => console.warn(`[DBEngine Backup] Async backup error for ${tableName}:`, err));
     } catch (e) {
       console.error(`[DBEngine SQLite] Error deleting record from ${tableName}:`, e);
     }
@@ -300,10 +308,11 @@ export class DBEngine {
       // 1. Seed Users (admin & user)
       const users = await this.readTable<User>('users');
       const adminPass = (process.env.ADMIN_PASSWORD || '').trim() || '123456';
+      const hasAnyAdmin = users.some(u => u.role === Role.ADMIN || (u.role as string) === 'admin');
       const adminIdx = users.findIndex(u => u.username.toLowerCase() === 'admin');
       
-      if (adminIdx === -1) {
-        console.log('[DBEngine Seed] Seeding default admin user with scrypt hash...');
+      if (!hasAnyAdmin && adminIdx === -1) {
+        console.log('[DBEngine Seed] No existing admin found. Seeding default admin user with scrypt hash...');
         const adminUser: User = {
           id: 'u_1001',
           username: 'admin',
@@ -318,8 +327,8 @@ export class DBEngine {
           updatedAt: new Date().toISOString()
         };
         users.push(adminUser);
-      } else {
-        // Synchronize admin password if ADMIN_PASSWORD is set in environment, or if hash missing
+      } else if (adminIdx !== -1) {
+        // Only synchronize admin password if ADMIN_PASSWORD is explicitly defined in environment
         if (process.env.ADMIN_PASSWORD) {
           users[adminIdx].passwordHash = hashPassword(adminPass);
         } else if (!users[adminIdx].passwordHash) {

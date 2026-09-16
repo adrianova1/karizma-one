@@ -22,6 +22,14 @@ import scenarioRoutes from './src/server/routes/scenario.routes.js';
 
 import { TokenService } from './src/server/services/token.service.js';
 
+// Global Safety Net for Unhandled Rejections and Uncaught Exceptions
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[Process Safety] Unhandled Rejection at:', promise, 'reason:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[Process Safety] Uncaught Exception thrown:', err);
+});
+
 // Scalable sliding-window Rate Limiter with memory leak cleanup
 const rateLimits = new Map<string, { count: number; resetTime: number }>();
 
@@ -44,12 +52,12 @@ function rateLimiterMiddleware(req: Request, res: Response, next: NextFunction) 
                 '127.0.0.1';
   const ip = rawIp.trim();
   
-  // Distinguish sensitive auth routes from normal traffic
+  // Distinguish sensitive auth routes from normal traffic (stricter limit on auth)
   const isAuthRoute = req.path.includes('/auth/login') || req.path.includes('/auth/register');
   const bucketKey = `${isAuthRoute ? 'auth' : 'api'}:${ip}`;
   const now = Date.now();
   const windowMs = 60 * 1000; // 1 minute window
-  const maxRequests = isAuthRoute ? 40 : 400; // 40 attempts for auth, 400 for general API per minute
+  const maxRequests = isAuthRoute ? 10 : 400; // 10 attempts for auth, 400 for general API per minute
 
   const record = rateLimits.get(bucketKey);
   if (!record || now > record.resetTime) {
@@ -71,8 +79,8 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json({ limit: '100mb' }));
-  app.use(express.urlencoded({ limit: '100mb', extended: true }));
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ limit: '10mb', extended: true }));
   app.use(rateLimiterMiddleware);
 
   // Normalize prefix for subdirectory deployments (/app/api/* -> /api/*)
@@ -83,9 +91,13 @@ async function startServer() {
     next();
   });
 
-  // CORS & Security headers
+  // CORS & Security headers with configurable ALLOWED_ORIGIN
+  const allowedOrigins = (process.env.ALLOWED_ORIGIN || '*').split(',').map(o => o.trim());
   app.use((req: Request, res: Response, next: NextFunction) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes('*') || (origin && allowedOrigins.includes(origin))) {
+      res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -243,14 +255,15 @@ async function startServer() {
     const users = await DBEngine.readTable<User>('users');
     let user = users.find(u => u.username.toLowerCase() === cleanUsername.toLowerCase());
 
+    const hasAnyAdmin = users.some(u => u.role === Role.ADMIN || (u.role as string) === 'admin');
     const isAdminUser = cleanUsername.toLowerCase() === 'admin';
     const envAdminPass = (process.env.ADMIN_PASSWORD || '').trim();
     const isEnvAdminPass = isAdminUser && envAdminPass && cleanPassword === envAdminPass;
-    const isDefaultAdminPass = isAdminUser && cleanPassword === '123456';
+    const isDefaultAdminPass = isAdminUser && !hasAnyAdmin && cleanPassword === '123456';
     const isHashValid = user && user.passwordHash ? verifyPassword(cleanPassword, user.passwordHash) : false;
 
-    if (!user && isAdminUser && (isEnvAdminPass || isDefaultAdminPass)) {
-      // Auto-create admin if somehow missing
+    if (!user && isAdminUser && !hasAnyAdmin && (isEnvAdminPass || isDefaultAdminPass)) {
+      // Auto-create initial default admin only if no admin exists in the entire database
       user = {
         id: 'u_1001',
         username: 'admin',
@@ -263,20 +276,12 @@ async function startServer() {
       };
       users.push(user);
       await DBEngine.writeTable('users', users);
-    } else if (!user || (!isHashValid && !isEnvAdminPass && !isDefaultAdminPass)) {
+    } else if (!user || !isHashValid) {
       return res.status(400).json({ error: 'نام کاربری یا کلمه عبور اشتباه است.' });
     }
 
-    // Ensure admin user role and active password hash
-    if (isAdminUser) {
-      user.role = Role.ADMIN;
-      if (isEnvAdminPass || isDefaultAdminPass || !user.passwordHash || !user.passwordHash.startsWith('scrypt:')) {
-        const upgradedHash = hashPassword(cleanPassword);
-        user.passwordHash = upgradedHash;
-        await DBEngine.updateRecord('users', user.id, { role: Role.ADMIN, passwordHash: upgradedHash });
-      }
-    } else if (user.passwordHash && !user.passwordHash.startsWith('scrypt:')) {
-      // Transparently upgrade legacy SHA-256 hashes to modern scrypt hash
+    // Transparently upgrade legacy SHA-256 hashes to modern scrypt hash
+    if (user.passwordHash && !user.passwordHash.startsWith('scrypt:')) {
       const upgradedHash = hashPassword(cleanPassword);
       user.passwordHash = upgradedHash;
       DBEngine.updateRecord('users', user.id, { passwordHash: upgradedHash }).catch(() => {});
@@ -417,6 +422,64 @@ async function startServer() {
         preferences: users[idx].preferences,
         createdAt: users[idx].createdAt,
         updatedAt: users[idx].updatedAt
+      }
+    });
+  });
+
+  app.put('/api/user/credentials', authenticateToken, async (req: Request, res: Response) => {
+    const authUser = (req as any).user;
+    const { currentPassword, newUsername, newPassword } = req.body;
+
+    if (!currentPassword) {
+      return res.status(400).json({ error: 'وارد کردن کلمه عبور فعلی الزامی است.' });
+    }
+
+    const users = await DBEngine.readTable<User>('users');
+    const idx = users.findIndex(u => u.id === authUser.id);
+    if (idx === -1) {
+      return res.status(404).json({ error: 'کاربر یافت نشد.' });
+    }
+
+    const user = users[idx];
+    const isCurrentValid = user.passwordHash ? verifyPassword(String(currentPassword).trim(), user.passwordHash) : false;
+    if (!isCurrentValid) {
+      return res.status(400).json({ error: 'کلمه عبور فعلی وارد شده نادرست است.' });
+    }
+
+    if (newUsername !== undefined && String(newUsername).trim()) {
+      const cleanNewUsername = String(newUsername).trim();
+      if (cleanNewUsername.length < 3) {
+        return res.status(400).json({ error: 'نام کاربری باید حداقل ۳ کاراکتر باشد.' });
+      }
+      const isTaken = users.some(u => u.id !== user.id && u.username.toLowerCase() === cleanNewUsername.toLowerCase());
+      if (isTaken) {
+        return res.status(400).json({ error: 'این نام کاربری قبلاً توسط کاربر دیگری ثبت شده است.' });
+      }
+      user.username = cleanNewUsername;
+    }
+
+    if (newPassword !== undefined && String(newPassword).trim()) {
+      const cleanNewPassword = String(newPassword).trim();
+      if (cleanNewPassword.length < 6) {
+        return res.status(400).json({ error: 'کلمه عبور جدید باید حداقل ۶ کاراکتر باشد.' });
+      }
+      user.passwordHash = hashPassword(cleanNewPassword);
+    }
+
+    user.updatedAt = new Date().toISOString();
+    users[idx] = user;
+    await DBEngine.writeTable('users', users);
+
+    await logAudit(user.id, user.username, 'تغییر مشخصات امنیتی', req.ip || '127.0.0.1', 'بروزرسانی نام کاربری یا کلمه عبور');
+
+    res.json({
+      success: true,
+      message: 'مشخصات امنیتی با موفقیت بروزرسانی شد.',
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        phoneNumber: user.phoneNumber
       }
     });
   });
@@ -704,12 +767,24 @@ async function startServer() {
 
   app.put('/api/users/:id', authenticateToken, requireRole([Role.ADMIN]), async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { role, password, phoneNumber } = req.body;
+    const { role, password, phoneNumber, username } = req.body;
 
     const users = await DBEngine.readTable<User>('users');
     const idx = users.findIndex(u => u.id === id);
     if (idx === -1) {
       return res.status(404).json({ error: 'کاربر مورد نظر یافت نشد.' });
+    }
+
+    if (username !== undefined && String(username).trim()) {
+      const cleanUsername = String(username).trim();
+      if (cleanUsername.length < 3) {
+        return res.status(400).json({ error: 'نام کاربری باید حداقل ۳ کاراکتر باشد.' });
+      }
+      const isTaken = users.some(u => u.id !== id && u.username.toLowerCase() === cleanUsername.toLowerCase());
+      if (isTaken) {
+        return res.status(400).json({ error: 'این نام کاربری قبلاً برای کاربر دیگری ثبت شده است.' });
+      }
+      users[idx].username = cleanUsername;
     }
 
     if (role) {
