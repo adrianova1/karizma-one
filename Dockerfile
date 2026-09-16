@@ -3,6 +3,9 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+# Install build dependencies for better-sqlite3 native compilation on Alpine musl
+RUN apk add --no-cache python3 make g++
+
 # Copy dependency configs
 COPY package*.json ./
 RUN npm ci
@@ -20,6 +23,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
+
+# Install build dependencies for better-sqlite3 native compilation on Alpine musl
+RUN apk add --no-cache python3 make g++
 
 # Copy output bundles and persistent data from builder stage
 COPY --from=builder /app/dist ./dist
