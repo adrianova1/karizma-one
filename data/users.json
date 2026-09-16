@@ -15,7 +15,7 @@
   {
     "id": "u_1001",
     "username": "admin",
-    "passwordHash": "scrypt:699db011b418d1289ebaf688cce5c7e9:700feec12f30e0231502c74b7da8112a1cfd68e82c8856b47f6a2320b270ad0c3f8f19fbe7124250fc6f6b092e1cafb3f2e6b26ab5d14627b385d4459421197e",
+    "passwordHash": "scrypt:689f315cdd3427f88d8b82d64417d1b4:51942dca8f3be56afbb9ce18156151ff29d21379d3a38f94ce489c186d2d633a3916633ef7e1800a91af8132c1f3b936f56b769ca73c494c514ff21c21370c6d",
     "role": "admin",
     "phoneNumber": "09123456789",
     "preferences": {
