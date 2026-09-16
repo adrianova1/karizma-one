@@ -15,7 +15,7 @@
   {
     "id": "u_1001",
     "username": "admin",
-    "passwordHash": "scrypt:7783b7c4d71de421f2f521b149e0a3d8:99cde01bdf7fdcc9e6aa46cba3c3c393d6fc46c7259b8e0c925896468b56d7c7006e389bc142f22feba641981709fb7584a69b7dd8005c7c1355c334ec923c0a",
+    "passwordHash": "scrypt:513126f8266e613317bafa2f4d11b3e3:9e9aff6a0568f7926bd0086ba37491e2e6ab8803439ff12208257d4ee9f0c92a08c1da3453aadaeb41b1673ab1face7e660872e2565ae6c71cf309e366a33d04",
     "role": "admin",
     "phoneNumber": "09123456789",
     "preferences": {
@@ -23,6 +23,6 @@
       "gender": "unspecified"
     },
     "createdAt": "2026-08-21T06:59:41.004Z",
-    "updatedAt": "2026-08-21T06:59:41.005Z"
+    "updatedAt": "2026-09-16T19:28:25.612Z"
   }
 ]

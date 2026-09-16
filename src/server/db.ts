@@ -8,7 +8,7 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import Database from 'better-sqlite3';
+import { DatabaseSync, StatementSync } from 'node:sqlite';
 import { 
   User, Plan, Subscription, KnowledgeCard, PromptTemplate, PromptHistory, 
   Conversation, AuditLog, Setting, Notification, ContentItem, Receipt, 
@@ -55,41 +55,67 @@ export function verifyPassword(password: string, storedHash: string): boolean {
   }
 }
 
-// ==================== SQLITE DATABASE ENGINE (ACID + WAL MODE) ====================
+// ==================== ZERO-DEPENDENCY SQLITE ENGINE (NODE:SQLITE) ====================
 
 const dbPath = path.join(DATA_DIR, 'karizma.db');
-const sqlite = new Database(dbPath);
+let sqlite: DatabaseSync | null = null;
+let selectAllStmt: StatementSync | null = null;
+let selectByIdStmt: StatementSync | null = null;
+let upsertStmt: StatementSync | null = null;
+let deleteStmt: StatementSync | null = null;
+let deleteAllTableStmt: StatementSync | null = null;
+let countTableStmt: StatementSync | null = null;
 
-// Enable Write-Ahead Logging (WAL) for high concurrency, durability, and sub-millisecond writes
-sqlite.pragma('journal_mode = WAL');
-sqlite.pragma('synchronous = NORMAL');
-sqlite.pragma('temp_store = MEMORY');
+// Memory KV fallback in case node:sqlite is unavailable in old environments
+const memoryKV = new Map<string, Map<string, { data: string; updated_at: number }>>();
 
-// Core KV table storing all tables as structured indexed JSON records
-sqlite.exec(`
-  CREATE TABLE IF NOT EXISTS kv_records (
-    table_name TEXT NOT NULL,
-    id TEXT NOT NULL,
-    data TEXT NOT NULL,
-    updated_at INTEGER NOT NULL,
-    PRIMARY KEY (table_name, id)
-  );
-  CREATE INDEX IF NOT EXISTS idx_kv_table ON kv_records(table_name);
-`);
+try {
+  sqlite = new DatabaseSync(dbPath);
+  sqlite.exec('PRAGMA journal_mode = WAL;');
+  sqlite.exec('PRAGMA synchronous = NORMAL;');
+  sqlite.exec('PRAGMA temp_store = MEMORY;');
+  sqlite.exec(`
+    CREATE TABLE IF NOT EXISTS kv_records (
+      table_name TEXT NOT NULL,
+      id TEXT NOT NULL,
+      data TEXT NOT NULL,
+      updated_at INTEGER NOT NULL,
+      PRIMARY KEY (table_name, id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_kv_table ON kv_records(table_name);
+  `);
 
-// Prepared statements for zero-overhead query execution
-const selectAllStmt = sqlite.prepare('SELECT data FROM kv_records WHERE table_name = ? ORDER BY updated_at ASC');
-const selectByIdStmt = sqlite.prepare('SELECT data FROM kv_records WHERE table_name = ? AND id = ?');
-const upsertStmt = sqlite.prepare(`
-  INSERT INTO kv_records (table_name, id, data, updated_at)
-  VALUES (?, ?, ?, ?)
-  ON CONFLICT(table_name, id) DO UPDATE SET
-    data = excluded.data,
-    updated_at = excluded.updated_at
-`);
-const deleteStmt = sqlite.prepare('DELETE FROM kv_records WHERE table_name = ? AND id = ?');
-const deleteAllTableStmt = sqlite.prepare('DELETE FROM kv_records WHERE table_name = ?');
-const countTableStmt = sqlite.prepare('SELECT COUNT(*) as count FROM kv_records WHERE table_name = ?');
+  selectAllStmt = sqlite.prepare('SELECT data FROM kv_records WHERE table_name = ? ORDER BY updated_at ASC');
+  selectByIdStmt = sqlite.prepare('SELECT data FROM kv_records WHERE table_name = ? AND id = ?');
+  upsertStmt = sqlite.prepare(`
+    INSERT INTO kv_records (table_name, id, data, updated_at)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(table_name, id) DO UPDATE SET
+      data = excluded.data,
+      updated_at = excluded.updated_at
+  `);
+  deleteStmt = sqlite.prepare('DELETE FROM kv_records WHERE table_name = ? AND id = ?');
+  deleteAllTableStmt = sqlite.prepare('DELETE FROM kv_records WHERE table_name = ?');
+  countTableStmt = sqlite.prepare('SELECT COUNT(*) as count FROM kv_records WHERE table_name = ?');
+} catch (err) {
+  console.warn('[DBEngine] Running in in-memory atomic JSON mode (node:sqlite fallback):', err);
+  sqlite = null;
+}
+
+function runTransaction<T>(fn: () => T): T {
+  if (sqlite) {
+    sqlite.exec('BEGIN IMMEDIATE;');
+    try {
+      const result = fn();
+      sqlite.exec('COMMIT;');
+      return result;
+    } catch (err) {
+      try { sqlite.exec('ROLLBACK;'); } catch {}
+      throw err;
+    }
+  }
+  return fn();
+}
 
 // Track migrated tables to avoid repeating disk checks
 const migratedTables = new Set<string>();
@@ -102,27 +128,47 @@ function ensureTableMigrated(tableName: string): void {
   migratedTables.add(tableName);
 
   try {
-    const row = countTableStmt.get(tableName) as { count: number } | undefined;
-    if (!row || row.count === 0) {
-      const jsonPath = path.join(DATA_DIR, `${tableName}.json`);
-      if (fs.existsSync(jsonPath)) {
-        const raw = fs.readFileSync(jsonPath, 'utf8');
-        if (raw && raw.trim().length > 0) {
-          const records: any[] = JSON.parse(raw);
-          if (Array.isArray(records) && records.length > 0) {
-            const insertTx = sqlite.transaction((items: any[]) => {
-              const now = Date.now();
-              for (const item of items) {
-                if (item) {
-                  const id = String(item.id || item.username || item.key || `rec_${now}_${Math.random().toString(36).substring(2, 6)}`);
-                  upsertStmt.run(tableName, id, JSON.stringify(item), now);
+    const jsonPath = path.join(DATA_DIR, `${tableName}.json`);
+    if (sqlite && countTableStmt) {
+      const row = countTableStmt.get(tableName) as { count: number } | undefined;
+      if (!row || row.count === 0) {
+        if (fs.existsSync(jsonPath)) {
+          const raw = fs.readFileSync(jsonPath, 'utf8');
+          if (raw && raw.trim().length > 0) {
+            const records: any[] = JSON.parse(raw);
+            if (Array.isArray(records) && records.length > 0) {
+              runTransaction(() => {
+                const now = Date.now();
+                for (const item of records) {
+                  if (item) {
+                    const id = String(item.id || item.username || item.key || `rec_${now}_${Math.random().toString(36).substring(2, 6)}`);
+                    upsertStmt!.run(tableName, id, JSON.stringify(item), now);
+                  }
                 }
-              }
-            });
-            insertTx(records);
-            console.log(`[SQLite Migration] Migrated ${records.length} records for ${tableName} into SQLite.`);
+              });
+              console.log(`[SQLite Migration] Migrated ${records.length} records for ${tableName} into SQLite.`);
+            }
           }
         }
+      }
+    } else {
+      if (!memoryKV.has(tableName)) {
+        const tableMap = new Map<string, { data: string; updated_at: number }>();
+        if (fs.existsSync(jsonPath)) {
+          const raw = fs.readFileSync(jsonPath, 'utf8');
+          if (raw && raw.trim().length > 0) {
+            const records: any[] = JSON.parse(raw);
+            if (Array.isArray(records)) {
+              for (const item of records) {
+                if (item) {
+                  const id = String(item.id || item.username || item.key || `rec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`);
+                  tableMap.set(id, { data: JSON.stringify(item), updated_at: Date.now() });
+                }
+              }
+            }
+          }
+        }
+        memoryKV.set(tableName, tableMap);
       }
     }
   } catch (err) {
@@ -135,8 +181,6 @@ const pendingBackups = new Map<string, NodeJS.Timeout>();
 
 export class DBEngine {
   private static scheduleJsonBackup(tableName: string, data: any[]): void {
-    // For large tables like 'scenarios' with over 5,000 records, do not serialize entire array into a massive JSON file on every write
-    // This prevents thread locking, huge string allocations, and RAM spikes. SQLite WAL is the persistent store.
     if (tableName === 'scenarios' && data.length > 5000) {
       return;
     }
@@ -161,14 +205,26 @@ export class DBEngine {
   static readTableSync<T>(tableName: string): T[] {
     ensureTableMigrated(tableName);
     try {
-      const rows = selectAllStmt.all(tableName) as Array<{ data: string }>;
-      const result: T[] = [];
-      for (const row of rows) {
-        try {
-          result.push(JSON.parse(row.data) as T);
-        } catch {}
+      if (sqlite && selectAllStmt) {
+        const rows = selectAllStmt.all(tableName) as Array<{ data: string }>;
+        const result: T[] = [];
+        for (const row of rows) {
+          try {
+            result.push(JSON.parse(row.data) as T);
+          } catch {}
+        }
+        return result;
+      } else {
+        const tableMap = memoryKV.get(tableName);
+        if (!tableMap) return [];
+        const result: T[] = [];
+        for (const entry of tableMap.values()) {
+          try {
+            result.push(JSON.parse(entry.data) as T);
+          } catch {}
+        }
+        return result;
       }
-      return result;
     } catch (e) {
       console.warn(`[DBEngine SQLite] Error in readTableSync for ${tableName}:`, e);
       return [];
@@ -182,18 +238,30 @@ export class DBEngine {
   static async writeTable<T>(tableName: string, data: T[]): Promise<void> {
     ensureTableMigrated(tableName);
     try {
-      const replaceTx = sqlite.transaction((items: T[]) => {
-        deleteAllTableStmt.run(tableName);
+      if (sqlite && deleteAllTableStmt && upsertStmt) {
+        runTransaction(() => {
+          deleteAllTableStmt!.run(tableName);
+          const now = Date.now();
+          for (const item of data) {
+            const rec = item as any;
+            if (rec) {
+              const id = String(rec.id || rec.username || rec.key || `rec_${now}_${Math.random().toString(36).substring(2, 6)}`);
+              upsertStmt!.run(tableName, id, JSON.stringify(item), now);
+            }
+          }
+        });
+      } else {
+        const tableMap = new Map<string, { data: string; updated_at: number }>();
         const now = Date.now();
-        for (const item of items) {
+        for (const item of data) {
           const rec = item as any;
           if (rec) {
             const id = String(rec.id || rec.username || rec.key || `rec_${now}_${Math.random().toString(36).substring(2, 6)}`);
-            upsertStmt.run(tableName, id, JSON.stringify(item), now);
+            tableMap.set(id, { data: JSON.stringify(item), updated_at: now });
           }
         }
-      });
-      replaceTx(data);
+        memoryKV.set(tableName, tableMap);
+      }
       this.scheduleJsonBackup(tableName, data);
     } catch (e) {
       console.error(`[DBEngine SQLite] Error writing table ${tableName}:`, e);
@@ -203,9 +271,16 @@ export class DBEngine {
   static async findById<T extends { id?: string }>(tableName: string, id: string): Promise<T | null> {
     ensureTableMigrated(tableName);
     try {
-      const row = selectByIdStmt.get(tableName, id) as { data: string } | undefined;
-      if (!row) return null;
-      return JSON.parse(row.data) as T;
+      if (sqlite && selectByIdStmt) {
+        const row = selectByIdStmt.get(tableName, id) as { data: string } | undefined;
+        if (!row) return null;
+        return JSON.parse(row.data) as T;
+      } else {
+        const tableMap = memoryKV.get(tableName);
+        const entry = tableMap ? tableMap.get(id) : undefined;
+        if (!entry) return null;
+        return JSON.parse(entry.data) as T;
+      }
     } catch (e) {
       console.warn(`[DBEngine SQLite] Error in findById for ${tableName}/${id}:`, e);
       return null;
@@ -216,8 +291,19 @@ export class DBEngine {
     ensureTableMigrated(tableName);
     try {
       const rec = record as any;
-      const id = String(rec.id || rec.username || rec.key || `rec_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`);
-      upsertStmt.run(tableName, id, JSON.stringify(record), Date.now());
+      const now = Date.now();
+      const id = String(rec.id || rec.username || rec.key || `rec_${now}_${Math.random().toString(36).substring(2, 6)}`);
+      
+      if (sqlite && upsertStmt) {
+        upsertStmt.run(tableName, id, JSON.stringify(record), now);
+      } else {
+        let tableMap = memoryKV.get(tableName);
+        if (!tableMap) {
+          tableMap = new Map();
+          memoryKV.set(tableName, tableMap);
+        }
+        tableMap.set(id, { data: JSON.stringify(record), updated_at: now });
+      }
       
       // Async trigger table backup
       this.readTable(tableName)
@@ -236,17 +322,32 @@ export class DBEngine {
     if (!records || records.length === 0) return 0;
     ensureTableMigrated(tableName);
     try {
-      const batchTx = sqlite.transaction((items: T[]) => {
+      if (sqlite && upsertStmt) {
+        runTransaction(() => {
+          const now = Date.now();
+          for (const item of records) {
+            const rec = item as any;
+            if (rec) {
+              const id = String(rec.id || rec.username || rec.key || `rec_${now}_${Math.random().toString(36).substring(2, 6)}`);
+              upsertStmt!.run(tableName, id, JSON.stringify(item), now);
+            }
+          }
+        });
+      } else {
+        let tableMap = memoryKV.get(tableName);
+        if (!tableMap) {
+          tableMap = new Map();
+          memoryKV.set(tableName, tableMap);
+        }
         const now = Date.now();
-        for (const item of items) {
+        for (const item of records) {
           const rec = item as any;
           if (rec) {
             const id = String(rec.id || rec.username || rec.key || `rec_${now}_${Math.random().toString(36).substring(2, 6)}`);
-            upsertStmt.run(tableName, id, JSON.stringify(item), now);
+            tableMap.set(id, { data: JSON.stringify(item), updated_at: now });
           }
         }
-      });
-      batchTx(records);
+      }
       
       // Schedule single backup after batch completes
       this.readTable(tableName)
@@ -262,15 +363,24 @@ export class DBEngine {
   static async updateRecord<T extends { id?: string } = any>(tableName: string, id: string, partialData: Partial<T> | Record<string, any>): Promise<void> {
     ensureTableMigrated(tableName);
     try {
-      const updateTx = sqlite.transaction(() => {
-        const row = selectByIdStmt.get(tableName, id) as { data: string } | undefined;
-        if (row) {
-          const current = JSON.parse(row.data);
+      if (sqlite && selectByIdStmt && upsertStmt) {
+        runTransaction(() => {
+          const row = selectByIdStmt!.get(tableName, id) as { data: string } | undefined;
+          if (row) {
+            const current = JSON.parse(row.data);
+            const merged = { ...current, ...partialData };
+            upsertStmt!.run(tableName, id, JSON.stringify(merged), Date.now());
+          }
+        });
+      } else {
+        const tableMap = memoryKV.get(tableName);
+        const entry = tableMap ? tableMap.get(id) : undefined;
+        if (entry) {
+          const current = JSON.parse(entry.data);
           const merged = { ...current, ...partialData };
-          upsertStmt.run(tableName, id, JSON.stringify(merged), Date.now());
+          tableMap!.set(id, { data: JSON.stringify(merged), updated_at: Date.now() });
         }
-      });
-      updateTx();
+      }
 
       this.readTable(tableName)
         .then(all => this.scheduleJsonBackup(tableName, all))
@@ -291,7 +401,12 @@ export class DBEngine {
   static async deleteRecord(tableName: string, id: string): Promise<void> {
     ensureTableMigrated(tableName);
     try {
-      deleteStmt.run(tableName, id);
+      if (sqlite && deleteStmt) {
+        deleteStmt.run(tableName, id);
+      } else {
+        const tableMap = memoryKV.get(tableName);
+        if (tableMap) tableMap.delete(id);
+      }
       this.readTable(tableName)
         .then(all => this.scheduleJsonBackup(tableName, all))
         .catch(err => console.warn(`[DBEngine Backup] Async backup error for ${tableName}:`, err));
