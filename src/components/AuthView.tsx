@@ -89,25 +89,27 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center p-4 font-sans dir-rtl" style={{ direction: 'rtl' }}>
-      {/* Background radial glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-sky-500/10 blur-3xl rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/10 blur-3xl rounded-full pointer-events-none" />
+    <div className="min-h-screen min-h-[100dvh] w-full max-w-full overflow-x-hidden bg-slate-950 text-slate-100 flex flex-col justify-center items-center p-3 sm:p-4 font-sans dir-rtl relative box-border" style={{ direction: 'rtl' }}>
+      {/* Background radial glow safely contained */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-sky-500/10 blur-3xl rounded-full" />
+        <div className="absolute bottom-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-purple-500/10 blur-3xl rounded-full" />
+      </div>
 
-      <div className="w-full max-w-md z-10">
+      <div className="w-full max-w-sm sm:max-w-md z-10 px-1 sm:px-0 box-border">
         {/* App Logo & Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-500 to-purple-600 p-3 shadow-lg shadow-sky-500/15 mb-4 animate-pulse">
-            <Shield className="w-8 h-8 text-white" />
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-sky-500 to-purple-600 p-3 shadow-lg shadow-sky-500/15 mb-3 sm:mb-4 animate-pulse">
+            <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">کاریزما سنتر</h1>
-          <p className="text-sm text-slate-400">سامانه پیشرفته مدیریت دانش و هوش مصنوعی هلدینگ کاریزما</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-1.5 sm:mb-2">کاریزما سنتر</h1>
+          <p className="text-xs sm:text-sm text-slate-400 px-2">سامانه پیشرفته مدیریت دانش و هوش مصنوعی هلدینگ کاریزما</p>
         </div>
 
         {/* Login / Register Card */}
-        <div className="glass-panel rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-white text-right">
+        <div className="glass-panel rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl relative overflow-hidden w-full box-border border border-slate-800/80">
+          <div className="mb-5 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-bold text-white text-right">
               {isLogin ? 'ورود به حساب کاربری' : 'ثبت‌نام حساب کاربری جدید'}
             </h2>
             <p className="text-xs text-slate-400 text-right mt-1">

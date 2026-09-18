@@ -18,12 +18,15 @@ let masterCache: ScenarioItem[] | null = null;
 let masterCacheMtime = 0;
 
 /**
- * Helper to fetch all active canonical scenarios from CoachLoader
+ * Helper to fetch all active canonical scenarios from CoachLoader with in-memory caching
  */
 async function getCanonicalScenarios(): Promise<ScenarioItem[]> {
+  if (masterCache && masterCache.length > 0) {
+    return masterCache;
+  }
   const runtimeScenarios = CoachLoader.getScenarios();
   if (runtimeScenarios && runtimeScenarios.length > 0) {
-    return runtimeScenarios.map(s => ({
+    masterCache = runtimeScenarios.map(s => ({
       id: s.id,
       title: s.title,
       category: s.category,
@@ -49,6 +52,7 @@ async function getCanonicalScenarios(): Promise<ScenarioItem[]> {
       goal: (s as any).goal || s.title,
       teachingNote: (s as any).teachingNote || s.technique || s.nextMove || ''
     }));
+    return masterCache;
   }
   return await DBEngine.readTable<ScenarioItem>('scenarios');
 }
@@ -65,13 +69,21 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
     const allScenarios = await getCanonicalScenarios();
     let filtered = [...allScenarios];
 
-    // Filter by Category if provided
+    // Filter by Category if provided (supports Persian title, substring, or master category ID)
     if (category && category !== 'all') {
       const normCat = normalizePersian(category).toLowerCase();
+      const matchedMaster = MASTER_CATEGORIES.find(c => c.id === category || normalizePersian(c.title).toLowerCase() === normCat);
+      const masterTitleNorm = matchedMaster ? normalizePersian(matchedMaster.title).toLowerCase() : '';
+
       filtered = filtered.filter(s => {
         const env = normalizePersian(s.environment || s.category || '').toLowerCase();
         const masterTitle = normalizePersian(getMasterCategoryTitle(s.environment || s.category || '')).toLowerCase();
-        return env.includes(normCat) || masterTitle.includes(normCat) || normCat.includes(env);
+        return (
+          env.includes(normCat) ||
+          masterTitle.includes(normCat) ||
+          normCat.includes(env) ||
+          (masterTitleNorm && (env.includes(masterTitleNorm) || masterTitle.includes(masterTitleNorm)))
+        );
       });
     }
 

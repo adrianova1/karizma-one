@@ -160,17 +160,20 @@ export class RankingEngine {
 
       const isHighConfidence =
         topCandidate.matchedBy === 'exact_trigger' ||
+        topCandidate.matchedBy === 'phrase_containment' ||
+        topCandidate.matchedBy === 'alias_trigram' ||
+        topCandidate.matchedBy === 'bm25_token' ||
         topCandidate.scoreBreakdown.exactTriggerScore > 0 ||
-        topCandidate.scoreBreakdown.phraseScore >= 4.0 ||
-        topCandidate.scoreBreakdown.aliasScore >= 3.0 ||
-        topCandidate.scoreBreakdown.keywordScore >= 3.0 ||
-        (topCandidate.scoreBreakdown.totalScore >= 4.0 && topCandidate.scoreBreakdown.tokenOverlapScore >= 2.0);
+        topCandidate.scoreBreakdown.phraseScore > 0 ||
+        topCandidate.scoreBreakdown.totalScore >= 1.5 ||
+        topCandidate.confidenceScore >= 35 ||
+        topCandidate.scoreBreakdown.tokenOverlapScore >= 0.8;
 
       if (isHighConfidence) {
         return {
           matchedScenario: topCandidate.scenario,
           fallbackItem: null,
-          confidenceScore: topCandidate.confidenceScore,
+          confidenceScore: Math.max(topCandidate.confidenceScore, 65),
           isFallback: false,
           matchType: topCandidate.matchedBy
         };

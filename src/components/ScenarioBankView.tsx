@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { ScenarioItem } from '../types.js';
 import { parseSafeJson } from '../lib/api.js';
+import { MASTER_CATEGORIES, PRESEEDED_SCENARIOS, getMasterCategoryTitle } from '../data/scenarios.js';
 
 interface ScenarioBankViewProps {
   token: string | null;
@@ -29,8 +30,23 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
   const [copiedResponseKey, setCopiedResponseKey] = useState<string | null>(null);
   const [likedScenarioIds, setLikedScenarioIds] = useState<Record<string, boolean>>({});
 
+  const iconMap: Record<string, any> = {
+    Zap,
+    ShieldAlert,
+    Flame,
+    Crown,
+    Send,
+    RotateCw,
+    Layers
+  };
+
   const categories = [
     { id: 'all', title: 'همه موقعیت‌ها', icon: Layers },
+    ...MASTER_CATEGORIES.map(m => ({
+      id: m.id,
+      title: m.title,
+      icon: iconMap[m.iconName] || Layers
+    }))
   ];
 
   // Debounced search / category change to query database from offset 0
@@ -66,12 +82,37 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
       if (res.ok) {
         const data = await parseSafeJson(res);
         if (data) {
+          const list = data.scenarios || [];
           if (append) {
-            setScenarios(prev => [...prev, ...(data.scenarios || [])]);
+            setScenarios(prev => [...prev, ...list]);
           } else {
-            setScenarios(data.scenarios || []);
+            if (list.length > 0) {
+              setScenarios(list);
+            } else if (!searchQuery.trim() && selectedCategory === 'all') {
+              // Graceful fallback to preseeded if initial db load was empty
+              const fallbackItems: ScenarioItem[] = PRESEEDED_SCENARIOS.map(s => ({
+                id: s.id,
+                title: s.title,
+                situation: s.context || s.title,
+                category: s.category,
+                environment: s.category,
+                responses: {
+                  charismatic: s.analysis?.bestAnswer || s.answers?.[0]?.text || '',
+                  funny: s.answers?.find(a => a.style === 'طنز')?.text || '',
+                  confident: s.answers?.find(a => a.style === 'سنگین' || a.style === 'کاریزماتیک')?.text || '',
+                  mysterious: s.answers?.find(a => a.style === 'مرموز')?.text || '',
+                  mature: s.answers?.find(a => a.style === 'خونسرد' || a.style === 'حمایتگر')?.text || ''
+                } as any,
+                technique: s.analysis?.reason,
+                bodyLanguage: s.analysis?.bodyLanguage,
+                nextMove: s.analysis?.nextStep
+              } as ScenarioItem));
+              setScenarios(fallbackItems);
+            } else {
+              setScenarios([]);
+            }
           }
-          setTotalCount(data.total || 0);
+          setTotalCount(data.total || (list.length > 0 ? list.length : PRESEEDED_SCENARIOS.length));
           if (data.categoryCounts) {
             setCategoryCounts(data.categoryCounts);
           }
