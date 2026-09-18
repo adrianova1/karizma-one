@@ -102,5 +102,32 @@
     "metadata": {},
     "userId": "anon_rojvw",
     "timestamp": "2026-08-31T14:55:52.383Z"
+  },
+  {
+    "id": "evt_a6gkhqb7k",
+    "eventName": "user_login_success",
+    "category": "auth",
+    "metadata": {},
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-09-16T18:40:09.962Z"
+  },
+  {
+    "id": "evt_crjs4y6i1",
+    "eventName": "coach_response_generation",
+    "category": "coach",
+    "metadata": {
+      "mode": "reply_generator",
+      "tone": "all"
+    },
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-09-16T18:53:01.570Z"
+  },
+  {
+    "id": "evt_e1imcplta",
+    "eventName": "user_login_success",
+    "category": "auth",
+    "metadata": {},
+    "userId": "anon_svcq9vzwh",
+    "timestamp": "2026-09-18T19:57:31.611Z"
   }
 ]
