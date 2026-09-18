@@ -53,11 +53,11 @@ if command -v pm2 >/dev/null 2>&1; then
   echo "🔄 Starting/Reloading service in PM2..."
   pm2 delete karizma >/dev/null 2>&1 || true
   if [ -f "dist/server.cjs" ]; then
-    pm2 start dist/server.cjs --name karizma
+    NODE_ENV=production pm2 start dist/server.cjs --name karizma --update-env
   elif [ -f "server-bundle.cjs" ]; then
-    pm2 start server-bundle.cjs --name karizma
+    NODE_ENV=production pm2 start server-bundle.cjs --name karizma --update-env
   else
-    pm2 start server.cjs --name karizma
+    NODE_ENV=production pm2 start server.cjs --name karizma --update-env
   fi
   pm2 save >/dev/null 2>&1 || true
   echo "=========================================="

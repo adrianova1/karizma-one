@@ -1872,14 +1872,21 @@ async function startServer() {
 
   // ==================== APP INITIAL ENTRY ====================
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== 'production') {
+  // Vite middleware for development vs static for production
+  const isProduction = process.env.NODE_ENV === 'production' || 
+    (process.env.NODE_ENV !== 'development' && (
+      fs.existsSync(path.join(process.cwd(), 'dist', 'index.html')) ||
+      fs.existsSync(path.join(process.cwd(), 'client_dist', 'index.html'))
+    ));
+
+  if (!isProduction) {
     try {
       const { createServer: createViteServer } = await import('vite');
       const vite = await createViteServer({
         server: {
           middlewareMode: true,
           hmr: false,
+          allowedHosts: true,
         },
         appType: 'spa',
       });

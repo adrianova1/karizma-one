@@ -7898,13 +7898,15 @@ async function startServer() {
       details: err.message || String(err)
     });
   });
-  if (process.env.NODE_ENV !== "production") {
+  const isProduction = process.env.NODE_ENV === "production" || process.env.NODE_ENV !== "development" && (fs5.existsSync(import_path5.default.join(process.cwd(), "dist", "index.html")) || fs5.existsSync(import_path5.default.join(process.cwd(), "client_dist", "index.html")));
+  if (!isProduction) {
     try {
       const { createServer: createViteServer } = await import("vite");
       const vite = await createViteServer({
         server: {
           middlewareMode: true,
-          hmr: false
+          hmr: false,
+          allowedHosts: true
         },
         appType: "spa"
       });
