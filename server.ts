@@ -8,7 +8,6 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
-import { createServer as createViteServer } from 'vite';
 import { DBEngine, hashPassword, verifyPassword } from './src/server/db.js';
 import { SubscriptionService } from './src/server/services/subscription.service.js';
 import { CleanupService } from './src/server/services/cleanup.service.js';
@@ -44,10 +43,11 @@ setInterval(() => {
 }, 60000);
 
 function rateLimiterMiddleware(req: Request, res: Response, next: NextFunction) {
-  // Extract client IP safely (first non-internal IP in x-forwarded-for if present)
+  // Extract client IP safely (respecting Nginx reverse proxy headers)
   const forwarded = req.headers['x-forwarded-for'];
   const rawIp = (typeof forwarded === 'string' ? forwarded.split(',')[0] : null) || 
                 (req.headers['x-real-ip'] as string) || 
+                req.ip ||
                 req.socket.remoteAddress || 
                 '127.0.0.1';
   const ip = rawIp.trim();
@@ -57,7 +57,7 @@ function rateLimiterMiddleware(req: Request, res: Response, next: NextFunction) 
   const bucketKey = `${isAuthRoute ? 'auth' : 'api'}:${ip}`;
   const now = Date.now();
   const windowMs = 60 * 1000; // 1 minute window
-  const maxRequests = isAuthRoute ? 10 : 400; // 10 attempts for auth, 400 for general API per minute
+  const maxRequests = isAuthRoute ? 30 : 1200; // 30 attempts for auth, 1200 for general API per minute
 
   const record = rateLimits.get(bucketKey);
   if (!record || now > record.resetTime) {
@@ -77,7 +77,10 @@ function rateLimiterMiddleware(req: Request, res: Response, next: NextFunction) 
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  // Trust Nginx reverse proxy headers (X-Forwarded-For, X-Real-IP, etc.)
+  app.set('trust proxy', true);
+
+  const PORT = Number(process.env.PORT) || 3000;
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ limit: '10mb', extended: true }));
@@ -1871,31 +1874,49 @@ async function startServer() {
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: {
-        middlewareMode: true,
-        hmr: false,
-      },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
+    try {
+      const { createServer: createViteServer } = await import('vite');
+      const vite = await createViteServer({
+        server: {
+          middlewareMode: true,
+          hmr: false,
+        },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+    } catch (viteErr) {
+      console.warn('[ViteDev] Vite middleware fallback to static build:', viteErr);
+    }
   } else {
     const distPath = path.join(process.cwd(), 'dist');
+    const indexPath = path.join(distPath, 'index.html');
     
     // Serve static files at root and subdirectory prefix
     app.use(express.static(distPath));
     app.use('/app', express.static(distPath));
     
+    const sendIndex = (_req: Request, res: Response) => {
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.status(503).send(`
+          <!DOCTYPE html>
+          <html lang="fa" dir="rtl">
+          <head><meta charset="utf-8"><title>مرکز کاریزما</title></head>
+          <body style="font-family: Tahoma, sans-serif; text-align: center; padding: 60px 20px; background: #09090b; color: #f8fafc;">
+            <h2>مرکز کاریزما در حال آماده‌سازی است</h2>
+            <p style="color: #94a3b8;">فایل‌های فرانت‌اند هنوز بیلد نشده‌اند. لطفاً دستور زیر را در ترمینال سرور اجرا فرمایید:</p>
+            <pre style="background: #1e293b; color: #38bdf8; display: inline-block; padding: 10px 20px; border-radius: 8px;">npm run build</pre>
+          </body>
+          </html>
+        `);
+      }
+    };
+
     // Serve index.html directly for /app and any subroutes to avoid redirect loops
-    app.get('/app', async (req: Request, res: Response) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-    app.get('/app/*', async (req: Request, res: Response) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-    app.get('*', async (req: Request, res: Response) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
+    app.get('/app', sendIndex);
+    app.get('/app/*', sendIndex);
+    app.get('*', sendIndex);
   }
 
   // Periodic real-time background sweep for expiring subscriptions
