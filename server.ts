@@ -1888,12 +1888,15 @@ async function startServer() {
       console.warn('[ViteDev] Vite middleware fallback to static build:', viteErr);
     }
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    const indexPath = path.join(distPath, 'index.html');
+    let staticDir = path.join(process.cwd(), 'dist');
+    if (!fs.existsSync(path.join(staticDir, 'index.html')) && fs.existsSync(path.join(process.cwd(), 'client_dist', 'index.html'))) {
+      staticDir = path.join(process.cwd(), 'client_dist');
+    }
+    const indexPath = path.join(staticDir, 'index.html');
     
     // Serve static files at root and subdirectory prefix
-    app.use(express.static(distPath));
-    app.use('/app', express.static(distPath));
+    app.use(express.static(staticDir));
+    app.use('/app', express.static(staticDir));
     
     const sendIndex = (_req: Request, res: Response) => {
       if (fs.existsSync(indexPath)) {

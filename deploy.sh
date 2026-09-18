@@ -39,20 +39,26 @@ fi
 echo "⚡ Installing production packages..."
 npm install --omit=dev --ignore-scripts
 
-# 6. Check if pre-built bundle exists or build if necessary
-if [ -f "dist/server.cjs" ] && [ -f "dist/index.html" ]; then
-  echo "✅ Pre-built production bundle detected from Git! Zero build time required."
-else
-  echo "🔨 Pre-built files not found, installing build tools and compiling..."
-  npm install --ignore-scripts
-  npm run build
+# 6. Ensure dist folder and server are ready for PM2
+mkdir -p dist
+if [ -d "client_dist" ]; then
+  cp -r client_dist/* dist/ 2>/dev/null || true
+fi
+if [ -f "server-bundle.cjs" ]; then
+  cp server-bundle.cjs dist/server.cjs 2>/dev/null || true
 fi
 
 # 7. Process management with PM2
 if command -v pm2 >/dev/null 2>&1; then
   echo "🔄 Starting/Reloading service in PM2..."
   pm2 delete karizma >/dev/null 2>&1 || true
-  pm2 start dist/server.cjs --name karizma
+  if [ -f "dist/server.cjs" ]; then
+    pm2 start dist/server.cjs --name karizma
+  elif [ -f "server-bundle.cjs" ]; then
+    pm2 start server-bundle.cjs --name karizma
+  else
+    pm2 start server.cjs --name karizma
+  fi
   pm2 save >/dev/null 2>&1 || true
   echo "=========================================="
   echo "✅ Karizma Center is LIVE and running on port 3000!"

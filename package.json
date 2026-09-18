@@ -7,8 +7,8 @@
     "dev": "tsx server.ts",
     "coach:benchmark": "tsx scripts/benchmark_coach.ts",
     "coach:blind-benchmark": "tsx scripts/blind_benchmark_coach.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
-    "start": "node dist/server.cjs",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs && cp dist/server.cjs server-bundle.cjs && cp dist/server.cjs server.cjs && mkdir -p client_dist && cp -r dist/* client_dist/ && rm -f client_dist/server.cjs client_dist/server.cjs.map",
+    "start": "node server-bundle.cjs",
     "deploy": "bash deploy.sh",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"
