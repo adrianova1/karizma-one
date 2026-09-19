@@ -14,6 +14,18 @@ interface ScenarioBankViewProps {
   onSelectScenarioForCoach?: (scenarioText: string) => void;
 }
 
+function cleanToneDialogue(txt: any): string {
+  if (!txt) return '';
+  if (typeof txt !== 'string') txt = String(txt);
+  return txt
+    .replace(/^(پاسخ کاریزماتیک|پاسخ شوخ‌طبع|پاسخ شوخ طبع|پاسخ مقتدر|پاسخ مرموز|پاسخ متین|کاریزماتیک|شوخ طبع|شوخ‌طبع|مقتدر|مرموز|متین|قاطع|پخته)[\s:：\-—]+/i, '')
+    .replace(/^«\s*/, '')
+    .replace(/\s*»$/, '')
+    .replace(/\s*—\s*\(اجرا با لحن[^)]+\)/g, '')
+    .replace(/\s*\(اجرا با لحن[^)]+\)/g, '')
+    .trim();
+}
+
 export function getScenarioToneResponses(scenario: ScenarioItem, toneKey: string): string[] {
   if (!scenario) return [];
 
@@ -34,57 +46,135 @@ export function getScenarioToneResponses(scenario: ScenarioItem, toneKey: string
     mature: ['mature', 'tone_mature', 'tone_5', 'متین', 'پخته', 'پاسخ متین', 'خونسرد', 'حمایتگر', 'psychology', 'دیپلماتیک', 'بالغ']
   };
 
-  const candidates = keySynonyms[toneKey] || [toneKey];
-
-  // 1. Try in responses object
-  for (const k of candidates) {
-    const val = resObj[k];
-    if (val) {
-      if (Array.isArray(val) && val.length > 0) return val.map(String).map(s => s.trim()).filter(Boolean);
-      if (typeof val === 'string' && val.trim()) return [val.trim()];
-    }
-  }
-
-  // 2. Try in flat scenario fields
-  const flat = scenario as any;
-  for (const k of candidates) {
-    const val = flat[k];
-    if (val && typeof val === 'string' && val.trim()) return [val.trim()];
-  }
-
-  // 3. Try in structured answers array
-  if (Array.isArray(flat.answers) && flat.answers.length > 0) {
-    for (const a of flat.answers) {
-      if (!a || !a.text) continue;
-      const style = (a.style || '').toLowerCase();
-      for (const k of candidates) {
-        if (style.includes(k.toLowerCase())) {
-          return [a.text.trim()];
+  const extractSingle = (tone: string): string => {
+    const candidates = keySynonyms[tone] || [tone];
+    for (const k of candidates) {
+      const val = resObj[k];
+      if (val) {
+        if (Array.isArray(val) && val.length > 0) {
+          const first = cleanToneDialogue(val[0]);
+          if (first) return first;
+        }
+        if (typeof val === 'string' && val.trim()) {
+          const cleaned = cleanToneDialogue(val);
+          if (cleaned) return cleaned;
         }
       }
     }
-  }
-
-  // 4. Fallback if this specific tone is missing
-  const allAvailable = Object.entries(resObj)
-    .filter(([_, v]) => typeof v === 'string' && (v as string).trim().length > 0)
-    .map(([_, v]) => (v as string).trim());
-
-  if (allAvailable.length > 0) {
-    const baseText = allAvailable[0];
-    if (toneKey === 'funny') {
-      return [`«${baseText}» — (اجرا با لحن شوخ‌طبع، لبخند خونسرد و رندانه)`];
-    } else if (toneKey === 'confident') {
-      return [`«${baseText}» — (اجرا با لحن مقتدر و قاطع، بدون عذرخواهی یا تاییدخواهی)`];
-    } else if (toneKey === 'mysterious') {
-      return [`«${baseText}» — (اجرا با مکث معنادار، لحن عمیق و پرکشش)`];
-    } else if (toneKey === 'mature') {
-      return [`«${baseText}» — (اجرا با وقار، متانت و ادب دیپلماتیک)`];
+    const flat = scenario as any;
+    for (const k of candidates) {
+      const val = flat[k];
+      if (val && typeof val === 'string' && val.trim()) {
+        const cleaned = cleanToneDialogue(val);
+        if (cleaned) return cleaned;
+      }
     }
-    return [baseText];
+    if (Array.isArray(flat.answers) && flat.answers.length > 0) {
+      for (const a of flat.answers) {
+        if (!a || !a.text) continue;
+        const style = (a.style || '').toLowerCase();
+        for (const k of candidates) {
+          if (style.includes(k.toLowerCase())) {
+            const cleaned = cleanToneDialogue(a.text);
+            if (cleaned) return cleaned;
+          }
+        }
+      }
+    }
+    return '';
+  };
+
+  const rawMap: Record<string, string> = {
+    charismatic: extractSingle('charismatic'),
+    funny: extractSingle('funny'),
+    confident: extractSingle('confident'),
+    mysterious: extractSingle('mysterious'),
+    mature: extractSingle('mature')
+  };
+
+  // Base fallback text from situation or title
+  const baseText = rawMap.charismatic || rawMap.confident || rawMap.funny || rawMap.mysterious || rawMap.mature || scenario.situation || scenario.title || '';
+  const contextStr = `${scenario.title || ''} ${scenario.situation || ''} ${baseText}`.toLowerCase();
+
+  // Context-aware tone generators if a tone is missing or duplicate
+  const generateToneFallback = (tKey: string): string => {
+    // 1. Playful / Food / Pastil teasing
+    if (/پاستیل|شکلات|خوراکی|کادو|هدیه|بخر|بخری/.test(contextStr)) {
+      if (tKey === 'charismatic') return 'دستور قشنگی بود! ولی معمولاً اول عیار همنشینی سنجیده میشه، بعد سورپرایزهای خوشمزه رونمایی میشن. فکر می‌کنی برنده این چالش بشی؟ ✨';
+      if (tKey === 'funny') return 'عاشق این مدل باج‌گیری‌های شیرینتم! باشه به شرطی که پاستیل ترش‌ها سهم من باشه و شکلات‌ها سهم تو 😄';
+      if (tKey === 'confident') return 'شکلات و پاستیل که پیشکشه، ولی پاداش‌ها توی لیست من بر اساس رفتار خوب و امتیازهای مثبته؛ ببینم تا الان چقدر امتیاز جمع کردی؟ 😉';
+      if (tKey === 'mysterious') return 'فکر کردی با اسم رمز شکلات و پاستیل می‌تونی حواسمو پرت کنی؟ مگه اینکه یه فنجون قهوه ناب هم به این قرارداد اضافه کنی تا تاییدش کنم 😏';
+      if (tKey === 'mature') return 'دیدن ذوق کردنت با یه بسته شکلات و خوراکی خوشمزه واقعاً حس قشنگی داره؛ حتماً توی برنامه دیدار بعدیمون در نظر می‌گیرم ❤️';
+    }
+
+    // 2. Late reply / Seen
+    if (/سین|دیر جواب|آنلاین|کجایی|بی محلی|پیام نمیدی/.test(contextStr)) {
+      if (tKey === 'charismatic') return 'وقت و تمرکز ارزشمندترین داراییه؛ ترجیح میدم در آرامش و با تمرکز مکالمه کنیم تا پیام‌های عجله‌ای.';
+      if (tKey === 'funny') return 'داشتم آماده می‌شدم به پلیس بین‌الملل اعلام مفقودی کنم! ولی خب رکورد سرعت پاسخگویی فعلاً دست شماست 😉';
+      if (tKey === 'confident') return 'من به مکالمه باکیفیت و متمرکز ارزش میدم؛ هر زمان فرصت کافی داشتی خوشحال میشم صحبت کنیم.';
+      if (tKey === 'mysterious') return 'ارتباط واقعی نیاز به حضور ذهن کامل داره، نه پیام‌های مقطعی بین کارهای روزمره؛ بعضی ناگفته‌ها ارزش صبر کردن رو دارن.';
+      if (tKey === 'mature') return 'سلام! امیدوارم روز پرانرژی و خوبی داشته باشی؛ کیفیت مکالمه برام مهم‌تر از سرعت پاسخگوییه، هر وقت سرت خلوت شد گپ می‌زنیم.';
+    }
+
+    // 3. Simp / Thirsty teasing (هول / عجول)
+    if (/هول|عجول|چقدر پیگیری|دستپاچه/.test(contextStr)) {
+      if (tKey === 'charismatic') return 'تفاوت بزرگی هست بین اشتیاق و انرژی برای هم‌صحبتی با یک شخص باکیفیت، و عجول بودن؛ من همیشه سنجیده و با وقار قدم برمی‌دارم.';
+      if (tKey === 'funny') return 'من حتی برای قطار مترو هم هول نمی‌زنم! ولی خب اعتراف می‌کنم در مورد تو نمیشه خونسرد موند 😉';
+      if (tKey === 'confident') return 'اگه توجه به یک آدم جذاب و باارزش اسمش هول بودنه، بذار هر برچسبی می‌خوان بزنن؛ من پای سلیقه و انتخابم با اعتمادبه‌نفس می‌ایستم.';
+      if (tKey === 'mysterious') return 'وقتی با تو هم‌کلام میشم کشش و حس خوبت ناخودآگاه ریتم معمول رو به هم می‌ریزه؛ اما کشف داستان ما صبوری می‌خواد.';
+      if (tKey === 'mature') return 'اتفاقاً انقدر باهات راحتم و خوش می‌گذره که دلم نمی‌خواد فیلم بازی کنم و خشک باشم؛ خودت انرژی مثبتت بالاست!';
+    }
+
+    // 4. Crisis / Depression / Hopelessness
+    if (/بمیرم|خودکشی|خسته شدم از زندگی|بریدم|امیدی ندارم|پوچی|ناامیدی|مرگ/.test(contextStr)) {
+      if (tKey === 'charismatic') return 'ارزش وجودی و گوهر درونی تو فراتر از بحران‌ها و تلاطم‌های گذراست. تاریک‌ترین ساعات شب همیشه درست قبل از طلوع سر می‌رسن؛ تو قوی‌تر از اونی هستی که این فصل سخت نقطه پایان داستانت باشه.';
+      if (tKey === 'funny') return 'دنیا هنوز پر از قهوه‌های داغ، فیلم‌های ندیده و شوخی‌های نشنیده‌ست که حیفه الان جا بزنی! بیا یکم با هم گپ بزنیم و آروم بشیم.';
+      if (tKey === 'confident') return 'این حجم از خستگی نشانه اینه که زیر فشار خیلی زیادی جنگیدی، نه اینکه ناتوان باشی. الان وقت تصمیم‌گیری نیست؛ یک نفس عمیق بکش، سرت رو بالا بگیر و اجازه بده این طوفان بگذره.';
+      if (tKey === 'mysterious') return 'انسان‌های عمیق همیشه از دل تاریک‌ترین اقیانوس‌ها عبور می‌کنن تا نور اصیل درونشون رو پیدا کنن؛ این درد پیله‌ایه که قراره ازت انسانی مستحکم بسازه.';
+      if (tKey === 'mature') return 'اولاً که دنیا بدون حضور تو جای خالی بزرگی داره، پس اصلاً به رفتن فکر نکن. از نظر روانی وقتی ذهن زیر فشار شدیده دچار دید تونلی میشه؛ این فقط خستگی بیوشیمیایی گذراست و می‌گذره.';
+    }
+
+    // General high-value persona fallbacks
+    if (tKey === 'charismatic') return baseText || 'حفظ وقار، آرامش و پرستیژ در عین انتقال احترام و ارزش بالا.';
+    if (tKey === 'funny') return 'اگه قرار باشه همیشه اینقدر سخت بگیری، باید از دفعه بعد با وکیلم هماهنگ کنی! خونسرد باش، دنیا قشنگ‌تر از این حرفاست 😉';
+    if (tKey === 'confident') return 'من برای وقت، انرژی و استانداردهام ارزش زیادی قائلم؛ وقتی گفتگو دوطرفه و شفاف باشه بالاترین ارزش رو داره.';
+    if (tKey === 'mysterious') return 'بعضی مکالمه‌ها مثل کتاب‌های چندجلدی می‌مونن؛ ورق زدن فصل‌های جذابش صبوری و توجه می‌خواد.';
+    if (tKey === 'mature') return 'درکت می‌کنم و دیدگاهت کاملاً محترمه؛ مهم اینه که در فضایی آروم و محترمانه گفتگو رو جلو ببریم.';
+    return baseText;
+  };
+
+  // Build strictly unique tone responses
+  const finalMap: Record<string, string> = {};
+  const seenTexts: string[] = [];
+  const toneOrder = ['charismatic', 'funny', 'confident', 'mysterious', 'mature'];
+
+  for (const t of toneOrder) {
+    let candidate = rawMap[t];
+    let isDuplicateOrMissing = !candidate || candidate.length < 4;
+
+    if (!isDuplicateOrMissing) {
+      for (const seen of seenTexts) {
+        if (candidate === seen || (candidate.length > 10 && seen.length > 10 && (candidate.includes(seen) || seen.includes(candidate)))) {
+          isDuplicateOrMissing = true;
+          break;
+        }
+      }
+    }
+
+    if (isDuplicateOrMissing) {
+      candidate = generateToneFallback(t);
+      // Ensure generated fallback is also strictly unique
+      if (seenTexts.includes(candidate)) {
+        candidate = candidate + (t === 'funny' ? ' 😄' : t === 'mysterious' ? ' ✨' : '..');
+      }
+    }
+
+    finalMap[t] = candidate;
+    seenTexts.push(candidate);
   }
 
-  return [];
+  const requestedText = finalMap[toneKey] || finalMap['charismatic'] || baseText;
+  return [requestedText];
 }
 
 export default function ScenarioBankView({ token, onSelectScenarioForCoach }: ScenarioBankViewProps) {

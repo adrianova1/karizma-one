@@ -121,31 +121,71 @@ export class CoachLoader {
       }
     }
 
-    let finalCharismatic = rawCharismatic;
-    let finalFunny = rawFunny;
-    let finalConfident = rawConfident;
-    let finalMysterious = rawMysterious;
-    let finalMature = rawMature;
+    // Tone validation and strict deduplication across all 5 Canonical Tones
+    const toneKeys: Array<'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature'> = [
+      'charismatic', 'funny', 'confident', 'mysterious', 'mature'
+    ];
 
-    const uniqueTones = new Set([finalCharismatic, finalFunny, finalConfident, finalMysterious, finalMature].filter(Boolean));
-    if (uniqueTones.size < 4) {
-      const baseText = finalCharismatic || finalConfident || finalFunny || finalMysterious || finalMature || s.situation || s.title || '';
-      const rotation = (s.id || '').split('').reduce((acc: number, c: string) => acc + c.charCodeAt(0), 0);
-      const gen = PersonaGenerator.generateVariations(baseText, s, s.title || s.situation || '', rotation);
+    const toneMap: Record<'charismatic' | 'funny' | 'confident' | 'mysterious' | 'mature', string> = {
+      charismatic: rawCharismatic,
+      funny: rawFunny,
+      confident: rawConfident,
+      mysterious: rawMysterious,
+      mature: rawMature
+    };
 
-      finalCharismatic = finalCharismatic || gen.charismatic;
-      finalFunny = (finalFunny && finalFunny !== finalCharismatic) ? finalFunny : gen.funny;
-      finalConfident = (finalConfident && finalConfident !== finalCharismatic && finalConfident !== finalFunny) ? finalConfident : gen.confident;
-      finalMysterious = (finalMysterious && finalMysterious !== finalCharismatic && finalMysterious !== finalFunny && finalMysterious !== finalConfident) ? finalMysterious : gen.mysterious;
-      finalMature = (finalMature && finalMature !== finalCharismatic && finalMature !== finalFunny && finalMature !== finalConfident && finalMature !== finalMysterious) ? finalMature : gen.mature;
+    // Find valid base text for persona synthesis if any tone is duplicate or missing
+    const baseText = cleanDialogue(
+      rawCharismatic || rawConfident || rawFunny || rawMysterious || rawMature || s.situation || s.title || ''
+    );
+    const rotation = (s.id || '').split('').reduce((acc: number, c: string) => acc + c.charCodeAt(0), 0);
+
+    let variationsCache: Record<string, string> | null = null;
+    const getVariations = (rotOffset = 0) => {
+      return PersonaGenerator.generateVariations(baseText, s, s.title || s.situation || '', rotation + rotOffset);
+    };
+
+    const seenReplies: string[] = [];
+    for (const key of toneKeys) {
+      let val = toneMap[key] ? toneMap[key].trim() : '';
+      let isInvalid = !val || val.length < 3;
+
+      if (!isInvalid) {
+        // Check for duplicates or near-duplicates against all previously accepted tones
+        for (const prev of seenReplies) {
+          const sim = PersianNormalizer.computeTrigramSimilarity(val, prev);
+          if (sim >= 0.75 || val === prev || (val.length > 8 && prev.length > 8 && (val.includes(prev) || prev.includes(val)))) {
+            isInvalid = true;
+            break;
+          }
+        }
+      }
+
+      if (isInvalid) {
+        // Generate distinct persona tone variation
+        if (!variationsCache) variationsCache = getVariations(0);
+        let replacement = variationsCache[key] || '';
+
+        // Ensure replacement is not also a duplicate of already seen replies
+        let attempts = 0;
+        while (attempts < 4 && (!replacement || seenReplies.some(prev => prev === replacement || PersianNormalizer.computeTrigramSimilarity(replacement, prev) >= 0.75))) {
+          attempts++;
+          const altVars = getVariations(attempts * 2 + 1);
+          replacement = altVars[key] || '';
+        }
+
+        toneMap[key] = replacement || 'پاسخ متناسب با کنترل فریم و حفظ وقار کلامی.';
+      }
+
+      seenReplies.push(toneMap[key]);
     }
 
     const responses: CoachToneResponses = {
-      charismatic: finalCharismatic || 'با متانت و کنترل فریم فضا را مدیریت کنید.',
-      funny: finalFunny || 'با شوخ‌طبعی و رندی هوشمندانه فضا را تلطیف کنید.',
-      confident: finalConfident || 'با صراحت، اقتدار و اعتمادبه‌نفس موضع خود را بیان کنید.',
-      mysterious: finalMysterious || 'با نگاهی عمیق و پاسخی سنجیده کنجکاوی مخاطب را حفظ کنید.',
-      mature: finalMature || 'با وقار، پرستیژ و آرامش ارتباط را پیش ببرید.'
+      charismatic: toneMap.charismatic,
+      funny: toneMap.funny,
+      confident: toneMap.confident,
+      mysterious: toneMap.mysterious,
+      mature: toneMap.mature
     };
 
     let triggers: string[] = [];
@@ -311,13 +351,6 @@ export class CoachLoader {
         }
       }
 
-      // Add high-priority canonical hand-crafted scenarios
-      for (const canonical of CANONICAL_FEATURED_SCENARIOS) {
-        const normalized = this.normalizeScenario(canonical, 'canonical_core.json');
-        scenarioMap.set(normalized.id, normalized);
-        this.scenarioChunkMap.set(normalized.id, 'canonical_core.json');
-      }
-
       // Merge custom / imported scenarios from SQLite DB if present
       try {
         const dbScenarios = DBEngine.readTableSync<any>('scenarios');
@@ -330,6 +363,13 @@ export class CoachLoader {
         }
       } catch (dbErr) {
         console.warn('[CoachLoader] Note while loading db scenarios:', dbErr);
+      }
+
+      // Add high-priority canonical hand-crafted scenarios (Must overwrite any stale DB records)
+      for (const canonical of CANONICAL_FEATURED_SCENARIOS) {
+        const normalized = this.normalizeScenario(canonical, 'canonical_core.json');
+        scenarioMap.set(normalized.id, normalized);
+        this.scenarioChunkMap.set(normalized.id, 'canonical_core.json');
       }
 
       // Also merge data/scenarios.json if extra custom records exist
