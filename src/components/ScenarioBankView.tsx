@@ -768,7 +768,7 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
 
                               <button
                                 type="button"
-                                onClick={() => handleCopy(fullCopyText || previewResponseText, `${scenario.id}_${currentTone}`)}
+                                onClick={() => handleCopy(responseList[0] || fullCopyText || '', `${scenario.id}_${currentTone}`)}
                                 className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer active:scale-95 ${
                                   copiedResponseKey === `${scenario.id}_${currentTone}`
                                     ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
@@ -813,7 +813,7 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
                               </div>
                             ) : (
                               <p className="text-sm sm:text-base text-white font-medium leading-relaxed select-text py-1">
-                                « {previewResponseText || 'پاسخی برای این لحن ثبت نشده است.'} »
+                                « {responseList[0] || 'پاسخی برای این لحن ثبت نشده است.'} »
                               </p>
                             )}
                           </div>
