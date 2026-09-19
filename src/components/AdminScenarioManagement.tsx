@@ -57,6 +57,10 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
   const [exportLoading, setExportLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Custom Delete Scenario Modal State (iframe and touch safe)
+  const [scenarioToDelete, setScenarioToDelete] = useState<{ id: string; title: string } | null>(null);
+  const [deletingScenario, setDeletingScenario] = useState(false);
+
   const getCategoryBadgeClass = (categoryTitle: string) => {
     const c = categoryTitle || '';
     if (c.includes('پوش')) return 'bg-amber-500/15 border-amber-500/30 text-amber-300';
@@ -218,22 +222,26 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
     }
   };
 
-  const handleDeleteScenario = async (id: string, title: string) => {
-    if (!window.confirm(`آیا از حذف سناریو «${title}» اطمینان دارید؟`)) return;
-
+  const executeDeleteScenario = async () => {
+    if (!scenarioToDelete) return;
+    setDeletingScenario(true);
     try {
-      const res = await fetch(`/api/scenarios/${id}`, {
+      const res = await fetch(`/api/scenarios/${scenarioToDelete.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (res.ok) {
+        setScenarioToDelete(null);
         fetchScenarios();
       } else {
-        alert('خطا در حذف سناریو.');
+        const data = await parseSafeJson(res);
+        alert(data?.error || 'خطا در حذف سناریو.');
       }
     } catch (err) {
       console.error('Error deleting scenario:', err);
+    } finally {
+      setDeletingScenario(false);
     }
   };
 
@@ -610,7 +618,7 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
                             <span>ویرایش</span>
                           </button>
                           <button
-                            onClick={() => handleDeleteScenario(scen.id, masterTitle)}
+                            onClick={() => setScenarioToDelete({ id: scen.id, title: masterTitle })}
                             className="p-1.5 text-rose-400 hover:bg-rose-500/15 rounded-lg transition cursor-pointer"
                             title="حذف سناریو"
                           >
@@ -956,6 +964,40 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
                   <span>شروع درون‌ریزی ({parsedRows.length} مورد)</span>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal */}
+      {scenarioToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in" style={{ direction: 'rtl' }}>
+          <div className="bg-[#0b0f19] border border-rose-500/40 rounded-3xl p-5 w-full max-w-sm shadow-2xl space-y-4">
+            <div className="flex items-center gap-2.5 text-rose-400 border-b border-slate-800/80 pb-3">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              <h3 className="text-sm font-bold text-white">تایید حذف سناریو</h3>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              آیا از حذف این سناریو با عنوان <span className="text-rose-400 font-bold">«{scenarioToDelete.title}»</span> از پایگاه داده سناریوهای کاریزما اطمینان دارید؟
+            </p>
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-800/80">
+              <button
+                type="button"
+                disabled={deletingScenario}
+                onClick={() => setScenarioToDelete(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition cursor-pointer"
+              >
+                انصراف
+              </button>
+              <button
+                type="button"
+                disabled={deletingScenario}
+                onClick={executeDeleteScenario}
+                className="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-white rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-rose-950/40"
+              >
+                {deletingScenario && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                <span>{deletingScenario ? 'در حال حذف...' : 'بله، حذف شود'}</span>
+              </button>
             </div>
           </div>
         </div>
