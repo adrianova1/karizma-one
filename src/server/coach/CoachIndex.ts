@@ -20,11 +20,11 @@ export class CoachIndex {
   private static readonly VULGAR_REGEX = /کیر|کسکش|جنده|کونی|ممه|سکس|سیکتیر|تریاک|شیره|هروئین|شیشه|کراک|کوکائین|حشیش|عرق سگی|پفیوز|گاومیش|عنتر/i;
 
   /**
-   * Helper to ensure only substantive phrases (not stop-words or generic single words) are indexed for containment
+   * Helper to ensure valid phrases and concise dialogue lines (even short words like 'نه', 'اوکی', 'بای', 'سین') are indexed
    */
   public static isSubstantivePhrase(phrase: string): boolean {
     const norm = PersianNormalizer.normalize(phrase).trim();
-    if (!norm || norm.length < 4) return false;
+    if (!norm || norm.length < 2) return false;
     if (this.VULGAR_REGEX.test(norm)) return false;
     if (PersianNormalizer.GENERIC_CARRIER_PHRASES.has(norm)) return false;
 
@@ -32,7 +32,7 @@ export class CoachIndex {
     for (const carrier of PersianNormalizer.GENERIC_CARRIER_PHRASES) {
       if (norm === carrier || norm.endsWith(' ' + carrier)) {
         const remaining = norm.slice(0, norm.length - carrier.length).trim();
-        if (!remaining || remaining.length < 4 || PersianNormalizer.GENERIC_CARRIER_PHRASES.has(remaining)) {
+        if (!remaining || remaining.length < 2 || PersianNormalizer.GENERIC_CARRIER_PHRASES.has(remaining)) {
           return false;
         }
       }
@@ -40,7 +40,8 @@ export class CoachIndex {
 
     const words = norm.split(' ').filter(Boolean);
     if (words.length === 1) {
-      return norm.length >= 6 && !PersianNormalizer.isStopWord(norm);
+      // Allow single meaningful chat & dating words of length >= 2 unless they are strict filler prepositions
+      return norm.length >= 2 && !PersianNormalizer.isStopWord(norm);
     }
     const nonGenericWords = words.filter(w => !PersianNormalizer.GENERIC_CARRIER_PHRASES.has(w) && !PersianNormalizer.isStopWord(w));
     return nonGenericWords.length > 0;

@@ -90,6 +90,17 @@ export class CoachLoader {
     } else if (typeof s.triggers === 'string' && s.triggers.trim()) {
       triggers = s.triggers.split(/[,\n;|،]+/).map(t => t.trim()).filter(Boolean);
     }
+
+    // Always include opponentLine (what the girl/boy said) and title into high-priority triggers
+    const opponentLine = (s.opponentLine || s.opponent_line || '').toString().trim();
+    if (opponentLine && !triggers.includes(opponentLine)) {
+      triggers.unshift(opponentLine);
+    }
+    const cleanTitle = (s.title || '').toString().trim();
+    if (cleanTitle && !triggers.includes(cleanTitle)) {
+      triggers.push(cleanTitle);
+    }
+
     if (triggers.length === 0) {
       triggers = [s.title || s.situation || ''];
     }

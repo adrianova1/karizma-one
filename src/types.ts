@@ -249,6 +249,14 @@ export interface ImportJob {
   createdAt: string;
 }
 
+export interface BankCardConfig {
+  cardNumber: string;
+  cardOwner: string;
+  cardBank: string;
+  supportReceiptUrl?: string;
+  supportReceiptTitle?: string;
+}
+
 export interface StatisticsRecord {
   id: string;
   type: string;

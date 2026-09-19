@@ -1318,11 +1318,17 @@ async function startServer() {
     const cardSetting = settings.find(s => s.key === 'card_number');
     const ownerSetting = settings.find(s => s.key === 'card_owner');
     const bankSetting = settings.find(s => s.key === 'card_bank');
+    const supportUrlSetting = settings.find(s => s.key === 'support_receipt_url');
+    const supportTitleSetting = settings.find(s => s.key === 'support_receipt_title');
+
+    const defaultSupportUrl = 'https://t.me/Karizma_Academy';
 
     res.json({
       cardNumber: cardSetting ? cardSetting.value : '6037-9911-2233-4455',
       cardOwner: ownerSetting ? ownerSetting.value : 'مدیریت مرکز کاریزما',
-      cardBank: bankSetting ? bankSetting.value : 'بانک ملی ایران'
+      cardBank: bankSetting ? bankSetting.value : 'بانک ملی ایران',
+      supportReceiptUrl: supportUrlSetting && supportUrlSetting.value ? supportUrlSetting.value : defaultSupportUrl,
+      supportReceiptTitle: supportTitleSetting && supportTitleSetting.value ? supportTitleSetting.value : 'ارسال فیش و اسکرین‌شات به پشتیبانی'
     });
   });
 
@@ -1331,16 +1337,20 @@ async function startServer() {
     const cardSetting = settings.find(s => s.key === 'card_number');
     const ownerSetting = settings.find(s => s.key === 'card_owner');
     const bankSetting = settings.find(s => s.key === 'card_bank');
+    const supportUrlSetting = settings.find(s => s.key === 'support_receipt_url');
+    const supportTitleSetting = settings.find(s => s.key === 'support_receipt_title');
 
     res.json({
       cardNumber: cardSetting ? cardSetting.value : '6037-9911-2233-4455',
       cardOwner: ownerSetting ? ownerSetting.value : 'مدیریت مرکز کاریزما',
-      cardBank: bankSetting ? bankSetting.value : 'بانک ملی ایران'
+      cardBank: bankSetting ? bankSetting.value : 'بانک ملی ایران',
+      supportReceiptUrl: supportUrlSetting ? supportUrlSetting.value : '',
+      supportReceiptTitle: supportTitleSetting ? supportTitleSetting.value : 'ارسال فیش و اسکرین‌شات به پشتیبانی'
     });
   });
 
   app.put('/api/admin/settings/card', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), async (req: Request, res: Response) => {
-    const { cardNumber, cardOwner, cardBank } = req.body;
+    const { cardNumber, cardOwner, cardBank, supportReceiptUrl, supportReceiptTitle } = req.body;
 
     if (!cardNumber || typeof cardNumber !== 'string') {
       return res.status(400).json({ error: 'شماره کارت الزامی است.' });
@@ -1367,17 +1377,21 @@ async function startServer() {
     updateOrInsertSetting('card_number', cardNumber.trim(), 'شماره کارت پیش‌فرض جهت واریزی');
     updateOrInsertSetting('card_owner', (cardOwner || 'مدیریت مرکز کاریزما').trim(), 'نام صاحب کارت');
     updateOrInsertSetting('card_bank', (cardBank || 'بانک ملی ایران').trim(), 'نام بانک صادرکننده کارت');
+    updateOrInsertSetting('support_receipt_url', (supportReceiptUrl || '').trim(), 'لینک ارسال رسید و اسکرین‌شات در شبکه‌های اجتماعی یا پشتیبانی');
+    updateOrInsertSetting('support_receipt_title', (supportReceiptTitle || 'ارسال فیش و اسکرین‌شات به پشتیبانی').trim(), 'عنوان دکمه ارسال رسید به پشتیبانی');
 
     await DBEngine.writeTable('settings', settings);
 
     const user = (req as any).user;
-    await logAudit(user.id, user.username, 'ویرایش شماره کارت پیش‌فرض', req.ip || '127.0.0.1', `شماره کارت جدید: ${cardNumber} | صاحب کارت: ${cardOwner}`);
+    await logAudit(user.id, user.username, 'ویرایش تنظیمات کارت و لینک پشتیبانی', req.ip || '127.0.0.1', `شماره کارت: ${cardNumber} | لینک پشتیبانی: ${supportReceiptUrl}`);
 
     res.json({
       success: true,
       cardNumber: cardNumber.trim(),
       cardOwner: (cardOwner || 'مدیریت مرکز کاریزما').trim(),
-      cardBank: (cardBank || 'بانک ملی ایران').trim()
+      cardBank: (cardBank || 'بانک ملی ایران').trim(),
+      supportReceiptUrl: (supportReceiptUrl || '').trim(),
+      supportReceiptTitle: (supportReceiptTitle || 'ارسال فیش و اسکرین‌شات به پشتیبانی').trim()
     });
   });
 

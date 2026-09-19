@@ -43,7 +43,9 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
   const [cardConfig, setCardConfig] = useState<BankCardConfig>({
     cardNumber: '6037-9911-2233-4455',
     cardOwner: 'مدیریت مرکز کاریزما',
-    cardBank: 'بانک ملی ایران'
+    cardBank: 'بانک ملی ایران',
+    supportReceiptUrl: '',
+    supportReceiptTitle: 'ارسال فیش و اسکرین‌شات به پشتیبانی'
   });
   const [cardSaving, setCardSaving] = useState(false);
   const [cardSaveMsg, setCardSaveMsg] = useState('');
@@ -835,6 +837,47 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
                 </div>
               </div>
 
+              {/* Support & Screenshot Link Setting */}
+              <div className="p-3.5 bg-slate-900/80 border border-sky-500/30 rounded-2xl space-y-2.5 mt-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-sky-400">
+                    <span className="text-sm">📸</span>
+                    <label className="text-xs font-bold text-white">لینک ارسال اسکرین‌شات / رسید پرداخت به پشتیبانی:</label>
+                  </div>
+                  {cardConfig.supportReceiptUrl && (
+                    <a
+                      href={cardConfig.supportReceiptUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-sky-400 hover:text-sky-300 underline font-bold"
+                    >
+                      تست لینک ↗
+                    </a>
+                  )}
+                </div>
+                <input
+                  type="url"
+                  value={cardConfig.supportReceiptUrl || ''}
+                  onChange={(e) => setCardConfig({ ...cardConfig, supportReceiptUrl: e.target.value })}
+                  placeholder="مثال: https://t.me/admin_support یا https://rubika.ir/admin یا لینک چت"
+                  className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white font-mono dir-ltr outline-none text-left"
+                />
+                <p className="text-[10px] text-slate-400 leading-relaxed">
+                  این لینک به عنوان یک دکمه مجزا در پاپ‌آپ پرداخت نمایش داده می‌شود تا کاربر بتواند با زدن روی آن مستقیماً تصویر یا اسکرین‌شات رسید کارت‌به‌کارت خود را در تلگرام، روبیکا یا پیام‌رسان دلخواه برای شما بفرستد.
+                </p>
+
+                <div className="pt-1">
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">متن روی دکمه (اختیاری):</label>
+                  <input
+                    type="text"
+                    value={cardConfig.supportReceiptTitle || ''}
+                    onChange={(e) => setCardConfig({ ...cardConfig, supportReceiptTitle: e.target.value })}
+                    placeholder="پیش‌فرض: ارسال فیش و اسکرین‌شات به پشتیبانی"
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-1.5 text-xs text-white outline-none"
+                  />
+                </div>
+              </div>
+
               <div className="pt-2 flex justify-end">
                 <button
                   type="submit"
@@ -1019,11 +1062,13 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
 
                     {/* Subscription status */}
                     <span className={`px-2.5 py-1 rounded-xl text-[10px] font-bold ${
-                      hasActiveSub 
+                      u.role === Role.ADMIN
+                        ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
+                        : hasActiveSub 
                         ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30' 
                         : 'bg-slate-900 text-slate-500 border border-slate-800'
                     }`}>
-                      {hasActiveSub ? `👑 ${(u as any).subscription.planName}` : 'اشتراک رایگان'}
+                      {u.role === Role.ADMIN ? '👑 مادام‌العمر / نامحدود (VIP ادمین)' : hasActiveSub ? `👑 ${(u as any).subscription.planName}` : 'اشتراک رایگان'}
                     </span>
                   </div>
 

@@ -94,10 +94,10 @@ export class RankingEngine {
       richness -= 10.0;
     }
 
-    // 3. Foundation Core Status
-    const isCore = ['scen_1', 'scen_2', 'scen_3', 'scen_4', 'scen_5', 'scen_6', 'scen_7', 'scen_8', 'scen_intimacy_request_1', 'scen_playful_gift_teasing_1', 'scen_distress_hopelessness_1'].includes(scenario.id);
-    if (isCore) {
-      richness += 20.0;
+    // 3. User-added / Custom Scenario Fairness
+    // Give all rich scenarios an equal playing field based on actual dialogue quality
+    if (scenario.id && !scenario.id.startsWith('junk_')) {
+      richness += 5.0;
     }
 
     // 4. Usable dialogue candidate pool size

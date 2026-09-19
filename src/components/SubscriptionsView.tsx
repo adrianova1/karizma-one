@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   CreditCard, Check, Sparkles, CheckCircle2, Shield, Calendar, 
   ArrowRight, Clock, AlertCircle, RefreshCw, Copy, X, ArrowDownRight,
-  ShieldCheck, FileText, CheckCircle
+  ShieldCheck, FileText, CheckCircle, Camera, ExternalLink, Send
 } from 'lucide-react';
 import { Plan } from '../types.js';
 import { parseSafeJson } from '../lib/api.js';
@@ -17,6 +18,8 @@ interface PublicCardSettings {
   cardNumber: string;
   cardOwner: string;
   cardBank: string;
+  supportReceiptUrl?: string;
+  supportReceiptTitle?: string;
 }
 
 interface UserReceipt {
@@ -36,7 +39,9 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
   const [cardSettings, setCardSettings] = useState<PublicCardSettings>({
     cardNumber: '6037-9911-2233-4455',
     cardOwner: 'مدیریت مرکز کاریزما',
-    cardBank: 'بانک ملی ایران'
+    cardBank: 'بانک ملی ایران',
+    supportReceiptUrl: '',
+    supportReceiptTitle: 'ارسال فیش و اسکرین‌شات به پشتیبانی'
   });
   
   // Payment Popup State
@@ -119,6 +124,26 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
     navigator.clipboard.writeText(rawCard);
     setCopiedCard(true);
     setTimeout(() => setCopiedCard(false), 2500);
+  };
+
+  const handleOpenSupportLink = () => {
+    let targetUrl = (cardSettings.supportReceiptUrl || '').trim();
+    if (!targetUrl) {
+      targetUrl = 'https://t.me/Karizma_Academy';
+    } else if (targetUrl.startsWith('@')) {
+      targetUrl = `https://t.me/${targetUrl.replace('@', '')}`;
+    } else if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+      targetUrl = 'https://' + targetUrl;
+    }
+
+    try {
+      const win = window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        window.location.assign(targetUrl);
+      }
+    } catch (e) {
+      window.location.href = targetUrl;
+    }
   };
 
   const handleSubmitReceipt = async (e: React.FormEvent) => {
@@ -340,14 +365,20 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
       </div>
 
       {/* ================= CARD-TO-CARD PAYMENT POPUP MODAL ================= */}
-      {showPaymentModal && selectedPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto" style={{ direction: 'rtl' }}>
-          <div className="bg-[#0b0f19] border border-sky-500/40 rounded-3xl p-4 sm:p-6 w-full max-w-md my-auto max-h-[92vh] flex flex-col shadow-2xl space-y-3.5 overflow-y-auto custom-scrollbar">
+      {showPaymentModal && selectedPlan && createPortal(
+        <div 
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-md animate-fade-in" 
+          style={{ direction: 'rtl' }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowPaymentModal(false);
+          }}
+        >
+          <div className="bg-[#0b0f19] border border-sky-500/40 rounded-3xl w-full max-w-[420px] max-h-[85dvh] flex flex-col shadow-2xl overflow-hidden animate-scale-up">
             
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3 shrink-0">
+            {/* 1. Sticky Modal Header */}
+            <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-slate-800/90 bg-[#0d1424] shrink-0">
               <div className="flex items-center gap-2 text-sky-400">
-                <CreditCard className="w-5 h-5 text-sky-400 shrink-0" />
+                <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 shrink-0" />
                 <h3 className="text-xs sm:text-sm font-black text-white">پرداخت کارت‌به‌کارت: {selectedPlan.name}</h3>
               </div>
               <button
@@ -359,105 +390,127 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
               </button>
             </div>
 
-            {/* Notification Messages */}
-            {modalSuccessMsg && (
-              <div className="p-3 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-emerald-300 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-                <span>{modalSuccessMsg}</span>
-              </div>
-            )}
-
-            {modalErrorMsg && (
-              <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-2xl text-rose-300 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-                <span>{modalErrorMsg}</span>
-              </div>
-            )}
-
-            {/* Visual Bank Card */}
-            <div className="bg-gradient-to-tr from-[#162035] via-[#0e172a] to-[#070e1e] border border-sky-500/40 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl relative overflow-hidden text-right space-y-3 shrink-0">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-sky-300">
-                  <ShieldCheck className="w-4 h-4 text-sky-400" />
-                  <span className="text-xs font-black">{cardSettings.cardBank || 'بانک ملی ایران'}</span>
+            {/* 2. Scrollable Body Content */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 custom-scrollbar text-right">
+              
+              {/* Notification Messages */}
+              {modalSuccessMsg && (
+                <div className="p-2.5 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-emerald-300 text-xs flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                  <span>{modalSuccessMsg}</span>
                 </div>
-                {/* Chip Icon */}
-                <div className="w-8 h-6 rounded-md bg-gradient-to-tr from-amber-400 to-amber-200 border border-amber-500 shadow-inner flex items-center justify-center">
-                  <div className="w-5 h-3 border border-amber-600/40 rounded-xs opacity-60" />
+              )}
+
+              {modalErrorMsg && (
+                <div className="p-2.5 bg-rose-500/15 border border-rose-500/30 rounded-2xl text-rose-300 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                  <span>{modalErrorMsg}</span>
+                </div>
+              )}
+
+              {/* Visual Bank Card */}
+              <div className="bg-gradient-to-tr from-[#162035] via-[#0e172a] to-[#070e1e] border border-sky-500/40 rounded-2xl p-3 sm:p-4 shadow-2xl relative overflow-hidden space-y-2.5 shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-sky-300">
+                    <ShieldCheck className="w-4 h-4 text-sky-400" />
+                    <span className="text-xs font-black">{cardSettings.cardBank || 'بانک ملی ایران'}</span>
+                  </div>
+                  {/* Chip Icon */}
+                  <div className="w-7 h-5 rounded-md bg-gradient-to-tr from-amber-400 to-amber-200 border border-amber-500 shadow-inner flex items-center justify-center">
+                    <div className="w-4 h-2.5 border border-amber-600/40 rounded-xs opacity-60" />
+                  </div>
+                </div>
+
+                {/* Card Number & Copy */}
+                <div className="space-y-0.5 text-center py-0.5">
+                  <span className="text-[10px] text-slate-400 block font-medium">شماره کارت مقصد جهت واریز:</span>
+                  <div className="flex items-center justify-center font-mono text-base sm:text-lg font-black text-amber-300 tracking-wider dir-ltr select-all py-0.5" style={{ direction: 'ltr' }}>
+                    {cardSettings.cardNumber}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1.5 border-t border-slate-700/60 text-xs">
+                  <div className="text-right">
+                    <span className="text-[9px] text-slate-400 block">صاحب حساب:</span>
+                    <span className="font-black text-white text-xs">{cardSettings.cardOwner || 'مدیریت مرکز کاریزما'}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCopyCard}
+                    className="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer active:scale-95 shrink-0"
+                  >
+                    {copiedCard ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                    <span>{copiedCard ? 'کپی شد ✓' : 'کپی کارت'}</span>
+                  </button>
+                </div>
+
+                {/* Amount reminder */}
+                <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-2 flex items-center justify-between text-xs">
+                  <span className="text-slate-400 text-[11px]">مبلغ دقیق واریزی:</span>
+                  <span className="text-amber-300 font-black font-mono text-xs sm:text-sm">
+                    {selectedPlan.price.toLocaleString('fa-IR')} تومان
+                  </span>
                 </div>
               </div>
 
-              {/* Card Number & Copy */}
-              <div className="space-y-1 text-center py-1">
-                <span className="text-[10px] text-slate-400 block font-medium">شماره کارت مقصد جهت واریز:</span>
-                <div className="flex items-center justify-center font-mono text-base sm:text-lg font-black text-amber-300 tracking-wider dir-ltr select-all py-0.5" style={{ direction: 'ltr' }}>
-                  {cardSettings.cardNumber}
-                </div>
-              </div>
+              {/* Instruction */}
+              <p className="text-[10px] sm:text-[11px] text-slate-300 leading-relaxed bg-slate-900/70 p-2 rounded-xl border border-slate-800">
+                💡 لطفاً مبلغ را به کارت بالا واریز کنید؛ سپس شماره کارت مبدأ را در کادر زیر ثبت نمایید. همچنین با دکمه پایین می‌توانید تصویر رسید را به پشتیبانی ارسال کنید.
+              </p>
 
-              <div className="flex items-center justify-between pt-2 border-t border-slate-700/60 text-xs">
-                <div className="text-right">
-                  <span className="text-[10px] text-slate-400 block">صاحب حساب:</span>
-                  <span className="font-black text-white text-xs sm:text-sm">{cardSettings.cardOwner || 'مدیریت مرکز کاریزما'}</span>
+              {/* Form inputs */}
+              <form id="receipt-form" onSubmit={handleSubmitReceipt} className="space-y-2.5">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-white block">
+                    شماره کارت واریزکننده (کارت مبدأ) <span className="text-rose-400">*</span>:
+                  </label>
+                  <input
+                    type="text"
+                    value={senderCard}
+                    onChange={e => setSenderCard(e.target.value)}
+                    placeholder="مثال: ۵۰۲۲۲۹... یا ۴ رقم آخر (مثلاً ۱۲۳۴)"
+                    className="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 outline-none font-mono dir-ltr text-right"
+                    required
+                  />
                 </div>
-                <button
-                  type="button"
-                  onClick={handleCopyCard}
-                  className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
-                >
-                  {copiedCard ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedCard ? 'کپی شد ✓' : 'کپی کارت'}</span>
-                </button>
-              </div>
 
-              {/* Amount reminder */}
-              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-2 sm:p-2.5 flex items-center justify-between text-xs">
-                <span className="text-slate-400 text-[11px]">مبلغ دقیق واریزی:</span>
-                <span className="text-amber-300 font-black font-mono text-xs sm:text-sm">
-                  {selectedPlan.price.toLocaleString('fa-IR')} تومان
-                </span>
-              </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-white block">
+                    شماره پیگیری یا کد ارجاع فیش (اختیاری):
+                  </label>
+                  <input
+                    type="text"
+                    value={receiptNumber}
+                    onChange={e => setReceiptNumber(e.target.value)}
+                    placeholder="مثال: ۱۲۳۴۵۶ یا شماره پیگیری تراکنش"
+                    className="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 outline-none font-mono dir-ltr text-right"
+                  />
+                </div>
+              </form>
+
             </div>
 
-            {/* Instruction */}
-            <p className="text-[11px] text-slate-300 leading-relaxed bg-slate-900/70 p-2.5 rounded-xl border border-slate-800 shrink-0">
-              💡 لطفاً مبلغ را به شماره کارت بالا کارت‌به‌کارت نمایید، سپس شماره کارت واریزکننده (۴ رقم آخر یا کامل) را در کادر زیر ثبت کنید تا اشتراک شما آنی تایید و فعال گردد.
-            </p>
+            {/* 3. Sticky Bottom Footer (Always in viewport - Buttons never overflow or get hidden) */}
+            <div className="p-3 sm:p-3.5 border-t border-slate-800/90 bg-[#070b14] shrink-0 space-y-2">
+              
+              {/* Button: Send Receipt Screenshot to Support */}
+              <button
+                type="button"
+                onClick={handleOpenSupportLink}
+                className="w-full py-2.5 px-3 bg-gradient-to-r from-sky-600/20 via-blue-600/20 to-indigo-600/20 hover:from-sky-600/30 hover:to-indigo-600/30 border border-sky-500/40 hover:border-sky-400 text-sky-200 hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-sm"
+              >
+                <Camera className="w-4 h-4 text-sky-400 shrink-0" />
+                <span>{cardSettings.supportReceiptTitle || 'ارسال فیش و اسکرین‌شات به پشتیبانی'}</span>
+                <ExternalLink className="w-3.5 h-3.5 text-sky-400/80 shrink-0" />
+              </button>
 
-            {/* Form */}
-            <form onSubmit={handleSubmitReceipt} className="space-y-3">
-              <div className="space-y-1 text-right">
-                <label className="text-xs font-bold text-white block">
-                  شماره کارت واریزکننده (کارت مبدأ) <span className="text-rose-400">*</span>:
-                </label>
-                <input
-                  type="text"
-                  value={senderCard}
-                  onChange={e => setSenderCard(e.target.value)}
-                  placeholder="مثال: ۵۰۲۲۲۹... یا ۴ رقم آخر (مثلاً ۱۲۳۴)"
-                  className="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 outline-none font-mono dir-ltr text-right"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1 text-right">
-                <label className="text-xs font-bold text-white block">
-                  شماره پیگیری یا کد ارجاع فیش (اختیاری):
-                </label>
-                <input
-                  type="text"
-                  value={receiptNumber}
-                  onChange={e => setReceiptNumber(e.target.value)}
-                  placeholder="مثال: ۱۲۳۴۵۶ یا شماره پیگیری تراکنش"
-                  className="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 outline-none font-mono dir-ltr text-right"
-                />
-              </div>
-
-              <div className="pt-2 flex items-center gap-2">
+              {/* Submit & Cancel Buttons */}
+              <div className="flex items-center gap-2">
                 <button
                   type="submit"
+                  form="receipt-form"
                   disabled={submitting}
-                  className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 disabled:opacity-50 text-slate-950 font-black text-xs py-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 active:scale-98"
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 disabled:opacity-50 text-slate-950 font-black text-xs py-2.5 sm:py-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 active:scale-98"
                 >
                   {submitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                   <span>ثبت فیش و فعال‌سازی اشتراک</span>
@@ -466,15 +519,17 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
                 <button
                   type="button"
                   onClick={() => setShowPaymentModal(false)}
-                  className="px-4 py-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                  className="px-4 py-2.5 sm:py-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition cursor-pointer active:scale-98 shrink-0"
                 >
                   انصراف
                 </button>
               </div>
-            </form>
+
+            </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

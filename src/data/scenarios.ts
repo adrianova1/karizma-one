@@ -34,6 +34,12 @@ export interface MasterCategoryInfo {
 
 export const MASTER_CATEGORIES: MasterCategoryInfo[] = [
   {
+    id: "general",
+    title: "عمومی و متفرقه (آزاد)",
+    iconName: "Layers",
+    description: "انواع سناریوهای متفرقه، گفتگوهای روزمره، تیکه‌پرانی‌ها و مکالمات آزاد"
+  },
+  {
     id: "push_pull",
     title: "پوش-پول (کشش و رانش)",
     iconName: "Zap",
@@ -72,8 +78,13 @@ export const MASTER_CATEGORIES: MasterCategoryInfo[] = [
 ];
 
 export function getMasterCategoryTitle(catName: string): string {
-  if (!catName) return "شرایط آلفا و پرستیژ";
+  if (!catName || !catName.trim()) return "عمومی و متفرقه (آزاد)";
   const c = catName.trim().toLowerCase();
+
+  // General / متفرقه / آزاد
+  if (c.includes("متفرقه") || c.includes("عمومی") || c.includes("آزاد") || c.includes("سایر") || c.includes("general") || c.includes("other")) {
+    return "عمومی و متفرقه (آزاد)";
+  }
 
   // Shit test / شیت تست
   if (c.includes("اهل رابطه") || c.includes("کی هستی") || c.includes("وقتش نیست") || c.includes("دوستت ندارم") || c.includes("شیت") || c.includes("تست") || c.includes("سنجش")) {
@@ -105,7 +116,12 @@ export function getMasterCategoryTitle(catName: string): string {
     return "شرایط آلفا و پرستیژ";
   }
 
-  return "شرایط آلفا و پرستیژ";
+  // If user provided an explicit custom category name, preserve it directly!
+  if (catName.trim().length > 1) {
+    return catName.trim();
+  }
+
+  return "عمومی و متفرقه (آزاد)";
 }
 
 export const CATEGORIES = MASTER_CATEGORIES.map(m => m.title);

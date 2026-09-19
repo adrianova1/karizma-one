@@ -480,7 +480,9 @@ router.post('/import-excel', authenticateToken, requireRole([Role.ADMIN]), async
         const finalSituation = situation || finalTitle;
 
         // Extract Category / Environment
-        const rawCat = row.environment || row.category || row['دسته‌بندی'] || row['دسته بندی'] || row['دسته'] || defaultCategory || '';
+        let fileCat = (row.environment || row.category || row['دسته‌بندی'] || row['دسته بندی'] || row['دسته'] || row['محیط'] || '').toString().trim();
+        let fallbackCat = defaultCategory === 'AUTO_DETECT' ? '' : (defaultCategory || '');
+        const rawCat = fileCat || fallbackCat || 'عمومی و متفرقه (آزاد)';
         const mappedCategory = getMasterCategoryTitle(rawCat);
 
         // Extract raw responses from multiple potential column names

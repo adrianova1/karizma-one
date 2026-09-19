@@ -50,7 +50,7 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
   const [parsedRows, setParsedRows] = useState<any[]>([]);
-  const [importDefaultCategory, setImportDefaultCategory] = useState(MASTER_CATEGORIES[0].title);
+  const [importDefaultCategory, setImportDefaultCategory] = useState('AUTO_DETECT');
   const [importLoading, setImportLoading] = useState(false);
   const [importProgress, setImportProgress] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<{ message: string; importedCount: number; updatedCount: number } | null>(null);
@@ -893,8 +893,9 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
                 <select
                   value={importDefaultCategory}
                   onChange={(e) => setImportDefaultCategory(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium"
                 >
+                  <option value="AUTO_DETECT">✨ تشخیص خودکار از فایل / عمومی و آزاد</option>
                   {MASTER_CATEGORIES.map(cat => (
                     <option key={cat.id} value={cat.title}>{cat.title}</option>
                   ))}
