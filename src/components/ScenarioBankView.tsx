@@ -30,6 +30,94 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
   const [copiedResponseKey, setCopiedResponseKey] = useState<string | null>(null);
   const [likedScenarioIds, setLikedScenarioIds] = useState<Record<string, boolean>>({});
 
+  // Leitner sync state
+  const [leitnerCardIds, setLeitnerCardIds] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem('karizma_leitner_deck_v3');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return new Set(parsed.map((item: any) => item.id || item.data?.id));
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading Leitner deck:', e);
+    }
+    return new Set();
+  });
+  const [leitnerToast, setLeitnerToast] = useState<string | null>(null);
+
+  const handleToggleLeitner = (scenario: ScenarioItem, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    try {
+      const saved = localStorage.getItem('karizma_leitner_deck_v3');
+      let currentDeck: any[] = saved ? JSON.parse(saved) : [];
+      if (!Array.isArray(currentDeck)) currentDeck = [];
+
+      const existsIdx = currentDeck.findIndex((item: any) => item.id === scenario.id || item.data?.id === scenario.id);
+
+      if (existsIdx >= 0) {
+        currentDeck.splice(existsIdx, 1);
+        localStorage.setItem('karizma_leitner_deck_v3', JSON.stringify(currentDeck));
+        setLeitnerCardIds(prev => {
+          const next = new Set(prev);
+          next.delete(scenario.id);
+          return next;
+        });
+        setLeitnerToast('سناریو از جعبه لایتنر حذف شد.');
+      } else {
+        const bestAnswer = 
+          scenario.responses?.charismatic ||
+          scenario.responses?.confident ||
+          (scenario.responses ? Object.values(scenario.responses)[0] : '') ||
+          '';
+
+        const answersList: { style: string; text: string }[] = [];
+        if (scenario.responses) {
+          const labels: Record<string, string> = {
+            charismatic: 'کاریزماتیک و باکلاس',
+            funny: 'شوخ‌طبع و رندانه',
+            confident: 'مقتدر و با اعتمادبه‌نفس',
+            mysterious: 'مرموز و پرکشش',
+            mature: 'متین و پخته'
+          };
+          for (const [k, v] of Object.entries(scenario.responses)) {
+            if (typeof v === 'string' && v.trim()) {
+              answersList.push({ style: labels[k] || k, text: v.trim() });
+            }
+          }
+        }
+
+        const newItem = {
+          id: scenario.id,
+          box: 1,
+          reviewCount: 0,
+          lastReviewed: new Date().toISOString(),
+          data: {
+            id: scenario.id,
+            title: scenario.title,
+            situation: scenario.situation || scenario.title,
+            opponentLine: (scenario as any).opponentLine || '',
+            environment: scenario.environment || scenario.category || 'سناریوی ارتباطی',
+            bestAnswer,
+            answersList,
+            technique: scenario.technique || '',
+            bodyLanguage: scenario.bodyLanguage || '',
+            nextMove: scenario.nextMove || scenario.teachingNote || ''
+          }
+        };
+
+        currentDeck.push(newItem);
+        localStorage.setItem('karizma_leitner_deck_v3', JSON.stringify(currentDeck));
+        setLeitnerCardIds(prev => new Set(prev).add(scenario.id));
+        setLeitnerToast('سناریو به خانه ۱ جعبه لایتنر اضافه شد! 🗃️');
+      }
+      setTimeout(() => setLeitnerToast(null), 3000);
+    } catch (err) {
+      console.error('Error modifying Leitner deck:', err);
+    }
+  };
+
   const iconMap: Record<string, any> = {
     Zap,
     ShieldAlert,
@@ -67,7 +155,10 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
 
     try {
       const params = new URLSearchParams();
-      if (searchQuery.trim()) params.append('search', searchQuery.trim());
+      if (searchQuery.trim()) {
+        params.append('search', searchQuery.trim());
+        params.append('query', searchQuery.trim());
+      }
       if (selectedCategory && selectedCategory !== 'all') {
         const catObj = categories.find(c => c.id === selectedCategory);
         if (catObj) params.append('category', catObj.title);
@@ -88,7 +179,7 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
           } else {
             if (list.length > 0) {
               setScenarios(list);
-            } else if (!searchQuery.trim() && selectedCategory === 'all') {
+            } else if (!searchQuery.trim()) {
               // Graceful fallback to preseeded if initial db load was empty
               const fallbackItems: ScenarioItem[] = PRESEEDED_SCENARIOS.map(s => ({
                 id: s.id,
@@ -117,9 +208,48 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
             setCategoryCounts(data.categoryCounts);
           }
         }
+      } else if (!append && (!scenarios || scenarios.length === 0)) {
+        const fallbackItems: ScenarioItem[] = PRESEEDED_SCENARIOS.map(s => ({
+          id: s.id,
+          title: s.title,
+          situation: s.context || s.title,
+          category: s.category,
+          environment: s.category,
+          responses: {
+            charismatic: s.analysis?.bestAnswer || s.answers?.[0]?.text || '',
+            funny: s.answers?.find(a => a.style === 'طنز')?.text || '',
+            confident: s.answers?.find(a => a.style === 'سنگین' || a.style === 'کاریزماتیک')?.text || '',
+            mysterious: s.answers?.find(a => a.style === 'مرموز')?.text || '',
+            mature: s.answers?.find(a => a.style === 'خونسرد' || a.style === 'حمایتگر')?.text || ''
+          } as any,
+          technique: s.analysis?.reason,
+          bodyLanguage: s.analysis?.bodyLanguage,
+          nextMove: s.analysis?.nextStep
+        } as ScenarioItem));
+        setScenarios(fallbackItems);
       }
     } catch (err) {
       console.error('Error fetching scenarios:', err);
+      if (!append && (!scenarios || scenarios.length === 0)) {
+        const fallbackItems: ScenarioItem[] = PRESEEDED_SCENARIOS.map(s => ({
+          id: s.id,
+          title: s.title,
+          situation: s.context || s.title,
+          category: s.category,
+          environment: s.category,
+          responses: {
+            charismatic: s.analysis?.bestAnswer || s.answers?.[0]?.text || '',
+            funny: s.answers?.find(a => a.style === 'طنز')?.text || '',
+            confident: s.answers?.find(a => a.style === 'سنگین' || a.style === 'کاریزماتیک')?.text || '',
+            mysterious: s.answers?.find(a => a.style === 'مرموز')?.text || '',
+            mature: s.answers?.find(a => a.style === 'خونسرد' || a.style === 'حمایتگر')?.text || ''
+          } as any,
+          technique: s.analysis?.reason,
+          bodyLanguage: s.analysis?.bodyLanguage,
+          nextMove: s.analysis?.nextStep
+        } as ScenarioItem));
+        setScenarios(fallbackItems);
+      }
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -204,25 +334,47 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
           </div>
 
           {/* 2. Live Database Search Bar */}
-          <div className="relative pt-2">
+          <div className="relative pt-2 space-y-2">
             <div className="relative flex items-center">
               <Search className="w-5 h-5 absolute right-4 text-slate-400 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="جستجو در سناریوها، موقعیت‌ها، کلمات کلیدی یا پاسخ‌ها..."
+                placeholder="موقعیت یا جمله مورد نظرتان را بنویسید (مثلاً: دیر جواب دادن پیام، تیکه انداختن، تعریف)..."
                 className="w-full bg-slate-950/90 border border-slate-800 focus:border-sky-500/60 focus:ring-2 focus:ring-sky-500/20 rounded-2xl pr-12 pl-10 py-3.5 text-xs sm:text-sm text-white placeholder-slate-500 shadow-inner transition outline-none"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute left-3 p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                  className="absolute left-3 p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition cursor-pointer"
                   title="پاک کردن جستجو"
                 >
                   ✕
                 </button>
               )}
+            </div>
+
+            {/* Quick Situation Suggestions */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-[11px]">
+              <span className="text-slate-500 font-bold shrink-0 ml-1">موقعیت‌های پرتکرار:</span>
+              {[
+                'دیر جواب دادن پیام',
+                'تیکه انداختن در جمع',
+                'بی‌محلی و سرد شدن',
+                'تعریف بیش از حد',
+                'پرسیدن سوال شخصی و فضولی',
+                'طعنه به ظاهر یا لباس'
+              ].map((sug, sIdx) => (
+                <button
+                  key={sIdx}
+                  type="button"
+                  onClick={() => setSearchQuery(sug)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-sky-500/15 border border-slate-800 hover:border-sky-500/30 text-slate-300 hover:text-sky-300 transition shrink-0 cursor-pointer"
+                >
+                  {sug}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -345,6 +497,23 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
+                        {/* Leitner Button */}
+                        <button
+                          type="button"
+                          onClick={(e) => handleToggleLeitner(scenario, e)}
+                          className={`p-2 sm:px-3 sm:py-2 rounded-xl border transition flex items-center gap-1.5 text-xs font-bold cursor-pointer active:scale-95 ${
+                            leitnerCardIds.has(scenario.id)
+                              ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+                              : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-amber-300 hover:border-amber-500/30'
+                          }`}
+                          title={leitnerCardIds.has(scenario.id) ? 'در جعبه لایتنر ثبت است (کلیک برای حذف)' : 'افزودن به جعبه لایتنر'}
+                        >
+                          <Layers className="w-3.5 h-3.5 text-amber-400" />
+                          <span className="hidden sm:inline text-[11px]">
+                            {leitnerCardIds.has(scenario.id) ? 'در لایتنر ✓' : 'لایتنر'}
+                          </span>
+                        </button>
+
                         <button
                           type="button"
                           onClick={(e) => handleLike(scenario.id, e)}
@@ -519,6 +688,26 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
                                 <p className="text-slate-300 leading-relaxed text-[11px]">{scenario.teachingNote}</p>
                               </div>
                             )}
+
+                            {/* Leitner Action Bar inside expanded view */}
+                            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-3">
+                              <button
+                                type="button"
+                                onClick={(e) => handleToggleLeitner(scenario, e)}
+                                className={`px-4 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition cursor-pointer active:scale-95 ${
+                                  leitnerCardIds.has(scenario.id)
+                                    ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+                                    : 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-300'
+                                }`}
+                              >
+                                <Layers className="w-4 h-4 text-amber-400" />
+                                <span>
+                                  {leitnerCardIds.has(scenario.id)
+                                    ? 'این سناریو در جعبه لایتنر شماست (کلیک برای حذف)'
+                                    : 'افزودن این سناریو به جعبه ۱ لایتنر جهت تمرین و یادگیری'}
+                                </span>
+                              </button>
+                            </div>
                           </div>
                         )}
                       </motion.div>
@@ -554,6 +743,21 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
           </div>
         )}
       </div>
+
+      {/* Floating Leitner Toast Notification */}
+      <AnimatePresence>
+        {leitnerToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 30 }}
+            className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-[#0e1628] border border-amber-500/50 text-amber-300 px-5 py-3 rounded-2xl text-xs font-black shadow-2xl flex items-center gap-2.5 backdrop-blur-md"
+          >
+            <Layers className="w-4 h-4 text-amber-400 animate-bounce" />
+            <span>{leitnerToast}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

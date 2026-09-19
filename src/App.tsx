@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Menu } from 'lucide-react';
+import { Sparkles, Menu, HelpCircle } from 'lucide-react';
 import AuthView from './components/AuthView.js';
 import BottomNav from './components/BottomNav.js';
 import HomeDashboardView from './components/HomeDashboardView.js';

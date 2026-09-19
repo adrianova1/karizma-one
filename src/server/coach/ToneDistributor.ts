@@ -234,7 +234,12 @@ export class ToneDistributor {
 
       const variations = PersonaGenerator.generateVariations(baseClean, scenario, userQuery || '', rotationIndex);
 
-      const isDomainSpecific = /قیاف|قیافت|به دلم نمیشین|زشت|لاغر|چاق|قد کوتا|کم\s*حرف|ساکت|چرا حرف نمیزنی|قهر|سرد شده|دلخور|سرسنگین|مسخره|مسخرم|تیکه|بی دست و پا|حقوق|درآمد|چقدر میگیری/.test(userQuery || '');
+      const isAngerDomain = /(?:^|[^\p{L}\p{N}])(عصبی|عصبانی|عصبانیت|خیلی عصبی|عصبی بشم|عصبی میشم|عصبی شدی|پرخاش|داد زد|جوش آورد|قاطی کرد|داد و بیداد|کفری|کنترل خشم|آروم باش|اعصاب ندارم)(?:[^\p{L}\p{N}]|$)/u.test(`${userQuery || ''} ${scenario?.title || ''}`);
+      const isDistanceReply = /فاصله‌های جغرافیایی|جغرافیا|از هر پروازی سریع‌تره|پرواز|راه دور/.test(charismaticReply);
+      const isActuallyDistance = /راه\s*دوره|شهرمون دوره|شهر دیگه|مهاجرت|تهران بیا|بیا شهر|راه دور|جغرافی/.test(`${userQuery || ''} ${scenario?.title || ''}`);
+      const isDistanceMismatch = isDistanceReply && !isActuallyDistance;
+
+      const isDomainSpecific = isAngerDomain || /قیاف|قیافت|به دلم نمیشین|زشت|لاغر|چاق|قد کوتا|کم\s*حرف|ساکت|چرا حرف نمیزنی|قهر|سرد شده|دلخور|سرسنگین|مسخره|مسخرم|تیکه|بی دست و پا|حقوق|درآمد|چقدر میگیری/.test(userQuery || '');
       const isIdenticalSet = charismaticReply && charismaticReply === funnyReply && charismaticReply === confidentReply;
       const isMemeContent = /خوب شد نیستی|لوله کشی داره|اندازه وقتی که خودمو تو آینه|تریاک|معتادی|شیت تست/.test(charismaticReply);
 
@@ -247,7 +252,7 @@ export class ToneDistributor {
         mature: matureReply
       };
 
-      if ((isDomainSpecific && (isIdenticalSet || isMemeContent)) || isMemeContent) {
+      if (isDistanceMismatch || (isDomainSpecific && (isIdenticalSet || isMemeContent || isDistanceReply)) || isMemeContent) {
         toneMap = {
           charismatic: variations.charismatic,
           funny: variations.funny,

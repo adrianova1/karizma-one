@@ -3138,9 +3138,51 @@ var PERSIAN_ARCHETYPES = {
       }
     ]
   },
+  // 7.5. خشم / عصبانیت / تنش در مکالمه
+  ANGER_TEMPER_CONTROL: {
+    pattern: /(?:^|[^\p{L}\p{N}])(عصبی|عصبانی|عصبانیت|خیلی عصبی|عصبی بشم|عصبی میشم|عصبی شدی|چرا عصبی|پرخاش|پرخاشگری|داد زد|داد نزن|جوش آورد|قاطی کرد|داد و بیداد|کفری|کنترل خشم|آروم باش|اعصاب ندارم)(?:[^\p{L}\p{N}]|$)/u,
+    toneSets: [
+      {
+        direct: [
+          "\u0645\u0646 \u062F\u0631 \u0641\u0636\u0627\u06CC \u0645\u062A\u0634\u0646\u062C \u06AF\u0641\u062A\u06AF\u0648 \u0646\u0645\u06CC\u200C\u06A9\u0646\u0645\u061B \u0647\u0631 \u0632\u0645\u0627\u0646 \u0647\u0631 \u062F\u0648 \u0637\u0631\u0641 \u0628\u0627 \u0622\u0631\u0627\u0645\u0634 \u0622\u0645\u0627\u062F\u0647 \u0628\u0648\u062F\u06CC\u0645 \u0635\u062D\u0628\u062A \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645.",
+          "\u0627\u062D\u062A\u0631\u0627\u0645 \u0645\u062A\u0642\u0627\u0628\u0644 \u0648 \u06A9\u0646\u062A\u0631\u0644 \u0644\u062D\u0646 \u062E\u0637 \u0642\u0631\u0645\u0632 \u0645\u0646\u0647\u061B \u0627\u06CC\u0646 \u0645\u06A9\u0627\u0644\u0645\u0647 \u0648\u0642\u062A\u06CC \u0622\u0631\u0627\u0645\u0634 \u0628\u0631\u0642\u0631\u0627\u0631 \u0634\u062F \u0627\u062F\u0627\u0645\u0647 \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u0647.",
+          "\u0639\u0635\u0628\u0627\u0646\u06CC\u062A \u0645\u0634\u06A9\u0644\u06CC \u0631\u0648 \u062D\u0644 \u0646\u0645\u06CC\u06A9\u0646\u0647\u060C \u0628\u06CC\u0627 \u0648\u0642\u062A\u06CC \u0645\u0646\u0637\u0642\u06CC \u0634\u062F\u06CC\u0645 \u0635\u062D\u0628\u062A \u06A9\u0646\u06CC\u0645."
+        ],
+        friendly: [
+          "\u062F\u0631\u06A9\u062A \u0645\u06CC\u200C\u06A9\u0646\u0645 \u06A9\u0647 \u0627\u0644\u0627\u0646 \u0634\u0631\u0627\u06CC\u0637 \u0647\u06CC\u062C\u0627\u0646\u06CC\u0647\u060C \u0628\u06CC\u0627 \u06CC\u0647 \u0646\u0641\u0633 \u0639\u0645\u06CC\u0642 \u0628\u06A9\u0634\u06CC\u0645 \u062A\u0627 \u0628\u062A\u0648\u0646\u06CC\u0645 \u062F\u0648\u0633\u062A\u0627\u0646\u0647 \u062D\u0644\u0634 \u06A9\u0646\u06CC\u0645.",
+          "\u0645\u0646 \u0642\u0635\u062F \u0646\u0627\u0631\u0627\u062D\u062A \u06A9\u0631\u062F\u0646\u062A \u0631\u0648 \u0646\u062F\u0627\u0634\u062A\u0645\u061B \u0628\u06CC\u0627 \u0628\u0639\u062F \u0627\u0632 \u0627\u06CC\u0646\u06A9\u0647 \u0622\u0631\u0648\u0645\u200C\u062A\u0631 \u0634\u062F\u06CC\u0645 \u062F\u0631 \u0645\u0648\u0631\u062F\u0634 \u0628\u0627 \u0622\u0631\u0627\u0645\u0634 \u06AF\u067E \u0628\u0632\u0646\u06CC\u0645.",
+          "\u0622\u0631\u0627\u0645\u0634 \u062A\u0648 \u0628\u0631\u0627\u0645 \u0645\u0647\u0645\u0647\u061B \u0627\u0644\u0627\u0646 \u0648\u0642\u062A \u0645\u0646\u0627\u0633\u0628\u06CC \u0628\u0631\u0627\u06CC \u062A\u0635\u0645\u06CC\u0645\u200C\u06AF\u06CC\u0631\u06CC \u0646\u06CC\u0633\u062A."
+        ],
+        charismatic: [
+          "\u0622\u0631\u0627\u0645\u0634 \u0648 \u0648\u0642\u0627\u0631 \u062F\u0631 \u0627\u0648\u062C \u062A\u0646\u0634 \u0628\u0627\u0644\u0627\u062A\u0631\u06CC\u0646 \u0639\u06CC\u0627\u0631 \u0642\u062F\u0631\u062A\u0647\u061B \u0647\u0631 \u0648\u0642\u062A \u0628\u0627 \u0637\u0645\u0623\u0646\u06CC\u0646\u0647 \u0622\u0645\u0627\u062F\u0647 \u0628\u0648\u062F\u06CC \u0645\u0634\u062A\u0627\u0642 \u0634\u0646\u06CC\u062F\u0646\u062A \u0647\u0633\u062A\u0645.",
+          "\u062E\u0648\u0646\u0633\u0631\u062F\u06CC \u06CC\u06A9 \u0627\u0646\u062A\u062E\u0627\u0628 \u0622\u06AF\u0627\u0647\u0627\u0646\u0647\u200C\u0633\u062A\u061B \u0628\u0627 \u06A9\u0645\u0627\u0644 \u0645\u06CC\u0644 \u0645\u0646\u062A\u0638\u0631\u0645 \u062A\u0627 \u062F\u0631 \u0641\u0636\u0627\u06CC\u06CC \u0634\u0627\u06CC\u0633\u062A\u0647 \u0648 \u0645\u062D\u062A\u0631\u0645\u0627\u0646\u0647 \u06AF\u0641\u062A\u06AF\u0648 \u06A9\u0646\u06CC\u0645.",
+          "\u0647\u06CC\u062C\u0627\u0646 \u0648 \u062E\u0634\u0645 \u06AF\u0630\u0631\u0627\u0633\u062A\u060C \u0627\u0645\u0627 \u062D\u0631\u0645\u062A \u06AF\u0641\u062A\u06AF\u0648 \u0645\u0627\u0646\u062F\u06AF\u0627\u0631\u0647\u061B \u062A\u0631\u062C\u06CC\u062D \u0645\u06CC\u062F\u0645 \u0628\u0627 \u0646\u0647\u0627\u06CC\u062A \u0645\u062A\u0627\u0646\u062A \u067E\u06CC\u0634 \u0628\u0631\u06CC\u0645."
+        ],
+        emotional: [
+          "\u0646\u0627\u0631\u0627\u062D\u062A\u06CC \u0648 \u062E\u0634\u0645\u062A \u0631\u0648 \u062D\u0633 \u0645\u06CC\u200C\u06A9\u0646\u0645 \u0648 \u0628\u0631\u0627\u0645 \u0645\u0647\u0645\u0647\u061B \u062F\u0644\u0645 \u0645\u06CC\u200C\u062E\u0648\u0627\u062F \u062D\u0631\u0641 \u062F\u0644\u062A \u0631\u0648 \u0628\u062F\u0648\u0646 \u062A\u0646\u0634 \u0628\u0634\u0646\u0648\u0645.",
+          "\u062D\u06CC\u0641\u0647 \u0635\u0645\u06CC\u0645\u06CC\u062A \u0648 \u0627\u062D\u062A\u0631\u0627\u0645\u06CC \u06A9\u0647 \u0628\u06CC\u0646\u0645\u0648\u0646\u0647 \u0628\u0627 \u062E\u0634\u0645 \u0622\u0633\u06CC\u0628 \u0628\u0628\u06CC\u0646\u0647\u061B \u0628\u06CC\u0627 \u0628\u0627 \u062F\u0644 \u0628\u0627\u0632\u062A\u0631\u06CC \u0628\u0647 \u0647\u0645 \u06AF\u0648\u0634 \u0628\u062F\u06CC\u0645.",
+          "\u0648\u0642\u062A\u06CC \u0622\u0631\u0627\u0645\u0634 \u062F\u0627\u0634\u062A\u0647 \u0628\u0627\u0634\u06CC\u0645 \u0628\u0647\u062A\u0631 \u0645\u06CC\u200C\u062A\u0648\u0646\u06CC\u0645 \u0627\u062D\u0633\u0627\u0633\u0627\u062A \u0647\u0645 \u0631\u0648 \u062F\u0631\u06A9 \u06A9\u0646\u06CC\u0645."
+        ],
+        funny: [
+          "\u0639\u0635\u0628\u0627\u0646\u06CC\u062A \u06A9\u0627\u0644\u0631\u06CC \u0632\u06CC\u0627\u062F\u06CC \u0645\u06CC\u200C\u0633\u0648\u0632\u0648\u0646\u0647 \u0648 \u0628\u0631\u0627\u06CC \u067E\u0648\u0633\u062A \u0647\u0645 \u062E\u0648\u0628 \u0646\u06CC\u0633\u062A! \u0628\u06CC\u0627 \u06CC\u0647 \u0686\u0627\u06CC \u0628\u0646\u0648\u0634\u06CC\u0645 \u0628\u0639\u062F \u0645\u0630\u0627\u06A9\u0631\u0647 \u06A9\u0646\u06CC\u0645.",
+          "\u0647\u0634\u062F\u0627\u0631: \u0633\u0637\u062D \u0647\u06CC\u062C\u0627\u0646 \u062F\u0631 \u0645\u062D\u062F\u0648\u062F\u0647 \u062E\u0637\u0631\u0646\u0627\u06A9\u0647! \u0633\u06CC\u0633\u062A\u0645 \u062C\u0647\u062A \u062E\u0646\u06A9\u200C\u0633\u0627\u0632\u06CC \u0645\u0648\u0642\u062A\u0627\u064B \u0645\u062A\u0648\u0642\u0641 \u0645\u06CC\u0634\u0647 \u{1F609}",
+          "\u0641\u06A9\u0631 \u06A9\u0646\u0645 \u0627\u0644\u0627\u0646 \u062F\u0631\u062C\u0647 \u062D\u0631\u0627\u0631\u062A \u0628\u0647 \u062C\u0648\u0634 \u0631\u0633\u06CC\u062F\u0647\u060C \u0628\u06CC\u0627 \u0628\u0630\u0627\u0631\u06CC\u0645 \u06CC\u06A9\u0645 \u062E\u0646\u06A9 \u0628\u0634\u0647 \u0628\u0639\u062F \u062F\u0648\u0628\u0627\u0631\u0647 \u0631\u0627\u0647\u200C\u0627\u0646\u062F\u0627\u0632\u06CC\u0634 \u06A9\u0646\u06CC\u0645!"
+        ],
+        tips: {
+          direct: "\u062A\u062B\u0628\u06CC\u062A \u0645\u0631\u0632\u0647\u0627\u06CC \u0627\u062D\u062A\u0631\u0627\u0645\u06CC \u0628\u062F\u0648\u0646 \u067E\u0631\u062E\u0627\u0634\u06AF\u0631\u06CC \u06CC\u0627 \u0628\u0627\u062C\u200C\u062F\u0647\u06CC \u0647\u06CC\u062C\u0627\u0646\u06CC.",
+          friendly: "\u0647\u0645\u062F\u0644\u06CC \u0628\u0627 \u0627\u062D\u0633\u0627\u0633 \u0648 \u062F\u0631\u062E\u0648\u0627\u0633\u062A \u062A\u0639\u0648\u06CC\u0642 \u06AF\u0641\u062A\u06AF\u0648 \u0628\u0647 \u0632\u0645\u0627\u0646 \u0622\u0631\u0627\u0645\u0634.",
+          charismatic: "\u0646\u0645\u0627\u06CC\u0634 \u06A9\u0646\u062A\u0631\u0644 \u0641\u0631\u06CC\u0645 \u0628\u0627\u0644\u0627\u060C \u0637\u0645\u0623\u0646\u06CC\u0646\u0647 \u0648 \u0645\u062F\u06CC\u0631\u06CC\u062A \u0645\u0642\u062A\u062F\u0631\u0627\u0646\u0647 \u0641\u0636\u0627.",
+          emotional: "\u0634\u0646\u06CC\u062F\u0646 \u0639\u0627\u0637\u0641\u06CC \u0648 \u0645\u0631\u0627\u0642\u0628\u062A \u0627\u0632 \u067E\u06CC\u0648\u0646\u062F \u0627\u0631\u062A\u0628\u0627\u0637\u06CC.",
+          funny: "\u062A\u0644\u0637\u06CC\u0641 \u062A\u0646\u0634 \u0628\u0627 \u0637\u0646\u0632 \u0647\u0648\u0634\u0645\u0646\u062F\u0627\u0646\u0647 \u0628\u062F\u0648\u0646 \u0628\u06CC\u200C\u0627\u062D\u062A\u0631\u0627\u0645\u06CC."
+        },
+        technique: "\u0645\u062F\u06CC\u0631\u06CC\u062A \u062A\u0646\u0634 \u0648 \u067E\u0631\u062E\u0627\u0634\u06AF\u0631\u06CC \u0628\u0627 \u062D\u0641\u0638 \u062E\u0648\u0646\u0633\u0631\u062F\u06CC \u0648 \u0639\u062F\u0645 \u0627\u0641\u062A\u0627\u062F\u0646 \u062F\u0631 \u062F\u0627\u0645 \u0648\u0627\u06A9\u0646\u0634\u200C\u06AF\u0631\u0627\u06CC\u06CC.",
+        nextMove: "\u0633\u06A9\u0648\u062A \u0645\u0648\u0642\u062A \u0648 \u0628\u0631\u0642\u0631\u0627\u0631\u06CC \u062A\u0645\u0627\u0633 \u062F\u0631 \u0632\u0645\u0627\u0646 \u0641\u0631\u0648\u06A9\u0634 \u06A9\u0631\u062F\u0646 \u0647\u06CC\u062C\u0627\u0646."
+      }
+    ]
+  },
   // 8. فاصله / شهر دیگر / بیا شهر من
   DISTANCE_RELOCATION: {
-    pattern: /شهر من|بیا شهر|راه دوره|راهمون دوره|از راه دور|فاصله|شهر دیگه|مهاجرت|تهران بیا|بیا اینجا/,
+    pattern: /شهر من|بیا شهر|راه دوره|راهمون دوره|از راه دور|فاصله\s*جغرافیایی|شهرمون دوره|شهر دیگه|مهاجرت|تهران بیا|بیا اینجا/,
     toneSets: [
       {
         direct: [
@@ -3495,6 +3537,15 @@ var PersonaGenerator = class {
     return variations;
   }
   static synthesizeVariations(clean, scenario, combinedContext, rotationIndex = 0) {
+    if (/(?:^|[^\p{L}\p{N}])(عصبی|عصبانی|عصبانیت|خیلی عصبی|عصبی بشم|عصبی میشم|عصبی شدی|چرا عصبی|پرخاش|پرخاشگری|داد زد|داد نزن|جوش آورد|قاطی کرد|داد و بیداد|کفری|کنترل خشم|آروم باش|اعصاب ندارم)(?:[^\p{L}\p{N}]|$)/u.test(combinedContext)) {
+      return {
+        charismatic: "\u0622\u0631\u0627\u0645\u0634 \u0648 \u062E\u0648\u0646\u0633\u0631\u062F\u06CC \u062F\u0631 \u0627\u0648\u062C \u062A\u0646\u0634 \u0628\u0627\u0644\u0627\u062A\u0631\u06CC\u0646 \u0646\u0645\u0627\u062F \u0642\u062F\u0631\u062A\u0647\u061B \u0647\u0631 \u0632\u0645\u0627\u0646 \u0647\u0631 \u062F\u0648 \u0637\u0631\u0641 \u0628\u0627 \u0622\u0631\u0627\u0645\u0634 \u0622\u0645\u0627\u062F\u0647 \u06AF\u0641\u062A\u06AF\u0648 \u0628\u0648\u062F\u06CC\u0645 \u0627\u062F\u0627\u0645\u0647 \u0645\u06CC\u062F\u06CC\u0645.",
+        funny: "\u0639\u0635\u0628\u0627\u0646\u06CC\u062A \u06A9\u0627\u0644\u0631\u06CC \u0632\u06CC\u0627\u062F\u06CC \u0645\u06CC\u200C\u0633\u0648\u0632\u0648\u0646\u0647 \u0648 \u0628\u0647 \u067E\u0648\u0633\u062A \u0647\u0645 \u0622\u0633\u06CC\u0628 \u0645\u06CC\u0632\u0646\u0647! \u0628\u06CC\u0627 \u0641\u0636\u0627 \u0631\u0648 \u062A\u0644\u0637\u06CC\u0641 \u06A9\u0646\u06CC\u0645 \u0648 \u0645\u0648\u0636\u0648\u0639 \u0631\u0648 \u0645\u0646\u0637\u0642\u06CC \u062D\u0644 \u06A9\u0646\u06CC\u0645.",
+        confident: "\u0645\u0646 \u062F\u0631 \u0641\u0636\u0627\u06CC \u0645\u062A\u0634\u0646\u062C \u0648 \u0628\u0627 \u062A\u0646 \u0635\u062F\u0627\u06CC \u0646\u0627\u0645\u0646\u0627\u0633\u0628 \u06AF\u0641\u062A\u06AF\u0648 \u0646\u0645\u06CC\u200C\u06A9\u0646\u0645\u061B \u0627\u062D\u062A\u0631\u0627\u0645 \u0648 \u0622\u0631\u0627\u0645\u0634 \u062E\u0637 \u0642\u0631\u0645\u0632 \u0645\u0646\u0647 \u062A\u0627 \u06AF\u0641\u062A\u06AF\u0648 \u0646\u062A\u06CC\u062C\u0647 \u062F\u0627\u0634\u062A\u0647 \u0628\u0627\u0634\u0647.",
+        mysterious: "\u0633\u06A9\u0648\u062A \u062F\u0631 \u0628\u0631\u0627\u0628\u0631 \u0639\u0635\u0628\u0627\u0646\u06CC\u062A \u0646\u0634\u0627\u0646\u0647 \u0636\u0639\u0641 \u0646\u06CC\u0633\u062A\u060C \u0646\u0634\u0627\u0646\u0647 \u0647\u0648\u0634 \u0647\u06CC\u062C\u0627\u0646\u06CC \u0648 \u06A9\u0646\u062A\u0631\u0644 \u0641\u0631\u06CC\u0645 \u0634\u062E\u0635\u06CC \u0645\u0646\u0647.",
+        mature: "\u0639\u0635\u0628\u0627\u0646\u06CC\u062A \u06CC\u06A9 \u0627\u062D\u0633\u0627\u0633 \u0637\u0628\u06CC\u0639\u06CC\u0647\u060C \u0627\u0645\u0627 \u0646\u062D\u0648\u0647 \u0645\u062F\u06CC\u0631\u06CC\u062A\u0634 \u0639\u06CC\u0627\u0631 \u0634\u062E\u0635\u06CC\u062A \u0645\u0627 \u0631\u0648 \u0645\u0634\u062E\u0635 \u0645\u06CC\u200C\u06A9\u0646\u0647\u061B \u0628\u0647\u062A\u0631\u0647 \u0628\u0627 \u0645\u062A\u0627\u0646\u062A \u0641\u0636\u0627 \u0631\u0648 \u0647\u062F\u0627\u06CC\u062A \u06A9\u0646\u06CC\u0645."
+      };
+    }
     if (/قهر|سرد شده|دلخور|سرسنگین|ناراحت شده|چرا قهر کردی/.test(combinedContext)) {
       return {
         charismatic: "\u0645\u0633\u0627\u0626\u0644 \u0628\u0627 \u06AF\u0641\u062A\u06AF\u0648\u06CC \u0635\u0645\u06CC\u0645\u0627\u0646\u0647 \u062D\u0644 \u0645\u06CC\u0634\u0646 \u0646\u0647 \u0628\u0627 \u0641\u0627\u0635\u0644\u0647 \u06AF\u0631\u0641\u062A\u0646\u061B \u0647\u0631 \u0632\u0645\u0627\u0646 \u0622\u0645\u0627\u062F\u0647 \u06AF\u0641\u062A\u06AF\u0648\u06CC \u0622\u0631\u0627\u0645 \u0628\u0648\u062F\u06CC \u0645\u0634\u062A\u0627\u0642\u0645 \u0628\u0634\u0646\u0648\u0645\u062A.",
@@ -3689,7 +3740,7 @@ var PersonaGenerator = class {
         mature: "\u062F\u06CC\u062F\u0627\u0631 \u062D\u0636\u0648\u0631\u06CC \u0641\u0631\u0635\u062A \u062E\u0648\u0628\u06CC \u0628\u0631\u0627\u06CC \u0634\u0646\u0627\u062E\u062A \u0639\u0645\u06CC\u0642\u200C\u062A\u0631\u0647\u061B \u0628\u0627 \u06A9\u0645\u0627\u0644 \u0645\u06CC\u0644 \u062F\u0631 \u0627\u0648\u0644\u06CC\u0646 \u0641\u0631\u0635\u062A \u0645\u0646\u0627\u0633\u0628 \u0647\u0645\u0627\u0647\u0646\u06AF \u0645\u06CC\u200C\u0634\u06CC\u0645."
       };
     }
-    if (/شهر من|بیا شهر|راه دوره|راهمون دوره|از راه دور|فاصله|شهر دیگه|مهاجرت|تهران بیا|بیا اینجا/.test(combinedContext)) {
+    if (/شهر من|بیا شهر|راه دوره|راهمون دوره|از راه دور|فاصله\s*جغرافیایی|شهرمون دوره|شهر دیگه|مهاجرت|تهران بیا|بیا اینجا/.test(combinedContext)) {
       return {
         charismatic: "\u0641\u0627\u0635\u0644\u0647\u200C\u0647\u0627\u06CC \u062C\u063A\u0631\u0627\u0641\u06CC\u0627\u06CC\u06CC \u0628\u0627 \u067E\u06CC\u0648\u0646\u062F \u0641\u06A9\u0631\u06CC \u0648 \u0635\u0645\u06CC\u0645\u06CC\u062A \u0648\u0627\u0642\u0639\u06CC \u06A9\u0645\u200C\u0631\u0646\u06AF \u0645\u06CC\u0634\u0646\u061B \u06A9\u06CC\u0641\u06CC\u062A \u0627\u0631\u062A\u0628\u0627\u0637 \u0628\u0647 \u062C\u063A\u0631\u0627\u0641\u06CC\u0627 \u0645\u062D\u062F\u0648\u062F \u0646\u06CC\u0633\u062A.",
         funny: "\u0641\u0627\u0635\u0644\u0647 \u0634\u0627\u06CC\u062F \u0632\u06CC\u0627\u062F \u0628\u0627\u0634\u0647\u060C \u0648\u0644\u06CC \u062A\u06A9\u0646\u0648\u0644\u0648\u0698\u06CC \u0648 \u0627\u0646\u0631\u0698\u06CC \u0645\u062B\u0628\u062A \u0645\u0627 \u0627\u0632 \u0647\u0631 \u067E\u0631\u0648\u0627\u0632\u06CC \u0633\u0631\u06CC\u0639\u200C\u062A\u0631\u0647!",
@@ -3996,7 +4047,11 @@ var ToneDistributor = class {
         charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || scenario.situation || scenario.title
       );
       const variations = PersonaGenerator.generateVariations(baseClean, scenario, userQuery || "", rotationIndex);
-      const isDomainSpecific = /قیاف|قیافت|به دلم نمیشین|زشت|لاغر|چاق|قد کوتا|کم\s*حرف|ساکت|چرا حرف نمیزنی|قهر|سرد شده|دلخور|سرسنگین|مسخره|مسخرم|تیکه|بی دست و پا|حقوق|درآمد|چقدر میگیری/.test(userQuery || "");
+      const isAngerDomain = /(?:^|[^\p{L}\p{N}])(عصبی|عصبانی|عصبانیت|خیلی عصبی|عصبی بشم|عصبی میشم|عصبی شدی|پرخاش|داد زد|جوش آورد|قاطی کرد|داد و بیداد|کفری|کنترل خشم|آروم باش|اعصاب ندارم)(?:[^\p{L}\p{N}]|$)/u.test(`${userQuery || ""} ${scenario?.title || ""}`);
+      const isDistanceReply = /فاصله‌های جغرافیایی|جغرافیا|از هر پروازی سریع‌تره|پرواز|راه دور/.test(charismaticReply);
+      const isActuallyDistance = /راه\s*دوره|شهرمون دوره|شهر دیگه|مهاجرت|تهران بیا|بیا شهر|راه دور|جغرافی/.test(`${userQuery || ""} ${scenario?.title || ""}`);
+      const isDistanceMismatch = isDistanceReply && !isActuallyDistance;
+      const isDomainSpecific = isAngerDomain || /قیاف|قیافت|به دلم نمیشین|زشت|لاغر|چاق|قد کوتا|کم\s*حرف|ساکت|چرا حرف نمیزنی|قهر|سرد شده|دلخور|سرسنگین|مسخره|مسخرم|تیکه|بی دست و پا|حقوق|درآمد|چقدر میگیری/.test(userQuery || "");
       const isIdenticalSet = charismaticReply && charismaticReply === funnyReply && charismaticReply === confidentReply;
       const isMemeContent = /خوب شد نیستی|لوله کشی داره|اندازه وقتی که خودمو تو آینه|تریاک|معتادی|شیت تست/.test(charismaticReply);
       let toneMap = {
@@ -4006,7 +4061,7 @@ var ToneDistributor = class {
         mysterious: mysteriousReply,
         mature: matureReply
       };
-      if (isDomainSpecific && (isIdenticalSet || isMemeContent) || isMemeContent) {
+      if (isDistanceMismatch || isDomainSpecific && (isIdenticalSet || isMemeContent || isDistanceReply) || isMemeContent) {
         toneMap = {
           charismatic: variations.charismatic,
           funny: variations.funny,
@@ -4900,12 +4955,12 @@ var RankingEngine = class _RankingEngine {
       const chosenIndex = topCluster.length > 1 ? Math.abs(rotationIndex) % topCluster.length : 0;
       const chosen = topCluster[chosenIndex];
       const topCandidate = chosen.candidate;
-      const isHighConfidence = topCandidate.matchedBy === "exact_trigger" || topCandidate.scoreBreakdown.exactTriggerScore > 0 || topCandidate.scoreBreakdown.phraseScore >= 4 || topCandidate.scoreBreakdown.aliasScore >= 3 || topCandidate.scoreBreakdown.keywordScore >= 3 || topCandidate.scoreBreakdown.totalScore >= 4 && topCandidate.scoreBreakdown.tokenOverlapScore >= 2;
+      const isHighConfidence = topCandidate.matchedBy === "exact_trigger" || topCandidate.matchedBy === "phrase_containment" || topCandidate.matchedBy === "alias_trigram" || topCandidate.matchedBy === "bm25_token" || topCandidate.scoreBreakdown.exactTriggerScore > 0 || topCandidate.scoreBreakdown.phraseScore > 0 || topCandidate.scoreBreakdown.totalScore >= 1.5 || topCandidate.confidenceScore >= 35 || topCandidate.scoreBreakdown.tokenOverlapScore >= 0.8;
       if (isHighConfidence) {
         return {
           matchedScenario: topCandidate.scenario,
           fallbackItem: null,
-          confidenceScore: topCandidate.confidenceScore,
+          confidenceScore: Math.max(topCandidate.confidenceScore, 65),
           isFallback: false,
           matchType: topCandidate.matchedBy
         };
@@ -5878,10 +5933,29 @@ var CoachDataPipeline = class {
 
 // src/server/routes/scenario.routes.ts
 var router3 = (0, import_express3.Router)();
+var masterCache = null;
+var cachedCategoryCounts = null;
+function computeCategoryCounts(scenarios) {
+  const counts = {};
+  for (const cat of MASTER_CATEGORIES) {
+    counts[cat.id] = 0;
+  }
+  for (const s of scenarios) {
+    const title = getMasterCategoryTitle(s.environment || s.category || "");
+    const matched = MASTER_CATEGORIES.find((c) => c.title === title);
+    if (matched) {
+      counts[matched.id] = (counts[matched.id] || 0) + 1;
+    }
+  }
+  return counts;
+}
 async function getCanonicalScenarios() {
+  if (masterCache && masterCache.length > 0) {
+    return masterCache;
+  }
   const runtimeScenarios = CoachLoader.getScenarios();
   if (runtimeScenarios && runtimeScenarios.length > 0) {
-    return runtimeScenarios.map((s) => ({
+    masterCache = runtimeScenarios.map((s) => ({
       id: s.id,
       title: s.title,
       category: s.category,
@@ -5907,8 +5981,12 @@ async function getCanonicalScenarios() {
       goal: s.goal || s.title,
       teachingNote: s.teachingNote || s.technique || s.nextMove || ""
     }));
+    cachedCategoryCounts = computeCategoryCounts(masterCache);
+    return masterCache;
   }
-  return await DBEngine.readTable("scenarios");
+  const dbScenarios = await DBEngine.readTable("scenarios");
+  cachedCategoryCounts = computeCategoryCounts(dbScenarios);
+  return dbScenarios;
 }
 router3.get("/", async (req, res) => {
   try {
@@ -5921,10 +5999,12 @@ router3.get("/", async (req, res) => {
     let filtered = [...allScenarios];
     if (category && category !== "all") {
       const normCat = normalizePersian(category).toLowerCase();
+      const matchedMaster = MASTER_CATEGORIES.find((c) => c.id === category || normalizePersian(c.title).toLowerCase() === normCat);
+      const masterTitleNorm = matchedMaster ? normalizePersian(matchedMaster.title).toLowerCase() : "";
       filtered = filtered.filter((s) => {
         const env = normalizePersian(s.environment || s.category || "").toLowerCase();
         const masterTitle = normalizePersian(getMasterCategoryTitle(s.environment || s.category || "")).toLowerCase();
-        return env.includes(normCat) || masterTitle.includes(normCat) || normCat.includes(env);
+        return env.includes(normCat) || masterTitle.includes(normCat) || normCat.includes(env) || masterTitleNorm && (env.includes(masterTitleNorm) || masterTitle.includes(masterTitleNorm));
       });
     }
     if (difficulty && difficulty !== "all") {
@@ -5987,7 +6067,7 @@ router3.get("/", async (req, res) => {
           }
           if (termMatched) matchedTermsCount++;
         }
-        if (normSearch.length >= 5) {
+        if (normSearch.length >= 5 && (score > 0 || scoredList.length < 40)) {
           const simTitle = PersianNormalizer.computeTrigramSimilarity(normSearch, titleNorm);
           const simOpponent = opponentNorm ? PersianNormalizer.computeTrigramSimilarity(normSearch, opponentNorm) : 0;
           const bestSim = Math.max(simTitle, simOpponent);
@@ -6007,13 +6087,7 @@ router3.get("/", async (req, res) => {
     }
     const total = filtered.length;
     const paginated = filtered.slice(offset, offset + limit);
-    const categoryCounts = {};
-    for (const cat of MASTER_CATEGORIES) {
-      categoryCounts[cat.id] = allScenarios.filter((s) => {
-        const title = getMasterCategoryTitle(s.environment || s.category || "");
-        return title === cat.title;
-      }).length;
-    }
+    const categoryCounts = cachedCategoryCounts || computeCategoryCounts(allScenarios);
     res.json({
       success: true,
       scenarios: paginated,

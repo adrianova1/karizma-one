@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   User, CreditCard, Settings2, Users, LogOut, 
-  ChevronRight, ArrowLeft, HelpCircle, Shield, ShieldAlert, UserCheck
+  ChevronRight, ArrowLeft, HelpCircle, Shield, ShieldAlert, UserCheck, BookOpen
 } from 'lucide-react';
 import SubscriptionsView from './SubscriptionsView.js';
 import AdminPanelView from './AdminPanelView.js';

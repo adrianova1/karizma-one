@@ -16,6 +16,22 @@ const router = Router();
 
 let masterCache: ScenarioItem[] | null = null;
 let masterCacheMtime = 0;
+let cachedCategoryCounts: Record<string, number> | null = null;
+
+function computeCategoryCounts(scenarios: ScenarioItem[]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const cat of MASTER_CATEGORIES) {
+    counts[cat.id] = 0;
+  }
+  for (const s of scenarios) {
+    const title = getMasterCategoryTitle(s.environment || s.category || '');
+    const matched = MASTER_CATEGORIES.find(c => c.title === title);
+    if (matched) {
+      counts[matched.id] = (counts[matched.id] || 0) + 1;
+    }
+  }
+  return counts;
+}
 
 /**
  * Helper to fetch all active canonical scenarios from CoachLoader with in-memory caching
@@ -52,15 +68,18 @@ async function getCanonicalScenarios(): Promise<ScenarioItem[]> {
       goal: (s as any).goal || s.title,
       teachingNote: (s as any).teachingNote || s.technique || s.nextMove || ''
     }));
+    cachedCategoryCounts = computeCategoryCounts(masterCache);
     return masterCache;
   }
-  return await DBEngine.readTable<ScenarioItem>('scenarios');
+  const dbScenarios = await DBEngine.readTable<ScenarioItem>('scenarios');
+  cachedCategoryCounts = computeCategoryCounts(dbScenarios);
+  return dbScenarios;
 }
 
 // GET /api/scenarios - List & Search Scenarios across categories with database search
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const search = req.query.search ? String(req.query.search).trim() : '';
+    const search = String(req.query.search || req.query.query || req.query.q || '').trim();
     const category = req.query.category ? String(req.query.category).trim() : '';
     const difficulty = req.query.difficulty ? String(req.query.difficulty).trim() : '';
     const limit = parseInt(String(req.query.limit || '50'), 10);
@@ -136,8 +155,8 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
           if (termMatched) matchedTermsCount++;
         }
 
-        // 3. Trigram similarity for long user sentences / questions
-        if (normSearch.length >= 5) {
+        // 3. Trigram similarity for long user sentences / questions (optimized: only when term matched or pool small)
+        if (normSearch.length >= 5 && (score > 0 || scoredList.length < 40)) {
           const simTitle = PersianNormalizer.computeTrigramSimilarity(normSearch, titleNorm);
           const simOpponent = opponentNorm ? PersianNormalizer.computeTrigramSimilarity(normSearch, opponentNorm) : 0;
           const bestSim = Math.max(simTitle, simOpponent);
@@ -163,14 +182,8 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
     const total = filtered.length;
     const paginated = filtered.slice(offset, offset + limit);
 
-    // Calculate count per master category for tab badges
-    const categoryCounts: Record<string, number> = {};
-    for (const cat of MASTER_CATEGORIES) {
-      categoryCounts[cat.id] = allScenarios.filter(s => {
-        const title = getMasterCategoryTitle(s.environment || s.category || '');
-        return title === cat.title;
-      }).length;
-    }
+    // Fast O(1) cached count per master category for tab badges
+    const categoryCounts: Record<string, number> = cachedCategoryCounts || computeCategoryCounts(allScenarios);
 
     res.json({
       success: true,
