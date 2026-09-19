@@ -222,11 +222,13 @@ export class ToneDistributor {
       const res = scenario!.responses;
 
       // Extract raw tones with wrapper stripping & boilerplate filtering
-      charismaticReply = this.extractToneText(res.charismatic, rotationIndex);
-      funnyReply = this.extractToneText(res.funny, rotationIndex);
-      confidentReply = this.extractToneText(res.confident, rotationIndex);
-      mysteriousReply = this.extractToneText(res.mysterious, rotationIndex);
-      matureReply = this.extractToneText(res.mature, rotationIndex);
+      const rAny = res as any;
+      const sAny = scenario as any;
+      charismaticReply = this.extractToneText(res.charismatic || rAny['کاریزماتیک'] || rAny['باکلاس'] || rAny.tone_1 || rAny.friendly || sAny.charismatic, rotationIndex);
+      funnyReply = this.extractToneText(res.funny || rAny['شوخ‌طبع'] || rAny['شوخ طبع'] || rAny['طنز'] || rAny['رندانه'] || rAny.tone_2 || sAny.funny, rotationIndex);
+      confidentReply = this.extractToneText(res.confident || rAny['مقتدر'] || rAny['سنگین'] || rAny['قاطع'] || rAny.direct || rAny.tone_3 || sAny.confident, rotationIndex);
+      mysteriousReply = this.extractToneText(res.mysterious || rAny['مرموز'] || rAny['پرکشش'] || rAny.emotional || rAny.tone_4 || sAny.mysterious, rotationIndex);
+      matureReply = this.extractToneText(res.mature || rAny['متین'] || rAny['پخته'] || rAny['خونسرد'] || rAny.psychology || rAny.tone_5 || sAny.mature, rotationIndex);
 
       const baseClean = this.cleanDialogue(
         charismaticReply || confidentReply || funnyReply || mysteriousReply || matureReply || scenario!.situation || scenario!.title

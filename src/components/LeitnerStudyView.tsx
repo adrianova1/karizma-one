@@ -34,12 +34,24 @@ export interface LeitnerItem {
 function extractCardData(card: any) {
   if (!card) return null;
   
+  let resObj = card.responses;
+  if (typeof resObj === 'string') {
+    try { resObj = JSON.parse(resObj); } catch { resObj = {}; }
+  }
+  if (!resObj || typeof resObj !== 'object') {
+    resObj = {};
+  }
+
   // 1. Best / Golden Answer
   const bestAnswer = 
     card.analysis?.bestAnswer ||
-    card.responses?.charismatic ||
-    card.responses?.tone_1 ||
-    card.responses?.confident ||
+    resObj.charismatic ||
+    resObj.tone_charismatic ||
+    resObj.tone_1 ||
+    resObj['پاسخ کاریزماتیک'] ||
+    resObj['کاریزماتیک'] ||
+    resObj.confident ||
+    card.charismatic ||
     (Array.isArray(card.answers) && card.answers[0]?.text) ||
     '';
 
@@ -52,18 +64,51 @@ function extractCardData(card: any) {
         answersList.push({ style: a.style || 'کاریزماتیک', text: a.text });
       }
     }
-  } else if (card.responses && typeof card.responses === 'object') {
+  } else {
     const toneLabels: Record<string, string> = {
       charismatic: 'کاریزماتیک و باکلاس',
+      tone_charismatic: 'کاریزماتیک و باکلاس',
+      tone_1: 'کاریزماتیک و باکلاس',
+      'کاریزماتیک': 'کاریزماتیک و باکلاس',
+      'باکلاس': 'کاریزماتیک و باکلاس',
       funny: 'شوخ‌طبع و رندانه',
+      tone_funny: 'شوخ‌طبع و رندانه',
+      tone_2: 'شوخ‌طبع و رندانه',
+      'شوخ‌طبع': 'شوخ‌طبع و رندانه',
+      'شوخ طبع': 'شوخ‌طبع و رندانه',
+      'طنز': 'شوخ‌طبع و رندانه',
       confident: 'مقتدر و با اعتمادبه‌نفس',
+      tone_confident: 'مقتدر و با اعتمادبه‌نفس',
+      tone_3: 'مقتدر و با اعتمادبه‌نفس',
+      'مقتدر': 'مقتدر و با اعتمادبه‌نفس',
+      'قاطع': 'مقتدر و با اعتمادبه‌نفس',
       mysterious: 'مرموز و پرکشش',
+      tone_mysterious: 'مرموز و پرکشش',
+      tone_4: 'مرموز و پرکشش',
+      'مرموز': 'مرموز و پرکشش',
       mature: 'متین و پخته',
+      tone_mature: 'متین و پخته',
+      tone_5: 'متین و پخته',
+      'متین': 'متین و پخته',
+      'پخته': 'متین و پخته',
       friendly: 'صمیمی',
       direct: 'صریح'
     };
-    for (const [k, v] of Object.entries(card.responses)) {
-      if (typeof v === 'string' && v.trim()) {
+
+    const addedTexts = new Set<string>();
+    for (const [k, v] of Object.entries(resObj)) {
+      if (typeof v === 'string' && v.trim() && !addedTexts.has(v.trim())) {
+        addedTexts.add(v.trim());
+        answersList.push({ style: toneLabels[k] || k, text: v.trim() });
+      }
+    }
+
+    // Check flat keys
+    const flatKeys = ['charismatic', 'funny', 'confident', 'mysterious', 'mature'];
+    for (const k of flatKeys) {
+      const v = card[k];
+      if (typeof v === 'string' && v.trim() && !addedTexts.has(v.trim())) {
+        addedTexts.add(v.trim());
         answersList.push({ style: toneLabels[k] || k, text: v.trim() });
       }
     }

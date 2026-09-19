@@ -5,6 +5,7 @@ import { PersianNormalizer } from './PersianNormalizer.js';
 import { CANONICAL_FEATURED_SCENARIOS } from './CanonicalScenarios.js';
 import { DBEngine } from '../db.js';
 import { ToneDistributor } from './ToneDistributor.js';
+import { PersonaGenerator } from './PersonaGenerator.js';
 
 /**
  * Safely parse JSON from a file with graceful error handling
@@ -65,23 +66,86 @@ export class CoachLoader {
     }
 
     // Extract the 5 Canonical Tones from raw dataset and strip any synthetic residuals
-    const cleanDialogue = (txt: string) => {
-      if (!txt || typeof txt !== 'string') return '';
+    const cleanDialogue = (txt: any) => {
+      if (!txt) return '';
+      if (typeof txt !== 'string') txt = String(txt);
       return ToneDistributor.cleanDialogue(ToneDistributor.stripToneWrappers(txt));
     };
 
-    const rawCharismatic = cleanDialogue(s.responses?.charismatic || s.responses?.tone_1 || s.responses?.tone_3 || s.responses?.friendly || '');
-    const rawFunny = cleanDialogue(s.responses?.funny || s.responses?.tone_2 || '');
-    const rawConfident = cleanDialogue(s.responses?.confident || s.responses?.direct || s.responses?.tone_3 || '');
-    const rawMysterious = cleanDialogue(s.responses?.mysterious || s.responses?.emotional || s.responses?.tone_4 || '');
-    const rawMature = cleanDialogue(s.responses?.mature || s.responses?.psychology || s.responses?.tone_5 || '');
+    let resObj = s.responses;
+    if (typeof resObj === 'string') {
+      try { resObj = JSON.parse(resObj); } catch { resObj = {}; }
+    }
+    if (!resObj || typeof resObj !== 'object') {
+      resObj = {};
+    }
+
+    // Comprehensive extraction with Persian synonyms and alternative field names
+    let rawCharismatic = cleanDialogue(
+      resObj.charismatic || resObj.tone_charismatic || resObj.tone_1 || resObj['پاسخ کاریزماتیک'] ||
+      resObj['کاریزماتیک'] || resObj['باکلاس'] || resObj['پاسخ باکلاس'] || resObj.friendly ||
+      s.charismatic || s.tone_charismatic || s['پاسخ کاریزماتیک'] || s['کاریزماتیک'] || s.analysis?.bestAnswer || ''
+    );
+    let rawFunny = cleanDialogue(
+      resObj.funny || resObj.tone_funny || resObj.tone_2 || resObj['پاسخ شوخ‌طبع'] ||
+      resObj['شوخ طبع'] || resObj['شوخ‌طبع'] || resObj['طنز'] || resObj['فان'] || resObj['رندانه'] ||
+      s.funny || s.tone_funny || s['پاسخ شوخ‌طبع'] || s['شوخ طبع'] || s['طنز'] || ''
+    );
+    let rawConfident = cleanDialogue(
+      resObj.confident || resObj.tone_confident || resObj.tone_3 || resObj.direct || resObj['پاسخ مقتدر'] ||
+      resObj['مقتدر'] || resObj['قاطع'] || resObj['با اعتماد به نفس'] || resObj['با اعتمادبه‌نفس'] || resObj['آلفا'] ||
+      s.confident || s.tone_confident || s.direct || s['پاسخ مقتدر'] || s['مقتدر'] || s['قاطع'] || ''
+    );
+    let rawMysterious = cleanDialogue(
+      resObj.mysterious || resObj.tone_mysterious || resObj.tone_4 || resObj.emotional || resObj['پاسخ مرموز'] ||
+      resObj['مرموز'] || resObj['پرکشش'] || resObj['چندلایه'] ||
+      s.mysterious || s.tone_mysterious || s['پاسخ مرموز'] || s['مرموز'] || s['پرکشش'] || ''
+    );
+    let rawMature = cleanDialogue(
+      resObj.mature || resObj.tone_mature || resObj.tone_5 || resObj.psychology || resObj['پاسخ متین'] ||
+      resObj['متین'] || resObj['پخته'] || resObj['بالغ'] || resObj['دیپلماتیک'] || resObj['خونسرد'] ||
+      s.mature || s.tone_mature || s['پاسخ متین'] || s['متین'] || s['پخته'] || ''
+    );
+
+    // If answers array is provided, extract tones from structured array
+    if (Array.isArray(s.answers) && s.answers.length > 0) {
+      for (const a of s.answers) {
+        if (!a || !a.text) continue;
+        const style = (a.style || '').toLowerCase();
+        const text = cleanDialogue(a.text);
+        if (!rawCharismatic && (style.includes('کاریزماتیک') || style.includes('باکلاس') || style.includes('charismatic'))) rawCharismatic = text;
+        if (!rawFunny && (style.includes('طنز') || style.includes('شوخ') || style.includes('funny') || style.includes('رندانه'))) rawFunny = text;
+        if (!rawConfident && (style.includes('مقتدر') || style.includes('سنگین') || style.includes('قاطع') || style.includes('confident'))) rawConfident = text;
+        if (!rawMysterious && (style.includes('مرموز') || style.includes('پرکشش') || style.includes('mysterious'))) rawMysterious = text;
+        if (!rawMature && (style.includes('متین') || style.includes('خونسرد') || style.includes('پخته') || style.includes('mature'))) rawMature = text;
+      }
+    }
+
+    let finalCharismatic = rawCharismatic;
+    let finalFunny = rawFunny;
+    let finalConfident = rawConfident;
+    let finalMysterious = rawMysterious;
+    let finalMature = rawMature;
+
+    const uniqueTones = new Set([finalCharismatic, finalFunny, finalConfident, finalMysterious, finalMature].filter(Boolean));
+    if (uniqueTones.size < 4) {
+      const baseText = finalCharismatic || finalConfident || finalFunny || finalMysterious || finalMature || s.situation || s.title || '';
+      const rotation = (s.id || '').split('').reduce((acc: number, c: string) => acc + c.charCodeAt(0), 0);
+      const gen = PersonaGenerator.generateVariations(baseText, s, s.title || s.situation || '', rotation);
+
+      finalCharismatic = finalCharismatic || gen.charismatic;
+      finalFunny = (finalFunny && finalFunny !== finalCharismatic) ? finalFunny : gen.funny;
+      finalConfident = (finalConfident && finalConfident !== finalCharismatic && finalConfident !== finalFunny) ? finalConfident : gen.confident;
+      finalMysterious = (finalMysterious && finalMysterious !== finalCharismatic && finalMysterious !== finalFunny && finalMysterious !== finalConfident) ? finalMysterious : gen.mysterious;
+      finalMature = (finalMature && finalMature !== finalCharismatic && finalMature !== finalFunny && finalMature !== finalConfident && finalMature !== finalMysterious) ? finalMature : gen.mature;
+    }
 
     const responses: CoachToneResponses = {
-      charismatic: rawCharismatic || rawConfident || 'با متانت و کنترل فریم فضا را مدیریت کنید.',
-      funny: rawFunny || 'با شوخ‌طبعی و رندی هوشمندانه فضا را تلطیف کنید.',
-      confident: rawConfident || rawCharismatic || 'با صراحت، اقتدار و اعتمادبه‌نفس موضع خود را بیان کنید.',
-      mysterious: rawMysterious || 'با نگاهی عمیق و پاسخی سنجیده کنجکاوی مخاطب را حفظ کنید.',
-      mature: rawMature || 'با وقار، پرستیژ و آرامش ارتباط را پیش ببرید.'
+      charismatic: finalCharismatic || 'با متانت و کنترل فریم فضا را مدیریت کنید.',
+      funny: finalFunny || 'با شوخ‌طبعی و رندی هوشمندانه فضا را تلطیف کنید.',
+      confident: finalConfident || 'با صراحت، اقتدار و اعتمادبه‌نفس موضع خود را بیان کنید.',
+      mysterious: finalMysterious || 'با نگاهی عمیق و پاسخی سنجیده کنجکاوی مخاطب را حفظ کنید.',
+      mature: finalMature || 'با وقار، پرستیژ و آرامش ارتباط را پیش ببرید.'
     };
 
     let triggers: string[] = [];
@@ -220,23 +284,10 @@ export class CoachLoader {
       const manifestPath = path.join(chunksDir, 'manifest.json');
 
       if (fs.existsSync(chunksDir)) {
-        let chunkFiles: string[] = [];
-
-        if (fs.existsSync(manifestPath)) {
-          try {
-            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-            if (Array.isArray(manifest.chunks)) {
-              chunkFiles = manifest.chunks.map((c: any) => c.file);
-            }
-          } catch (mErr) {
-            console.warn('[CoachLoader] Error parsing chunks manifest:', mErr);
-          }
-        }
-
-        // Fallback to reading directory files if manifest failed
-        if (chunkFiles.length === 0) {
-          chunkFiles = fs.readdirSync(chunksDir).filter(f => f.startsWith('chunk_') && f.endsWith('.json')).sort();
-        }
+        // Read ALL chunk_*.json files in chunksDir dynamically
+        const chunkFiles = fs.readdirSync(chunksDir)
+          .filter(f => f.startsWith('chunk_') && f.endsWith('.json'))
+          .sort();
 
         for (const file of chunkFiles) {
           const filePath = path.join(chunksDir, file);
@@ -262,11 +313,12 @@ export class CoachLoader {
 
       // Add high-priority canonical hand-crafted scenarios
       for (const canonical of CANONICAL_FEATURED_SCENARIOS) {
-        scenarioMap.set(canonical.id, canonical);
-        this.scenarioChunkMap.set(canonical.id, 'canonical_core.json');
+        const normalized = this.normalizeScenario(canonical, 'canonical_core.json');
+        scenarioMap.set(normalized.id, normalized);
+        this.scenarioChunkMap.set(normalized.id, 'canonical_core.json');
       }
 
-      // Also merge custom / imported scenarios from SQLite DB if present
+      // Merge custom / imported scenarios from SQLite DB if present
       try {
         const dbScenarios = DBEngine.readTableSync<any>('scenarios');
         if (Array.isArray(dbScenarios) && dbScenarios.length > 0) {
@@ -275,15 +327,21 @@ export class CoachLoader {
             scenarioMap.set(normalized.id, normalized);
             this.scenarioChunkMap.set(normalized.id, 'db_scenarios');
           }
-        } else {
-          // Fallback to scenarios.json if SQLite has not been seeded yet
-          const dbScenariosJsonPath = path.join(process.cwd(), 'data', 'scenarios.json');
-          if (fs.existsSync(dbScenariosJsonPath)) {
-            const rawDb = fs.readFileSync(dbScenariosJsonPath, 'utf8');
-            if (rawDb && rawDb.trim().length > 0) {
-              const dbList = JSON.parse(rawDb);
-              if (Array.isArray(dbList)) {
-                for (const s of dbList) {
+        }
+      } catch (dbErr) {
+        console.warn('[CoachLoader] Note while loading db scenarios:', dbErr);
+      }
+
+      // Also merge data/scenarios.json if extra custom records exist
+      try {
+        const dbScenariosJsonPath = path.join(process.cwd(), 'data', 'scenarios.json');
+        if (fs.existsSync(dbScenariosJsonPath)) {
+          const rawDb = fs.readFileSync(dbScenariosJsonPath, 'utf8');
+          if (rawDb && rawDb.trim().length > 0) {
+            const dbList = JSON.parse(rawDb);
+            if (Array.isArray(dbList)) {
+              for (const s of dbList) {
+                if (s && s.id && !scenarioMap.has(s.id)) {
                   const normalized = this.normalizeScenario(s, 'db_scenarios.json');
                   scenarioMap.set(normalized.id, normalized);
                   this.scenarioChunkMap.set(normalized.id, 'db_scenarios.json');
@@ -292,8 +350,8 @@ export class CoachLoader {
             }
           }
         }
-      } catch (dbErr) {
-        console.warn('[CoachLoader] Note while loading db scenarios:', dbErr);
+      } catch (jsonErr) {
+        console.warn('[CoachLoader] Note while loading extra scenarios.json:', jsonErr);
       }
 
       this.scenarios = Array.from(scenarioMap.values());

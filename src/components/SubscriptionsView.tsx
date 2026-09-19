@@ -53,6 +53,7 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
   const [modalSuccessMsg, setModalSuccessMsg] = useState('');
   const [modalErrorMsg, setModalErrorMsg] = useState('');
   const [copiedCard, setCopiedCard] = useState(false);
+  const [copiedSupportLink, setCopiedSupportLink] = useState(false);
 
   // User receipts history
   const [userReceipts, setUserReceipts] = useState<UserReceipt[]>([]);
@@ -126,7 +127,7 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
     setTimeout(() => setCopiedCard(false), 2500);
   };
 
-  const handleOpenSupportLink = () => {
+  const getResolvedSupportUrl = () => {
     let targetUrl = (cardSettings.supportReceiptUrl || '').trim();
     if (!targetUrl) {
       targetUrl = 'https://t.me/Karizma_Academy';
@@ -135,7 +136,20 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
     } else if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
       targetUrl = 'https://' + targetUrl;
     }
+    return targetUrl;
+  };
 
+  const handleCopySupportLink = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = getResolvedSupportUrl();
+    navigator.clipboard.writeText(url);
+    setCopiedSupportLink(true);
+    setTimeout(() => setCopiedSupportLink(false), 2500);
+  };
+
+  const handleOpenSupportLink = () => {
+    const targetUrl = getResolvedSupportUrl();
     try {
       const win = window.open(targetUrl, '_blank', 'noopener,noreferrer');
       if (!win || win.closed || typeof win.closed === 'undefined') {
@@ -373,10 +387,10 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
             if (e.target === e.currentTarget) setShowPaymentModal(false);
           }}
         >
-          <div className="bg-[#0b0f19] border border-sky-500/40 rounded-3xl w-full max-w-[420px] max-h-[85dvh] flex flex-col shadow-2xl overflow-hidden animate-scale-up">
+          <div className="bg-[#0b0f19] border border-sky-500/40 rounded-3xl w-full max-w-[440px] max-h-[92vh] sm:max-h-[86vh] flex flex-col shadow-2xl overflow-hidden animate-scale-up">
             
             {/* 1. Sticky Modal Header */}
-            <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-slate-800/90 bg-[#0d1424] shrink-0">
+            <div className="flex items-center justify-between px-4 sm:px-5 py-2.5 sm:py-3 border-b border-slate-800/90 bg-[#0d1424] shrink-0">
               <div className="flex items-center gap-2 text-sky-400">
                 <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 shrink-0" />
                 <h3 className="text-xs sm:text-sm font-black text-white">پرداخت کارت‌به‌کارت: {selectedPlan.name}</h3>
@@ -390,8 +404,8 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
               </button>
             </div>
 
-            {/* 2. Scrollable Body Content */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 custom-scrollbar text-right">
+            {/* 2. Scrollable Body Content (min-h-0 prevents bottom buttons from overflowing) */}
+            <div className="flex-1 min-h-0 overflow-y-auto px-3.5 sm:px-4 py-2.5 sm:py-3 space-y-2.5 custom-scrollbar text-right">
               
               {/* Notification Messages */}
               {modalSuccessMsg && (
@@ -409,7 +423,7 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
               )}
 
               {/* Visual Bank Card */}
-              <div className="bg-gradient-to-tr from-[#162035] via-[#0e172a] to-[#070e1e] border border-sky-500/40 rounded-2xl p-3 sm:p-4 shadow-2xl relative overflow-hidden space-y-2.5 shrink-0">
+              <div className="bg-gradient-to-tr from-[#162035] via-[#0e172a] to-[#070e1e] border border-sky-500/40 rounded-2xl p-3 sm:p-3.5 shadow-2xl relative overflow-hidden space-y-2 shrink-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-sky-300">
                     <ShieldCheck className="w-4 h-4 text-sky-400" />
@@ -459,7 +473,7 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
               </p>
 
               {/* Form inputs */}
-              <form id="receipt-form" onSubmit={handleSubmitReceipt} className="space-y-2.5">
+              <form id="receipt-form" onSubmit={handleSubmitReceipt} className="space-y-2">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-white block">
                     شماره کارت واریزکننده (کارت مبدأ) <span className="text-rose-400">*</span>:
@@ -491,18 +505,39 @@ export default function SubscriptionsView({ token, onSubscriptionUpdate }: Subsc
             </div>
 
             {/* 3. Sticky Bottom Footer (Always in viewport - Buttons never overflow or get hidden) */}
-            <div className="p-3 sm:p-3.5 border-t border-slate-800/90 bg-[#070b14] shrink-0 space-y-2">
+            <div className="p-2.5 sm:p-3 border-t border-slate-800/90 bg-[#070b14] shrink-0 space-y-2">
               
-              {/* Button: Send Receipt Screenshot to Support */}
-              <button
-                type="button"
-                onClick={handleOpenSupportLink}
-                className="w-full py-2.5 px-3 bg-gradient-to-r from-sky-600/20 via-blue-600/20 to-indigo-600/20 hover:from-sky-600/30 hover:to-indigo-600/30 border border-sky-500/40 hover:border-sky-400 text-sky-200 hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-sm"
-              >
-                <Camera className="w-4 h-4 text-sky-400 shrink-0" />
-                <span>{cardSettings.supportReceiptTitle || 'ارسال فیش و اسکرین‌شات به پشتیبانی'}</span>
-                <ExternalLink className="w-3.5 h-3.5 text-sky-400/80 shrink-0" />
-              </button>
+              {/* Button: Send Receipt Screenshot to Support (Direct Link + Copy fallback) */}
+              <div className="flex items-center gap-1.5">
+                <a
+                  href={getResolvedSupportUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    try {
+                      const win = window.open(getResolvedSupportUrl(), '_blank', 'noopener,noreferrer');
+                      if (win) e.preventDefault();
+                    } catch {
+                      // Let native <a> navigate
+                    }
+                  }}
+                  className="flex-1 py-2 px-3 bg-gradient-to-r from-sky-600/25 via-blue-600/25 to-indigo-600/25 hover:from-sky-600/35 hover:to-indigo-600/35 border border-sky-500/50 hover:border-sky-400 text-sky-100 hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-sm no-underline text-center"
+                >
+                  <Camera className="w-4 h-4 text-sky-400 shrink-0" />
+                  <span>{cardSettings.supportReceiptTitle || 'ارسال فیش و اسکرین‌شات به پشتیبانی'}</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-sky-400/90 shrink-0" />
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleCopySupportLink}
+                  title="کپی آیدی یا لینک پشتیبانی"
+                  className="px-2.5 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 hover:text-sky-300 rounded-xl text-xs font-bold transition cursor-pointer active:scale-95 shrink-0 flex items-center gap-1"
+                >
+                  {copiedSupportLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span className="text-[10px] hidden sm:inline">{copiedSupportLink ? 'کپی شد' : 'کپی لینک'}</span>
+                </button>
+              </div>
 
               {/* Submit & Cancel Buttons */}
               <div className="flex items-center gap-2">

@@ -372,14 +372,38 @@ export class PersonaGenerator {
     if (clean.length >= 4 && !clean.includes('علت تست') && !clean.includes('اشتباه بزرگ') && !clean.includes('مرحله قرار')) {
       const isQuestion = clean.endsWith('؟') || clean.endsWith('?');
       const cleanCore = clean.replace(/[.؟!؛]+$/, '').trim();
+      const rIdx = Math.abs(rotationIndex);
+
+      const funnyOptions = [
+        isQuestion ? `اتفاقاً ${cleanCore}، یا اینکه خواستی سر به سرم بذاری؟ 😉` : `${cleanCore}؛ بیا اعتراف کن جواب رندانه‌تری سراغ نداشتی 😉`,
+        `اینجا معمولاً باید سکوت کرد، ولی در جوابش میشه گفت: «${cleanCore}»؛ فقط لبخند خونسرد یادت نره!`,
+        `${cleanCore}؛ اگر امتیاز هوش کلامی می‌دادن، این پاسخ ده از ده بود!`
+      ];
+
+      const confidentOptions = [
+        `${cleanCore}؛ موضع من کاملاً روشنه و نیازی به توجیه نداره.`,
+        `${cleanCore}؛ وقتی چارچوب و استانداردهات مشخص باشه، مکالمه دقیقاً در مسیر درست هدایت میشه.`,
+        `${cleanCore}؛ من پای صحبتم محکم می‌ایستم و با آرامش کنترل فریم رو حفظ می‌کنم.`
+      ];
+
+      const mysteriousOptions = [
+        `${cleanCore}... البته شاید اصل ماجرا هنوز فاش نشده باشه.`,
+        `${cleanCore}؛ همیشه جذاب‌ترین بخش مکالمه اون چیزیه که طرف رو به کنجکاوی وادار می‌کنه.`,
+        `${cleanCore}؛ کلمات سنجیده وقتی با نگاه عمیق همراه بشن کشش فوق‌العاده‌ای ایجاد می‌کنن.`
+      ];
+
+      const matureOptions = [
+        `${cleanCore}؛ درک متقابل و گفتگوی سنجیده همیشه بهترین مسیره.`,
+        `${cleanCore}؛ وقار کلامی و متانت در برخورد، نشان‌دهنده شخصیت پخته و باکلاسه.`,
+        `${cleanCore}؛ حفظ احترام در عین صراحت، کلید طلایی یک ارتباط پایدار و ارزشمنده.`
+      ];
+
       return {
-        charismatic: `${cleanCore}؛ برای من همیشه اصالت و کیفیت گفتگو حرف اول رو میزنه.`,
-        funny: isQuestion 
-          ? `اتفاقاً ${cleanCore}، یا اینکه خواستی سر به سرم بذاری؟ 😉` 
-          : `${cleanCore}؛ بیا اعتراف کن جواب جذاب‌تری سراغ نداشتی 😉`,
-        confident: `${cleanCore}؛ موضع من کاملاً روشنه و نیازی به توجیه نداره.`,
-        mysterious: `${cleanCore}... البته شاید اصل ماجرا هنوز فاش نشده باشه.`,
-        mature: `${cleanCore}؛ درک متقابل و گفتگوی سنجیده همیشه بهترین مسیره.`
+        charismatic: cleanCore,
+        funny: funnyOptions[rIdx % funnyOptions.length],
+        confident: confidentOptions[(rIdx + 1) % confidentOptions.length],
+        mysterious: mysteriousOptions[(rIdx + 2) % mysteriousOptions.length],
+        mature: matureOptions[(rIdx + 3) % matureOptions.length]
       };
     }
 

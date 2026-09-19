@@ -1,94 +1,63 @@
 {
-  "version": "2.0.0_PRODUCTION_60K",
-  "targetCount": 60000,
-  "chunkSize": 5000,
-  "totalSavedScenarios": 60000,
+  "totalChunks": 14,
+  "totalScenarios": 25913,
   "chunks": [
     {
-      "id": "chunk_001",
       "file": "chunk_001.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:51.025Z"
+      "count": 1948
     },
     {
-      "id": "chunk_002",
       "file": "chunk_002.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:51.189Z"
+      "count": 1985
     },
     {
-      "id": "chunk_003",
       "file": "chunk_003.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:51.284Z"
+      "count": 2080
     },
     {
-      "id": "chunk_004",
       "file": "chunk_004.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:51.373Z"
+      "count": 2049
     },
     {
-      "id": "chunk_005",
       "file": "chunk_005.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:51.480Z"
+      "count": 2033
     },
     {
-      "id": "chunk_006",
       "file": "chunk_006.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:51.568Z"
+      "count": 1603
     },
     {
-      "id": "chunk_007",
       "file": "chunk_007.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:51.664Z"
+      "count": 619
     },
     {
-      "id": "chunk_008",
       "file": "chunk_008.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:51.759Z"
+      "count": 2248
     },
     {
-      "id": "chunk_009",
       "file": "chunk_009.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:51.909Z"
+      "count": 2134
     },
     {
-      "id": "chunk_010",
       "file": "chunk_010.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:52.043Z"
+      "count": 2090
     },
     {
-      "id": "chunk_011",
       "file": "chunk_011.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:52.268Z"
+      "count": 2008
     },
     {
-      "id": "chunk_012",
       "file": "chunk_012.json",
-      "count": 5000,
-      "status": "completed",
-      "createdAt": "2026-09-01T14:17:52.350Z"
+      "count": 2308
+    },
+    {
+      "file": "chunk_013.json",
+      "count": 2000
+    },
+    {
+      "file": "chunk_014.json",
+      "count": 808
     }
   ],
-  "isFullyCompleted": true,
-  "lastUpdatedAt": "2026-09-01T14:17:50.845Z"
+  "updatedAt": "2026-09-19T13:47:14.465Z"
 }

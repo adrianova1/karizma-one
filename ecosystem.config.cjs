@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'karizma-app',
+      name: 'karizma',
       script: 'dist/server.cjs',
       instances: 1,
       autorestart: true,

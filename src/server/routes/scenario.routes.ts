@@ -18,6 +18,11 @@ let masterCache: ScenarioItem[] | null = null;
 let masterCacheMtime = 0;
 let cachedCategoryCounts: Record<string, number> | null = null;
 
+export function invalidateScenarioCache(): void {
+  masterCache = null;
+  cachedCategoryCounts = null;
+}
+
 function computeCategoryCounts(scenarios: ScenarioItem[]): Record<string, number> {
   const counts: Record<string, number> = {};
   for (const cat of MASTER_CATEGORIES) {
@@ -333,6 +338,7 @@ router.post('/', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), a
     await DBEngine.insertRecord('scenarios', newScenario);
     CoachLoader.reload();
     coachEngine.reindex();
+    invalidateScenarioCache();
 
     res.status(201).json({ success: true, scenario: newScenario });
   } catch (error: any) {
@@ -408,6 +414,7 @@ router.put('/:id', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]),
     await DBEngine.updateRecord('scenarios', id, updatedData);
     CoachLoader.reload();
     coachEngine.reindex();
+    invalidateScenarioCache();
 
     res.json({ success: true, scenario: { ...scenario, ...updatedData } });
   } catch (error: any) {
@@ -427,6 +434,7 @@ router.delete("/:id", authenticateToken, requireRole([Role.ADMIN]), async (req: 
     await DBEngine.deleteRecord("scenarios", id);
     CoachLoader.reload();
     coachEngine.reindex();
+    invalidateScenarioCache();
     res.json({ success: true, message: "سناریو با موفقیت حذف شد." });
   } catch (error: any) {
     res.status(500).json({ error: "خطا در حذف سناریو" });
@@ -485,14 +493,65 @@ router.post('/import-excel', authenticateToken, requireRole([Role.ADMIN]), async
         const rawCat = fileCat || fallbackCat || 'عمومی و متفرقه (آزاد)';
         const mappedCategory = getMasterCategoryTitle(rawCat);
 
-        // Extract raw responses from multiple potential column names
-        let charismatic = (row.charismatic || row.tone_charismatic || row.tone_1 || row['پاسخ کاریزماتیک'] || row['کاریزماتیک'] || row['باکلاس'] || row['پاسخ باکلاس'] || '').toString().trim();
-        let funny = (row.funny || row.tone_funny || row.tone_2 || row['پاسخ شوخ‌طبع'] || row['شوخ طبع'] || row['شوخ‌طبع'] || row['طنز'] || row['فان'] || row['رندانه'] || '').toString().trim();
-        let confident = (row.confident || row.tone_confident || row.tone_3 || row.direct || row['پاسخ مقتدر'] || row['مقتدر'] || row['قاطع'] || row['با اعتماد به نفس'] || row['با اعتمادبه‌نفس'] || row['آلفا'] || '').toString().trim();
-        let mysterious = (row.mysterious || row.tone_mysterious || row.tone_4 || row.emotional || row['پاسخ مرموز'] || row['مرموز'] || row['پرکشش'] || row['چندلایه'] || '').toString().trim();
-        let mature = (row.mature || row.tone_mature || row.tone_5 || row.psychology || row['پاسخ متین'] || row['متین'] || row['پخته'] || row['بالغ'] || row['دیپلماتیک'] || '').toString().trim();
+        // Extract responses from nested object (or parsed string), array, or flat fields
+        let resObj = row.responses;
+        if (typeof resObj === 'string') {
+          try { resObj = JSON.parse(resObj); } catch { resObj = {}; }
+        }
+        if (!resObj || typeof resObj !== 'object') {
+          resObj = {};
+        }
 
-        // If any of the 5 canonical tones is missing, dynamically synthesize distinct Persian tone variations
+        let charismatic = (
+          resObj.charismatic || resObj.tone_charismatic || resObj.tone_1 || resObj['پاسخ کاریزماتیک'] ||
+          resObj['کاریزماتیک'] || resObj['باکلاس'] || resObj['پاسخ باکلاس'] || resObj.friendly ||
+          row.charismatic || row.tone_charismatic || row.tone_1 || row['پاسخ کاریزماتیک'] ||
+          row['کاریزماتیک'] || row['باکلاس'] || row['پاسخ باکلاس'] || row.analysis?.bestAnswer || ''
+        ).toString().trim();
+
+        let funny = (
+          resObj.funny || resObj.tone_funny || resObj.tone_2 || resObj['پاسخ شوخ‌طبع'] ||
+          resObj['شوخ طبع'] || resObj['شوخ‌طبع'] || resObj['طنز'] || resObj['فان'] || resObj['رندانه'] ||
+          row.funny || row.tone_funny || row.tone_2 || row['پاسخ شوخ‌طبع'] ||
+          row['شوخ طبع'] || row['شوخ‌طبع'] || row['طنز'] || row['فان'] || row['رندانه'] || ''
+        ).toString().trim();
+
+        let confident = (
+          resObj.confident || resObj.tone_confident || resObj.tone_3 || resObj.direct || resObj['پاسخ مقتدر'] ||
+          resObj['مقتدر'] || resObj['قاطع'] || resObj['با اعتماد به نفس'] || resObj['با اعتمادبه‌نفس'] || resObj['آلفا'] ||
+          row.confident || row.tone_confident || row.tone_3 || row.direct || row['پاسخ مقتدر'] ||
+          row['مقتدر'] || row['قاطع'] || row['با اعتماد به نفس'] || row['با اعتمادبه‌نفس'] || row['آلفا'] || ''
+        ).toString().trim();
+
+        let mysterious = (
+          resObj.mysterious || resObj.tone_mysterious || resObj.tone_4 || resObj.emotional || resObj['پاسخ مرموز'] ||
+          resObj['مرموز'] || resObj['پرکشش'] || resObj['چندلایه'] ||
+          row.mysterious || row.tone_mysterious || row.tone_4 || row.emotional || row['پاسخ مرموز'] ||
+          row['مرموز'] || row['پرکشش'] || row['چندلایه'] || ''
+        ).toString().trim();
+
+        let mature = (
+          resObj.mature || resObj.tone_mature || resObj.tone_5 || resObj.psychology || resObj['پاسخ متین'] ||
+          resObj['متین'] || resObj['پخته'] || resObj['بالغ'] || resObj['دیپلماتیک'] || resObj['خونسرد'] ||
+          row.mature || row.tone_mature || row.tone_5 || row.psychology || row['پاسخ متین'] ||
+          row['متین'] || row['پخته'] || row['بالغ'] || row['دیپلماتیک'] || ''
+        ).toString().trim();
+
+        // Support structured answers array
+        if (Array.isArray(row.answers) && row.answers.length > 0) {
+          for (const a of row.answers) {
+            if (!a || !a.text) continue;
+            const style = (a.style || '').toLowerCase();
+            const text = a.text.toString().trim();
+            if (!charismatic && (style.includes('کاریزماتیک') || style.includes('باکلاس') || style.includes('charismatic'))) charismatic = text;
+            if (!funny && (style.includes('طنز') || style.includes('شوخ') || style.includes('funny') || style.includes('رندانه'))) funny = text;
+            if (!confident && (style.includes('مقتدر') || style.includes('سنگین') || style.includes('قاطع') || style.includes('confident'))) confident = text;
+            if (!mysterious && (style.includes('مرموز') || style.includes('پرکشش') || style.includes('mysterious'))) mysterious = text;
+            if (!mature && (style.includes('متین') || style.includes('خونسرد') || style.includes('پخته') || style.includes('mature'))) mature = text;
+          }
+        }
+
+        // If any of the 5 canonical tones is genuinely missing, dynamically synthesize distinct variations
         const hasMissingTone = !charismatic || !funny || !confident || !mysterious || !mature;
         if (hasMissingTone) {
           const baseText = charismatic || confident || funny || mysterious || mature || finalSituation;
@@ -616,6 +675,7 @@ router.post('/import-excel', authenticateToken, requireRole([Role.ADMIN]), async
       // Synchronize Coach in-memory index
       CoachLoader.reload();
       coachEngine.reindex();
+      invalidateScenarioCache();
     }
 
     res.json({
@@ -646,6 +706,9 @@ router.post('/ingest-json', authenticateToken, requireRole([Role.ADMIN]), async 
     }
 
     const report = await CoachDataPipeline.ingestScenarios(items, { overwrite, autoFillTones });
+    CoachLoader.reload();
+    coachEngine.reindex();
+    invalidateScenarioCache();
 
     res.json({
       success: true,

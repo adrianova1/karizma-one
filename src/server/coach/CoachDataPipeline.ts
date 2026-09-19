@@ -9,6 +9,8 @@ import path from 'path';
 import { CoachScenario, CoachToneResponses } from './CoachTypes.js';
 import { CoachLoader } from './CoachLoader.js';
 import { CoachEngine } from './CoachEngine.js';
+import { PersonaGenerator } from './PersonaGenerator.js';
+import { DBEngine } from '../db.js';
 
 export interface ScenarioValidationResult {
   valid: boolean;
@@ -108,40 +110,80 @@ export class CoachDataPipeline {
     }
 
     // Responses & 5-Tone Validation
-    const rawResp = raw.responses || {};
-    let missingTonesCount = 0;
+    let rawResp = raw.responses;
+    if (typeof rawResp === 'string') {
+      try { rawResp = JSON.parse(rawResp); } catch { rawResp = {}; }
+    }
+    if (!rawResp || typeof rawResp !== 'object') {
+      rawResp = {};
+    }
 
-    const charismatic = rawResp.charismatic || rawResp.tone_1 || raw.goal || '';
-    const friendly = rawResp.friendly || rawResp.confident || rawResp.tone_2 || raw.goal || '';
-    const mature = rawResp.mature || rawResp.tone_3 || rawResp.charismatic || raw.goal || '';
-    const mysterious = rawResp.mysterious || rawResp.tone_4 || raw.goal || '';
-    const funny = rawResp.funny || rawResp.tone_5 || raw.goal || '';
+    let charismatic = (
+      rawResp.charismatic || rawResp.tone_charismatic || rawResp.tone_1 || rawResp['پاسخ کاریزماتیک'] ||
+      rawResp['کاریزماتیک'] || rawResp['باکلاس'] || rawResp.friendly || raw.charismatic || raw.analysis?.bestAnswer || ''
+    ).toString().trim();
 
-    if (!charismatic) { missingTonesCount++; warnings.push('لحن کاریزماتیک/مقتدر (tone_1) تعریف نشده است.'); }
-    if (!friendly) { missingTonesCount++; warnings.push('لحن صمیمی/دوستانه (tone_2) تعریف نشده است.'); }
-    if (!mature) { missingTonesCount++; warnings.push('لحن باکلاس/متین (tone_3) تعریف نشده است.'); }
-    if (!mysterious) { missingTonesCount++; warnings.push('لحن احساسی/رازآلود (tone_4) تعریف نشده است.'); }
-    if (!funny) { missingTonesCount++; warnings.push('لحن شوخ‌طبع (tone_5) تعریف نشده است.'); }
+    let funny = (
+      rawResp.funny || rawResp.tone_funny || rawResp.tone_2 || rawResp['پاسخ شوخ‌طبع'] ||
+      rawResp['شوخ طبع'] || rawResp['شوخ‌طبع'] || rawResp['طنز'] || rawResp['فان'] || rawResp['رندانه'] || raw.funny || ''
+    ).toString().trim();
 
-    const direct = rawResp.direct || rawResp.tone_1 || rawResp.charismatic || raw.goal || '';
-    const emotional = rawResp.emotional || rawResp.tone_4 || rawResp.friendly || '';
-    const psychology = rawResp.psychology || rawResp.psychological_analysis || raw.technique || '';
+    let confident = (
+      rawResp.confident || rawResp.tone_confident || rawResp.tone_3 || rawResp.direct || rawResp['پاسخ مقتدر'] ||
+      rawResp['مقتدر'] || rawResp['قاطع'] || rawResp['با اعتماد به نفس'] || rawResp['با اعتمادبه‌نفس'] || rawResp['آلفا'] || raw.confident || ''
+    ).toString().trim();
+
+    let mysterious = (
+      rawResp.mysterious || rawResp.tone_mysterious || rawResp.tone_4 || rawResp.emotional || rawResp['پاسخ مرموز'] ||
+      rawResp['مرموز'] || rawResp['پرکشش'] || rawResp['چندلایه'] || raw.mysterious || ''
+    ).toString().trim();
+
+    let mature = (
+      rawResp.mature || rawResp.tone_mature || rawResp.tone_5 || rawResp.psychology || rawResp['پاسخ متین'] ||
+      rawResp['متین'] || rawResp['پخته'] || rawResp['بالغ'] || rawResp['دیپلماتیک'] || rawResp['خونسرد'] || raw.mature || ''
+    ).toString().trim();
+
+    // Check answers array if present
+    if (Array.isArray(raw.answers) && raw.answers.length > 0) {
+      for (const a of raw.answers) {
+        if (!a || !a.text) continue;
+        const style = (a.style || '').toLowerCase();
+        const text = a.text.toString().trim();
+        if (!charismatic && (style.includes('کاریزماتیک') || style.includes('باکلاس'))) charismatic = text;
+        if (!funny && (style.includes('طنز') || style.includes('شوخ') || style.includes('funny'))) funny = text;
+        if (!confident && (style.includes('مقتدر') || style.includes('سنگین') || style.includes('قاطع'))) confident = text;
+        if (!mysterious && style.includes('مرموز')) mysterious = text;
+        if (!mature && (style.includes('متین') || style.includes('خونسرد') || style.includes('پخته'))) mature = text;
+      }
+    }
+
+    const hasMissingTone = !charismatic || !funny || !confident || !mysterious || !mature;
+    if (hasMissingTone) {
+      const baseText = charismatic || confident || funny || mysterious || mature || situation || title;
+      const gen = PersonaGenerator.generateVariations(baseText, raw, title, index);
+      if (!charismatic) charismatic = gen.charismatic;
+      if (!funny) funny = gen.funny;
+      if (!confident) confident = gen.confident;
+      if (!mysterious) mysterious = gen.mysterious;
+      if (!mature) mature = gen.mature;
+      warnings.push('بخشی از لحن‌ها به صورت هوشمند و متمایز با لحن‌های پنج‌گانه تکمیل شدند.');
+    }
 
     const sanitizedResponses: CoachToneResponses = {
-      direct: direct || 'با کلامی شفاف و مطمئن پیش بروید.',
-      funny: funny || charismatic || 'با یک شوخی مؤدبانه و خونسرد جو را منعطف کنید.',
+      direct: confident || 'با کلامی شفاف و مطمئن پیش بروید.',
+      funny: funny || 'با یک شوخی مؤدبانه و خونسرد جو را منعطف کنید.',
       charismatic: charismatic || 'با متانت و تسلط فضا را مدیریت کنید.',
-      emotional: emotional || friendly || charismatic || 'سلام! با صمیمیت و احترام در کنارت هستم.',
-      psychology: psychology || 'تحلیل رفتار و زبان بدن متناسب با موقعیت را در نظر داشته باشید.',
-      friendly: friendly || charismatic || 'سلام! با صمیمیت و احترام در کنارت هستم.',
-      mature: mature || charismatic || 'با وقار، پرستیژ و آرامش ارتباط را پیش ببرید.',
-      mysterious: mysterious || charismatic || 'با نگاهی عمیق و پاسخی سنجیده کنجکاوی طرف مقابل را حفظ کنید.',
-      tone_1: direct || charismatic || 'با متانت و تسلط فضا را مدیریت کنید.',
-      tone_2: funny || charismatic || 'با یک شوخی مؤدبانه و خونسرد جو را منعطف کنید.',
-      tone_3: charismatic || 'با وقار، پرستیژ و آرامش ارتباط را پیش ببرید.',
-      tone_4: emotional || friendly || 'سلام! با صمیمیت و احترام در کنارت هستم.',
-      tone_5: psychology || 'با نگاهی عمیق و پاسخی سنجیده کنجکاوی طرف مقابل را حفظ کنید.',
-      psychological_analysis: psychology || raw.technique || ''
+      emotional: mysterious || 'با نگاهی عمیق و پاسخی سنجیده کنجکاوی طرف مقابل را حفظ کنید.',
+      psychology: mature || raw.technique || 'تحلیل رفتار و زبان بدن متناسب با موقعیت را در نظر داشته باشید.',
+      friendly: charismatic || 'با صمیمیت و احترام در کنارت هستم.',
+      mature: mature || 'با وقار، پرستیژ و آرامش ارتباط را پیش ببرید.',
+      mysterious: mysterious || 'با نگاهی عمیق و پاسخی سنجیده کنجکاوی طرف مقابل را حفظ کنید.',
+      tone_1: charismatic || 'با متانت و تسلط فضا را مدیریت کنید.',
+      tone_2: funny || 'با یک شوخی مؤدبانه و خونسرد جو را منعطف کنید.',
+      tone_3: confident || 'با وقار، پرستیژ و صراحت ارتباط را پیش ببرید.',
+      tone_4: mysterious || 'با نگاهی عمیق و پاسخی سنجیده کنجکاوی طرف مقابل را حفظ کنید.',
+      tone_5: mature || 'با متانت و دوراندیشی موقعیت را هدایت کنید.',
+      psychological_analysis: raw.technique || 'تحلیل رفتار کلامی و حفظ ارزش'
     };
 
     if (errors.length > 0) {
@@ -273,6 +315,13 @@ export class CoachDataPipeline {
         fs.mkdirSync(coachDir, { recursive: true });
       }
       fs.writeFileSync(this.coachPath, jsonContent, 'utf-8');
+
+      // Sync to SQLite database
+      try {
+        await DBEngine.batchUpsertRecords('scenarios', finalBank);
+      } catch (dbErr) {
+        console.warn('[CoachDataPipeline] Warning while syncing to SQLite DB:', dbErr);
+      }
 
       // Re-index Coach Engine in memory
       CoachLoader.reload();

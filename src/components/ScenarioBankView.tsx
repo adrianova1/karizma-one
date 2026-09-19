@@ -14,6 +14,79 @@ interface ScenarioBankViewProps {
   onSelectScenarioForCoach?: (scenarioText: string) => void;
 }
 
+export function getScenarioToneResponses(scenario: ScenarioItem, toneKey: string): string[] {
+  if (!scenario) return [];
+
+  let resObj = scenario.responses as any;
+  if (typeof resObj === 'string') {
+    try { resObj = JSON.parse(resObj); } catch { resObj = {}; }
+  }
+  if (!resObj || typeof resObj !== 'object') {
+    resObj = {};
+  }
+
+  // Synonym maps for the 5 canonical tones
+  const keySynonyms: Record<string, string[]> = {
+    charismatic: ['charismatic', 'tone_charismatic', 'tone_1', 'کاریزماتیک', 'باکلاس', 'پاسخ کاریزماتیک', 'پاسخ باکلاس', 'friendly', 'bestAnswer'],
+    funny: ['funny', 'tone_funny', 'tone_2', 'شوخ‌طبع', 'شوخ طبع', 'طنز', 'پاسخ شوخ‌طبع', 'پاسخ طنز', 'فان', 'رندانه'],
+    confident: ['confident', 'tone_confident', 'tone_3', 'مقتدر', 'سنگین', 'قاطع', 'پاسخ مقتدر', 'direct', 'آلفا', 'با اعتماد به نفس', 'با اعتمادبه‌نفس'],
+    mysterious: ['mysterious', 'tone_mysterious', 'tone_4', 'مرموز', 'پرکشش', 'پاسخ مرموز', 'emotional', 'چندلایه'],
+    mature: ['mature', 'tone_mature', 'tone_5', 'متین', 'پخته', 'پاسخ متین', 'خونسرد', 'حمایتگر', 'psychology', 'دیپلماتیک', 'بالغ']
+  };
+
+  const candidates = keySynonyms[toneKey] || [toneKey];
+
+  // 1. Try in responses object
+  for (const k of candidates) {
+    const val = resObj[k];
+    if (val) {
+      if (Array.isArray(val) && val.length > 0) return val.map(String).map(s => s.trim()).filter(Boolean);
+      if (typeof val === 'string' && val.trim()) return [val.trim()];
+    }
+  }
+
+  // 2. Try in flat scenario fields
+  const flat = scenario as any;
+  for (const k of candidates) {
+    const val = flat[k];
+    if (val && typeof val === 'string' && val.trim()) return [val.trim()];
+  }
+
+  // 3. Try in structured answers array
+  if (Array.isArray(flat.answers) && flat.answers.length > 0) {
+    for (const a of flat.answers) {
+      if (!a || !a.text) continue;
+      const style = (a.style || '').toLowerCase();
+      for (const k of candidates) {
+        if (style.includes(k.toLowerCase())) {
+          return [a.text.trim()];
+        }
+      }
+    }
+  }
+
+  // 4. Fallback if this specific tone is missing
+  const allAvailable = Object.entries(resObj)
+    .filter(([_, v]) => typeof v === 'string' && (v as string).trim().length > 0)
+    .map(([_, v]) => (v as string).trim());
+
+  if (allAvailable.length > 0) {
+    const baseText = allAvailable[0];
+    if (toneKey === 'funny') {
+      return [`«${baseText}» — (اجرا با لحن شوخ‌طبع، لبخند خونسرد و رندانه)`];
+    } else if (toneKey === 'confident') {
+      return [`«${baseText}» — (اجرا با لحن مقتدر و قاطع، بدون عذرخواهی یا تاییدخواهی)`];
+    } else if (toneKey === 'mysterious') {
+      return [`«${baseText}» — (اجرا با مکث معنادار، لحن عمیق و پرکشش)`];
+    } else if (toneKey === 'mature') {
+      return [`«${baseText}» — (اجرا با وقار، متانت و ادب دیپلماتیک)`];
+    }
+    return [baseText];
+  }
+
+  return [];
+}
+
 export default function ScenarioBankView({ token, onSelectScenarioForCoach }: ScenarioBankViewProps) {
   const [scenarios, setScenarios] = useState<ScenarioItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,27 +139,20 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
         });
         setLeitnerToast('سناریو از جعبه لایتنر حذف شد.');
       } else {
-        const bestAnswer = 
-          scenario.responses?.charismatic ||
-          scenario.responses?.confident ||
-          (scenario.responses ? Object.values(scenario.responses)[0] : '') ||
-          '';
+        const charismaticAnswers = getScenarioToneResponses(scenario, 'charismatic');
+        const funnyAnswers = getScenarioToneResponses(scenario, 'funny');
+        const confidentAnswers = getScenarioToneResponses(scenario, 'confident');
+        const mysteriousAnswers = getScenarioToneResponses(scenario, 'mysterious');
+        const matureAnswers = getScenarioToneResponses(scenario, 'mature');
+
+        const bestAnswer = charismaticAnswers[0] || confidentAnswers[0] || '';
 
         const answersList: { style: string; text: string }[] = [];
-        if (scenario.responses) {
-          const labels: Record<string, string> = {
-            charismatic: 'کاریزماتیک و باکلاس',
-            funny: 'شوخ‌طبع و رندانه',
-            confident: 'مقتدر و با اعتمادبه‌نفس',
-            mysterious: 'مرموز و پرکشش',
-            mature: 'متین و پخته'
-          };
-          for (const [k, v] of Object.entries(scenario.responses)) {
-            if (typeof v === 'string' && v.trim()) {
-              answersList.push({ style: labels[k] || k, text: v.trim() });
-            }
-          }
-        }
+        if (charismaticAnswers[0]) answersList.push({ style: 'کاریزماتیک و باکلاس', text: charismaticAnswers[0] });
+        if (funnyAnswers[0]) answersList.push({ style: 'شوخ‌طبع و رندانه', text: funnyAnswers[0] });
+        if (confidentAnswers[0]) answersList.push({ style: 'مقتدر و با اعتمادبه‌نفس', text: confidentAnswers[0] });
+        if (mysteriousAnswers[0]) answersList.push({ style: 'مرموز و پرکشش', text: mysteriousAnswers[0] });
+        if (matureAnswers[0]) answersList.push({ style: 'متین و پخته', text: matureAnswers[0] });
 
         const newItem = {
           id: scenario.id,
@@ -464,11 +530,9 @@ export default function ScenarioBankView({ token, onSelectScenarioForCoach }: Sc
               const currentTone = activeToneTab[scenario.id] || 'charismatic';
               const isLiked = likedScenarioIds[scenario.id];
 
-              const rawResp = scenario.responses
-                ? scenario.responses[currentTone] || Object.values(scenario.responses).find(v => !!v) || ''
-                : '';
-              const responseList = Array.isArray(rawResp) ? rawResp : [rawResp].filter(Boolean);
-              const previewResponseText = responseList[0] || '';
+              const responseList = getScenarioToneResponses(scenario, currentTone);
+              const charismaticList = getScenarioToneResponses(scenario, 'charismatic');
+              const previewResponseText = charismaticList[0] || responseList[0] || '';
               const fullCopyText = responseList.join('\n---\n');
 
               return (
