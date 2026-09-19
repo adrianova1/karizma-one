@@ -128,12 +128,11 @@ export default function LeitnerStudyView({ token, onBack, onStudyComplete }: Lei
   const [copied, setCopied] = useState(false);
   const [userTrialAnswer, setUserTrialAnswer] = useState('');
 
-  // Add scenario modal state
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [modalSearchQuery, setModalSearchQuery] = useState('');
-  const [modalResults, setModalResults] = useState<any[]>([]);
-  const [modalLoading, setModalLoading] = useState(false);
-  const [modalHasSearched, setModalHasSearched] = useState(false);
+  // Integrated Search State inside Leitner Box
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchHasRun, setSearchHasRun] = useState(false);
   const [addedToast, setAddedToast] = useState<string | null>(null);
   
   // Session statistics
@@ -277,31 +276,46 @@ export default function LeitnerStudyView({ token, onBack, onStudyComplete }: Lei
     }
   };
 
-  const handleSearchFromModal = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!modalSearchQuery.trim()) return;
-    setModalLoading(true);
-    setModalHasSearched(true);
+  const executeSearch = async (queryText: string) => {
+    if (!queryText.trim()) {
+      setSearchResults([]);
+      setSearchHasRun(false);
+      return;
+    }
+    setSearchLoading(true);
+    setSearchHasRun(true);
     try {
-      const res = await fetch(`/api/scenarios?search=${encodeURIComponent(modalSearchQuery.trim())}&limit=8`);
+      const res = await fetch(`/api/scenarios?search=${encodeURIComponent(queryText.trim())}&limit=12`);
       if (res.ok) {
         const data = await res.json();
-        setModalResults(data.scenarios || []);
+        setSearchResults(data.scenarios || []);
       }
     } catch (err) {
       console.error('Error searching scenarios for Leitner:', err);
     } finally {
-      setModalLoading(false);
+      setSearchLoading(false);
     }
   };
 
-  const handleAddScenarioToDeck = (scenario: any) => {
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    executeSearch(searchQuery);
+  };
+
+  const handleAddAndStudyScenario = (scenario: any) => {
     const extracted = extractCardData(scenario);
     if (!extracted) return;
 
-    const existingIdx = deck.findIndex(d => d.id === scenario.id || d.data?.id === scenario.id);
-    if (existingIdx >= 0) {
-      setAddedToast('این سناریو هم‌اکنون در جعبه لایتنر شما وجود دارد.');
+    const existingItem = deck.find(d => d.id === scenario.id || d.data?.id === scenario.id);
+    if (existingItem) {
+      // Already in deck, jump directly to study it!
+      setCurrentCardId(existingItem.id);
+      setIsFlipped(false);
+      setUserTrialAnswer('');
+      setSearchQuery('');
+      setSearchResults([]);
+      setSearchHasRun(false);
+      setAddedToast(`در حال مرور سناریوی «${extracted.title}» (خانه ${existingItem.box})`);
       setTimeout(() => setAddedToast(null), 3000);
       return;
     }
@@ -319,7 +333,10 @@ export default function LeitnerStudyView({ token, onBack, onStudyComplete }: Lei
     setCurrentCardId(newItem.id);
     setIsFlipped(false);
     setUserTrialAnswer('');
-    setAddedToast(`سناریوی «${extracted.title}» به خانه ۱ اضافه شد! 🗃️`);
+    setSearchQuery('');
+    setSearchResults([]);
+    setSearchHasRun(false);
+    setAddedToast(`سناریوی «${extracted.title}» به خانه ۱ اضافه و برای تمرین باز شد! 🗃️`);
     setTimeout(() => setAddedToast(null), 3000);
   };
 
@@ -372,27 +389,226 @@ export default function LeitnerStudyView({ token, onBack, onStudyComplete }: Lei
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 text-xs text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl px-2.5 py-1.5 transition cursor-pointer active:scale-95"
-            title="نوشتن موقعیت و جستجو در بانک سناریوها برای تمرین"
-          >
-            <Plus className="w-3.5 h-3.5 text-amber-400" />
-            <span className="font-bold">افزودن از بانک سناریو</span>
-          </button>
+        <button
+          type="button"
+          onClick={handleResetDeck}
+          title="ریست کارت‌ها به خانه ۱"
+          className="text-[11px] text-slate-400 hover:text-rose-300 p-1.5 bg-slate-900 border border-slate-800 rounded-xl transition cursor-pointer"
+        >
+          <RotateCw className="w-3.5 h-3.5" />
+        </button>
+      </div>
 
-          <button
-            type="button"
-            onClick={handleResetDeck}
-            title="ریست کارت‌ها به خانه ۱"
-            className="text-[11px] text-slate-400 hover:text-rose-300 p-1.5 bg-slate-900 border border-slate-800 rounded-xl transition cursor-pointer"
-          >
-            <RotateCw className="w-3.5 h-3.5" />
-          </button>
+      {/* 2. DEDICATED IN-VIEW SEARCH BOX */}
+      <div className="bg-[#0b0f19] border border-amber-500/30 rounded-2xl p-3 space-y-2.5 shadow-md">
+        <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+          <Search className="w-4 h-4 absolute right-3.5 text-slate-400 pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              if (!e.target.value.trim()) {
+                setSearchResults([]);
+                setSearchHasRun(false);
+              }
+            }}
+            placeholder="باکس جستجو در بانک ۶۰ هزار سناریو و لایتنر (مثلاً: تیکه، دیر جواب دادن)..."
+            className="w-full bg-slate-950/90 border border-slate-700/80 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-xl pr-10 pl-24 py-2.5 text-xs text-white placeholder-slate-500 outline-none"
+          />
+          <div className="absolute left-1.5 flex items-center gap-1">
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSearchResults([]);
+                  setSearchHasRun(false);
+                }}
+                className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition cursor-pointer"
+                title="پاک کردن جستجو"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+            <button
+              type="submit"
+              disabled={searchLoading || !searchQuery.trim()}
+              className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-slate-950 font-black text-[11px] rounded-lg transition cursor-pointer"
+            >
+              {searchLoading ? '...' : 'جستجو'}
+            </button>
+          </div>
+        </form>
+
+        {/* Suggestion Chips */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-[11px]">
+          <span className="text-slate-500 shrink-0 text-[10px]">پیشنهادی:</span>
+          {[
+            'دیر جواب دادن پیام',
+            'تیکه انداختن در جمع',
+            'تعریف بیش از حد',
+            'بی‌محلی و سرد بودن',
+            'پرسیدن حقوق و درآمد',
+            'شوخی زشت و توهین‌آمیز'
+          ].map((sug, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => {
+                setSearchQuery(sug);
+                executeSearch(sug);
+              }}
+              className="px-2 py-0.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-amber-300 hover:border-amber-500/30 whitespace-nowrap text-[10px] transition cursor-pointer"
+            >
+              {sug}
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* 3. SEARCH RESULTS (In-view display when user searches) */}
+      {searchHasRun && searchQuery.trim() && (
+        <div className="bg-[#0b0f19] border border-slate-800 rounded-3xl p-4 space-y-3.5 shadow-xl animate-fade-in">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
+            <div className="flex items-center gap-1.5 text-xs text-amber-300 font-bold">
+              <Search className="w-4 h-4 text-amber-400" />
+              <span>نتایج جستجو برای: «{searchQuery}»</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setSearchResults([]);
+                setSearchHasRun(false);
+              }}
+              className="text-[11px] text-slate-400 hover:text-white bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-800 transition cursor-pointer"
+            >
+              بستن نتایج
+            </button>
+          </div>
+
+          {/* Matches already in current Leitner Deck */}
+          {(() => {
+            const queryNorm = searchQuery.trim().toLowerCase();
+            const deckMatches = deck.filter(d => 
+              d.data?.title?.toLowerCase().includes(queryNorm) ||
+              d.data?.opponentLine?.toLowerCase().includes(queryNorm) ||
+              d.data?.bestAnswer?.toLowerCase().includes(queryNorm)
+            );
+
+            if (deckMatches.length === 0) return null;
+
+            return (
+              <div className="bg-sky-500/10 border border-sky-500/20 rounded-2xl p-3 space-y-2">
+                <span className="text-[11px] font-black text-sky-300 block">
+                  کارت‌های موجود در جعبه لایتنر شما ({deckMatches.length} مورد):
+                </span>
+                <div className="space-y-1.5">
+                  {deckMatches.map(m => (
+                    <div key={m.id} className="bg-slate-950/80 p-2.5 rounded-xl flex items-center justify-between gap-2 border border-slate-800">
+                      <div className="space-y-0.5 text-right">
+                        <span className="text-xs font-bold text-white block">{m.data?.title}</span>
+                        <span className="text-[10px] text-sky-400">مستقر در: خانه {m.box}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentCardId(m.id);
+                          setIsFlipped(false);
+                          setUserTrialAnswer('');
+                          setSearchQuery('');
+                          setSearchResults([]);
+                          setSearchHasRun(false);
+                        }}
+                        className="px-2.5 py-1 bg-sky-500 hover:bg-sky-400 text-slate-950 text-[11px] font-bold rounded-lg transition cursor-pointer"
+                      >
+                        مرور فوری این کارت
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Results from 60,000 Canonical Bank */}
+          {searchLoading ? (
+            <div className="flex flex-col items-center justify-center py-10 space-y-2">
+              <RefreshCw className="w-6 h-6 text-amber-400 animate-spin" />
+              <span className="text-xs text-slate-400">در حال استخراج از بانک ۶۰ هزار سناریو...</span>
+            </div>
+          ) : searchResults.length > 0 ? (
+            <div className="space-y-3">
+              <span className="text-[11px] font-black text-slate-300 block">
+                یافته‌های بانک سناریوها ({searchResults.length} مورد):
+              </span>
+              {searchResults.map((scenario) => {
+                const extracted = extractCardData(scenario);
+                const isAlreadyInDeck = deck.some(d => d.id === scenario.id || d.data?.id === scenario.id);
+
+                return (
+                  <div 
+                    key={scenario.id}
+                    className="bg-slate-950/90 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-3.5 space-y-2.5 transition text-right"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="text-[10px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
+                          {extracted.environment}
+                        </span>
+                        <h4 className="text-xs sm:text-sm font-black text-white mt-1 leading-snug">
+                          {extracted.title}
+                        </h4>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleAddAndStudyScenario(scenario)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 transition cursor-pointer ${
+                          isAlreadyInDeck
+                            ? 'bg-sky-500/20 border border-sky-500/30 text-sky-300 hover:bg-sky-500/30'
+                            : 'bg-amber-500 hover:bg-amber-400 text-slate-950 active:scale-95'
+                        }`}
+                      >
+                        {isAlreadyInDeck ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-sky-400" />
+                            <span>مرور در لایتنر</span>
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>تمرین در لایتنر (خانه ۱)</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {extracted.opponentLine && (
+                      <p className="text-[11px] text-slate-300 bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                        <span className="text-sky-400 font-bold ml-1">جمله طرف مقابل:</span>
+                        «{extracted.opponentLine}»
+                      </p>
+                    )}
+
+                    {extracted.bestAnswer && (
+                      <p className="text-xs text-amber-200 bg-amber-500/10 p-2 rounded-xl border border-amber-500/20">
+                        <span className="text-amber-400 font-bold ml-1">👑 پاسخ طلایی کاریزماتیک:</span>
+                        «{extracted.bestAnswer}»
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-xs text-slate-400 space-y-1">
+              <p>سناریوی مستقیمی برای این عبارت در بانک سناریوها پیدا نشد.</p>
+              <p className="text-[11px] text-slate-500">کلمات کلیدی کوتاه‌تری مانند «تیکه»، «سکوت»، «حقوق» یا «دیر» را امتحان کنید.</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 2. 5-Box Leitner Tabs Indicator */}
       <div className="bg-[#0b0f19] border border-slate-800/80 rounded-2xl p-2.5 space-y-2 shadow-md">
@@ -679,181 +895,6 @@ export default function LeitnerStudyView({ token, onBack, onStudyComplete }: Lei
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-[#0e1628] border border-amber-500/50 text-amber-300 px-5 py-3 rounded-2xl text-xs font-black shadow-2xl flex items-center gap-2 animate-bounce">
           <Layers className="w-4 h-4 text-amber-400" />
           <span>{addedToast}</span>
-        </div>
-      )}
-
-      {/* Search & Add Scenario from Bank Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in" style={{ direction: 'rtl' }}>
-          <div className="bg-[#0c101c] border border-amber-500/30 rounded-3xl p-5 sm:p-6 w-full max-w-xl max-h-[85vh] flex flex-col shadow-2xl space-y-4">
-            
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                  <Plus className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-black text-white">افزودن سناریو از بانک سناریوها</h3>
-                  <p className="text-[11px] text-slate-400">موقعیت دلخواه را بنویسید تا پاسخ‌های کاریزماتیک استخراج و به لایتنر افزوده شوند.</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowAddModal(false);
-                  setModalResults([]);
-                  setModalSearchQuery('');
-                  setModalHasSearched(false);
-                }}
-                className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Search Input */}
-            <form onSubmit={handleSearchFromModal} className="space-y-2">
-              <div className="relative flex items-center">
-                <Search className="w-4 h-4 absolute right-3.5 text-slate-400 pointer-events-none" />
-                <input
-                  type="text"
-                  value={modalSearchQuery}
-                  onChange={(e) => setModalSearchQuery(e.target.value)}
-                  placeholder="موقعیت یا جمله مورد نظرتان را بنویسید (مثلاً: بی‌محلی، شوخی زشت در جمع)..."
-                  className="w-full bg-slate-950/90 border border-slate-700/80 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 rounded-2xl pr-10 pl-24 py-3 text-xs text-white placeholder-slate-500 outline-none"
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  disabled={modalLoading || !modalSearchQuery.trim()}
-                  className="absolute left-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-black text-xs rounded-xl transition cursor-pointer"
-                >
-                  {modalLoading ? 'جستجو...' : 'جستجو'}
-                </button>
-              </div>
-
-              {/* Quick Tags */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px]">
-                <span className="text-slate-500 shrink-0">پیشنهادی:</span>
-                {[
-                  'دیر جواب دادن پیام',
-                  'تیکه انداختن در جمع',
-                  'تعریف بیش از حد',
-                  'بی‌محلی و سرد بودن',
-                  'پرسیدن حقوق یا درآمد'
-                ].map((sug, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      setModalSearchQuery(sug);
-                      fetch(`/api/scenarios?search=${encodeURIComponent(sug)}&limit=8`)
-                        .then(r => r.json())
-                        .then(d => {
-                          setModalResults(d.scenarios || []);
-                          setModalHasSearched(true);
-                        })
-                        .catch(() => {});
-                    }}
-                    className="px-2 py-0.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-amber-300 hover:border-amber-500/30 whitespace-nowrap transition cursor-pointer"
-                  >
-                    {sug}
-                  </button>
-                ))}
-              </div>
-            </form>
-
-            {/* Results List */}
-            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-              {modalLoading ? (
-                <div className="flex flex-col items-center justify-center py-10 space-y-2">
-                  <RefreshCw className="w-6 h-6 text-amber-400 animate-spin" />
-                  <span className="text-xs text-slate-400">در حال جستجو در بانک سناریوها...</span>
-                </div>
-              ) : modalResults.length > 0 ? (
-                modalResults.map((scenario) => {
-                  const extracted = extractCardData(scenario);
-                  const isAlreadyInDeck = deck.some(d => d.id === scenario.id || d.data?.id === scenario.id);
-
-                  return (
-                    <div 
-                      key={scenario.id}
-                      className="bg-slate-900/80 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-3.5 space-y-2.5 transition text-right"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <span className="text-[10px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
-                            {extracted.environment}
-                          </span>
-                          <h4 className="text-xs sm:text-sm font-black text-white mt-1 leading-snug">
-                            {extracted.title}
-                          </h4>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleAddScenarioToDeck(scenario)}
-                          disabled={isAlreadyInDeck}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 transition cursor-pointer ${
-                            isAlreadyInDeck
-                              ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 opacity-80 cursor-default'
-                              : 'bg-amber-500 hover:bg-amber-400 text-slate-950 active:scale-95'
-                          }`}
-                        >
-                          {isAlreadyInDeck ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 text-emerald-400" />
-                              <span>در لایتنر هست</span>
-                            </>
-                          ) : (
-                            <>
-                              <Plus className="w-3.5 h-3.5" />
-                              <span>افزودن به خانه ۱</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-
-                      {extracted.opponentLine && (
-                        <p className="text-[11px] text-slate-300 bg-slate-950/60 p-2 rounded-xl border border-slate-800/80">
-                          <span className="text-sky-400 font-bold ml-1">جمله طرف مقابل:</span>
-                          «{extracted.opponentLine}»
-                        </p>
-                      )}
-
-                      {extracted.bestAnswer && (
-                        <p className="text-xs text-amber-200 bg-amber-500/10 p-2 rounded-xl border border-amber-500/20">
-                          <span className="text-amber-400 font-bold ml-1">👑 پاسخ طلایی:</span>
-                          «{extracted.bestAnswer}»
-                        </p>
-                      )}
-                    </div>
-                  );
-                })
-              ) : modalHasSearched ? (
-                <div className="text-center py-8 text-xs text-slate-400 space-y-1">
-                  <p>هیچ سناریوی مستقیمی برای این عبارت یافت نشد.</p>
-                  <p className="text-[11px] text-slate-500">کلمات کلیدی کوتاه‌تری مثل «تیکه»، «دیر جواب دادن» یا «شوخی» را امتحان کنید.</p>
-                </div>
-              ) : (
-                <div className="text-center py-8 text-xs text-slate-500">
-                  موقعیت یا جمله مورد نظر را در کادر بالا بنویسید و جستجو کنید.
-                </div>
-              )}
-            </div>
-
-            {/* Modal Footer */}
-            <div className="border-t border-slate-800 pt-3 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 rounded-xl text-xs font-bold transition cursor-pointer"
-              >
-                بستن
-              </button>
-            </div>
-
-          </div>
         </div>
       )}
 

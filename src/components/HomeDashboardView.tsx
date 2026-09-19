@@ -327,26 +327,6 @@ export default function HomeDashboardView({
         </button>
       </div>
 
-      {/* Support / Quick Help & Onboarding Guide Banner */}
-      {onOpenOnboarding && (
-        <div className="bg-sky-500/5 border border-sky-500/15 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm">
-          <div className="space-y-1 text-right min-w-0">
-            <h4 className="text-xs font-bold text-sky-400 flex items-center gap-1.5 truncate">
-              <HelpCircle className="w-4 h-4 shrink-0" />
-              <span className="truncate">راهنمای شروع به کار مرکز کاریزما</span>
-            </h4>
-            <p className="text-[10px] text-slate-400 leading-normal">می‌خواهی بدانی چطور بالاترین کارایی را از شبیه‌ساز گفتگو بگیری؟</p>
-          </div>
-          <button
-            type="button"
-            onClick={onOpenOnboarding}
-            className="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-[11px] px-3.5 py-2 rounded-xl transition cursor-pointer shrink-0 shadow-md active:scale-95 whitespace-nowrap"
-          >
-            مشاهده راهنما
-          </button>
-        </div>
-      )}
-
     </div>
   );
 }

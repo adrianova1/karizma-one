@@ -1562,6 +1562,195 @@ async function startServer() {
     res.json(newMsg);
   });
 
+  // ==================== ADMIN USERS & AUDIT LOGS ====================
+
+  app.get('/api/admin/users', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), async (req: Request, res: Response) => {
+    try {
+      const users = await DBEngine.readTable<User>('users');
+      const subs = await DBEngine.readTable<Subscription>('subscriptions');
+      const plans = await DBEngine.readTable<Plan>('plans');
+
+      const safeUsers = users.map(u => {
+        const sub = subs.find(s => s.userId === u.id && s.status === 'active');
+        const plan = sub ? plans.find(p => p.id === sub.planId) : null;
+        return {
+          id: u.id,
+          username: u.username,
+          role: u.role,
+          phoneNumber: u.phoneNumber || null,
+          createdAt: u.createdAt,
+          subscription: sub ? {
+            planId: sub.planId,
+            planName: plan ? plan.name : 'طرح ویژه',
+            endDate: sub.endDate,
+            isActive: new Date(sub.endDate) > new Date()
+          } : null
+        };
+      });
+
+      res.json(safeUsers.reverse());
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.put('/api/admin/users/:id/role', authenticateToken, requireRole([Role.ADMIN]), async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { role } = req.body;
+
+      if (!Object.values(Role).includes(role)) {
+        return res.status(400).json({ error: 'نقش کاربری نامعتبر است.' });
+      }
+
+      const users = await DBEngine.readTable<User>('users');
+      const userIdx = users.findIndex(u => u.id === id);
+      if (userIdx === -1) {
+        return res.status(404).json({ error: 'کاربر یافت نشد.' });
+      }
+
+      users[userIdx].role = role;
+      await DBEngine.writeTable('users', users);
+
+      const admin = (req as any).user;
+      await logAudit(admin.id, admin.username, 'تغییر نقش کاربر', req.ip || '127.0.0.1', `تغییر نقش کاربر ${users[userIdx].username} به ${role}`);
+
+      res.json({ success: true, role });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Admin Create New User
+  app.post('/api/admin/users', authenticateToken, requireRole([Role.ADMIN]), async (req: Request, res: Response) => {
+    try {
+      const { username, password, phoneNumber, role } = req.body;
+      if (!username || !password) {
+        return res.status(400).json({ error: 'نام کاربری و کلمه عبور الزامی است.' });
+      }
+
+      const cleanUsername = String(username).trim();
+      if (!/^[a-zA-Z][a-zA-Z0-9_.-]*$/.test(cleanUsername)) {
+        return res.status(400).json({ error: 'نام کاربری باید با یک حرف انگلیسی آغاز شود (مثال: ali12).' });
+      }
+
+      const users = await DBEngine.readTable<User>('users');
+      if (users.find(u => u.username.toLowerCase() === cleanUsername.toLowerCase())) {
+        return res.status(400).json({ error: 'این نام کاربری از قبل وجود دارد.' });
+      }
+
+      const newUser: User = {
+        id: 'u_' + Math.random().toString(36).substring(2, 11),
+        username: cleanUsername,
+        passwordHash: hashPassword(String(password)),
+        role: Object.values(Role).includes(role) ? role : Role.USER,
+        phoneNumber: phoneNumber ? String(phoneNumber).trim() : undefined,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      await DBEngine.writeTable('users', users);
+
+      const admin = (req as any).user;
+      await logAudit(admin.id, admin.username, 'ایجاد کاربر توسط ادمین', req.ip || '127.0.0.1', `نام کاربری: ${newUser.username}، نقش: ${newUser.role}`);
+
+      res.json({ success: true, user: { id: newUser.id, username: newUser.username, role: newUser.role, phoneNumber: newUser.phoneNumber } });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Admin Reset User Password
+  app.put('/api/admin/users/:id/password', authenticateToken, requireRole([Role.ADMIN]), async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { newPassword } = req.body;
+
+      if (!newPassword || String(newPassword).length < 4) {
+        return res.status(400).json({ error: 'کلمه عبور جدید باید حداقل ۴ کاراکتر باشد.' });
+      }
+
+      const users = await DBEngine.readTable<User>('users');
+      const userIdx = users.findIndex(u => u.id === id);
+      if (userIdx === -1) {
+        return res.status(404).json({ error: 'کاربر مورد نظر یافت نشد.' });
+      }
+
+      users[userIdx].passwordHash = hashPassword(String(newPassword));
+      users[userIdx].updatedAt = new Date().toISOString();
+      await DBEngine.writeTable('users', users);
+
+      const admin = (req as any).user;
+      await logAudit(admin.id, admin.username, 'تغییر رمز کاربر توسط ادمین', req.ip || '127.0.0.1', `کاربر: ${users[userIdx].username}`);
+
+      res.json({ success: true, message: `رمز عبور کاربر ${users[userIdx].username} با موفقیت تغییر یافت.` });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Admin Delete User
+  app.delete('/api/admin/users/:id', authenticateToken, requireRole([Role.ADMIN]), async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const admin = (req as any).user;
+
+      if (id === admin.id) {
+        return res.status(400).json({ error: 'نمی‌توانید حساب کاربری خودتان را حذف کنید.' });
+      }
+
+      const users = await DBEngine.readTable<User>('users');
+      const userIdx = users.findIndex(u => u.id === id);
+      if (userIdx === -1) {
+        return res.status(404).json({ error: 'کاربر مورد نظر یافت نشد.' });
+      }
+
+      const targetUsername = users[userIdx].username;
+      users.splice(userIdx, 1);
+      await DBEngine.writeTable('users', users);
+
+      // Clean up subscriptions for this user
+      const subs = await DBEngine.readTable<Subscription>('subscriptions');
+      const remainingSubs = subs.filter(s => s.userId !== id);
+      await DBEngine.writeTable('subscriptions', remainingSubs);
+
+      await logAudit(admin.id, admin.username, 'حذف کاربر توسط مدیر', req.ip || '127.0.0.1', `کاربر حذف‌شده: ${targetUsername} (شناسه: ${id})`);
+
+      res.json({ success: true, message: `کاربر ${targetUsername} با موفقیت حذف شد.` });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/admin/users/:id/subscription', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { durationDays, planId } = req.body;
+
+      const days = Number(durationDays) || 30;
+      const chosenPlan = planId || 'p3';
+
+      const newSub = await SubscriptionService.activateSubscription(id, chosenPlan, days);
+
+      const admin = (req as any).user;
+      await logAudit(admin.id, admin.username, 'اعطای اشتراک دستی', req.ip || '127.0.0.1', `اعطای اشتراک ${days} روزه به کاربر ${id}`);
+
+      res.json({ success: true, subscription: newSub });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.get('/api/admin/audits', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), async (req: Request, res: Response) => {
+    try {
+      const audits = await DBEngine.readTable<AuditLog>('audit_logs');
+      res.json(audits.slice(-100).reverse());
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   app.get('/api/admin/receipts', authenticateToken, requireRole([Role.ADMIN, Role.MODERATOR]), async (req: Request, res: Response) => {
     const receipts = await DBEngine.readTable<Receipt>('receipts');
     const users = await DBEngine.readTable<User>('users');
@@ -1726,6 +1915,52 @@ async function startServer() {
 
     await logAudit(user.id, user.username, 'ثبت رسید واریز دستی (در انتظار تایید)', req.ip || '127.0.0.1', `مبلغ: ${numAmount} - طرح: ${plan.name}`);
 
+    res.json({ success: true, status: 'pending' });
+  });
+
+  app.get('/api/receipts/me', authenticateToken, async (req: Request, res: Response) => {
+    const user = (req as any).user;
+    const receipts = await DBEngine.readTable<Receipt>('receipts');
+    const userReceipts = receipts.filter(r => r.userId === user.id);
+    const plans = await DBEngine.readTable<Plan>('plans');
+    const mapped = userReceipts.map(r => {
+      const plan = plans.find(p => p.id === r.planId);
+      return {
+        ...r,
+        planName: plan ? plan.name : 'طرح اشتراک'
+      };
+    });
+    res.json(mapped.reverse());
+  });
+
+  // Backward compatibility alias for purchase-request
+  app.post('/api/subscriptions/purchase-request', authenticateToken, async (req: Request, res: Response) => {
+    const { planId, receiptNumber, senderCard, amount } = req.body;
+    const user = (req as any).user;
+
+    const plans = await DBEngine.readTable<Plan>('plans');
+    const plan = plans.find(p => p.id === planId);
+    if (!plan) {
+      return res.status(404).json({ error: 'طرح انتخابی یافت نشد.' });
+    }
+
+    const receipts = await DBEngine.readTable<Receipt>('receipts');
+    const newReceipt: Receipt = {
+      id: 'rec_' + Math.random().toString(36).substring(2, 11),
+      userId: user.id,
+      subscriptionId: 'sub_' + Math.random().toString(36).substring(2, 11),
+      amount: amount ? Number(amount) : plan.price,
+      traceNumber: receiptNumber || '',
+      refId: 'REF-MANUAL',
+      status: 'pending',
+      senderCard: senderCard || 'ثبت دستی',
+      planId: plan.id,
+      createdAt: new Date().toISOString()
+    };
+    receipts.push(newReceipt);
+    await DBEngine.writeTable('receipts', receipts);
+
+    await logAudit(user.id, user.username, 'ثبت فیش واریزی در انتظار بررسی', req.ip || '127.0.0.1', `طرح: ${plan.name}`);
     res.json({ success: true, status: 'pending' });
   });
 

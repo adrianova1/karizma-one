@@ -210,14 +210,24 @@ export default function App() {
       {/* Centered Mobile Container */}
       <div className="w-full md:max-w-[430px] h-[100dvh] bg-[#090d16] flex flex-col border-x border-slate-800/80 md:shadow-[0_0_60px_rgba(56,189,248,0.12)] relative overflow-y-auto overscroll-y-contain">
 
-        {/* Mobile Top Navbar */}
-        <div className="w-full bg-[#0b0f19]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3 flex justify-center items-center relative z-40 shrink-0 shadow-md">
+        {/* Mobile Top Navbar with Single Karizma Guide Button */}
+        <div className="w-full bg-[#0b0f19]/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3 flex justify-between items-center relative z-40 shrink-0 shadow-md">
           <div className="flex items-center gap-2">
             <span className="font-black text-sm text-white tracking-tight bg-gradient-to-r from-white via-slate-100 to-sky-200 bg-clip-text text-transparent">
               مرکز کاریزما
             </span>
             <div className="w-2 h-2 rounded-full bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
           </div>
+
+          <button
+            type="button"
+            onClick={() => setOnboardingOpen(true)}
+            className="flex items-center gap-1.5 text-xs text-sky-300 hover:text-white bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 rounded-xl px-2.5 py-1 transition cursor-pointer active:scale-95 shadow-sm"
+            title="راهنمای بخش‌های مرکز کاریزما"
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-sky-400" />
+            <span className="font-bold text-[11px]">راهنمای اپ</span>
+          </button>
         </div>
 
         {/* Mandatory Profile Completion Prompt Banner */}

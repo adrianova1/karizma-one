@@ -1072,17 +1072,6 @@ export default function RAGEngineView({
   return (
     <div id="rage-engine-view" className="flex flex-col h-full w-full min-w-0 min-h-0 text-slate-100 font-sans relative overflow-hidden" style={{ direction: 'rtl' }}>
       
-      {/* Onboarding Tutorial Modal */}
-      <OnboardingGuideModal
-        isOpen={showOnboarding}
-        onClose={() => setShowOnboarding(false)}
-        onSelectPromptAndMode={(promptText, mode) => {
-          setShowOnboarding(false);
-          setActiveMode(mode);
-          handleSendPrompt(promptText, mode);
-        }}
-      />
-
       {/* Emergency Live Coach Modal */}
       <EmergencyLiveCoachModal
         isOpen={showEmergencyModal}
@@ -1238,33 +1227,21 @@ export default function RAGEngineView({
             </div>
             
             {/* Quick Action Toggle Buttons inside Settings */}
-            <div className="grid grid-cols-2 gap-2 mt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowOnboarding(true);
-                  setShowPromptSettings(false);
-                }}
-                className="px-2.5 py-2 min-h-[40px] bg-slate-950 hover:bg-slate-850 border border-slate-800 rounded-xl text-slate-200 font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 text-xs"
-              >
-                <HelpCircle className="w-3.5 h-3.5 text-sky-400" />
-                <span>راهنمای تعاملی</span>
-              </button>
-
+            <div className="mt-1">
               <button
                 type="button"
                 onClick={() => {
                   setShowDiagnostics(!showDiagnostics);
                   setShowPromptSettings(false);
                 }}
-                className={`px-2.5 py-2 min-h-[40px] border rounded-xl font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 text-xs ${
+                className={`w-full px-2.5 py-2 min-h-[40px] border rounded-xl font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 text-xs ${
                   showDiagnostics 
                     ? 'bg-sky-500/10 text-sky-400 border-sky-500/35' 
                     : 'bg-slate-950 hover:bg-slate-850 border-slate-800 text-slate-300'
                 }`}
               >
                 <Database className="w-3.5 h-3.5" />
-                <span>{showDiagnostics ? 'پنهان‌سازی لاگ' : 'نمایش لاگ فنی'}</span>
+                <span>{showDiagnostics ? 'پنهان‌سازی لاگ فنی' : 'نمایش لاگ فنی و پایپ‌لاین'}</span>
               </button>
             </div>
 

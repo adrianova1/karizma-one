@@ -416,6 +416,34 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
     }
   };
 
+  const handleExportJson = async () => {
+    setExportLoading(true);
+    try {
+      const res = await fetch('/api/scenarios?limit=50000', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('خطا در دریافت اطلاعات سناریوها');
+      const data = await parseSafeJson(res);
+      const list = data?.scenarios || [];
+      if (list.length === 0) {
+        alert('هیچ سناریویی برای خروجی گرفتن وجود ندارد.');
+        return;
+      }
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(list, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `karizma_scenarios_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    } catch (err: any) {
+      console.error('Export JSON error:', err);
+      alert('خطا در دانلود فایل جیسون: ' + err.message);
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       
@@ -435,27 +463,37 @@ export default function AdminScenarioManagement({ token }: AdminScenarioManageme
           <button
             onClick={handleExportExcel}
             disabled={exportLoading}
-            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm disabled:opacity-50"
+            className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-sm disabled:opacity-50"
             title="دانلود بانک سناریوها در قالب فایل اکسل استاندارد"
           >
-            {exportLoading ? <RefreshCw className="w-4 h-4 animate-spin text-sky-400" /> : <Download className="w-4 h-4 text-sky-400" />}
-            <span>{exportLoading ? 'در حال آماده‌سازی...' : 'خروجی اکسل (Export)'}</span>
+            {exportLoading ? <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" /> : <Download className="w-4 h-4 text-emerald-400" />}
+            <span>خروجی Excel</span>
+          </button>
+
+          <button
+            onClick={handleExportJson}
+            disabled={exportLoading}
+            className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-sm disabled:opacity-50"
+            title="دانلود سناریوها به صورت فرمت JSON خام"
+          >
+            <Download className="w-4 h-4 text-sky-400" />
+            <span>خروجی JSON</span>
           </button>
 
           <button
             onClick={() => { setIsImportOpen(true); setImportResult(null); setParsedRows([]); setImportFile(null); }}
-            className="px-4 py-2.5 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm"
+            className="px-3.5 py-2.5 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-sm"
           >
             <CloudUpload className="w-4 h-4" />
-            <span>درون‌ریزی فایل (Excel / JSON)</span>
+            <span>درون‌ریزی (Excel / JSON)</span>
           </button>
 
           <button
             onClick={handleOpenAddModal}
-            className="px-4 py-2.5 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer active:scale-95 shadow-md shadow-sky-500/20"
+            className="px-4 py-2.5 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-md shadow-sky-500/20"
           >
             <Plus className="w-4 h-4" />
-            <span>افزودن سناریوی جدید</span>
+            <span>افزودن سناریو</span>
           </button>
         </div>
       </div>

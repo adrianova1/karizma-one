@@ -77,16 +77,6 @@ export default function MoreView({
     });
   }
 
-  if (isAdmin) {
-    menuItems.push({ 
-      id: 'prompts-settings', 
-      label: 'تنظیمات و الگوهای پرامپت', 
-      icon: Settings2, 
-      desc: 'تنظیم متون پیش‌فرض مربی ارشد کاریزما سنتر', 
-      color: 'text-amber-400' 
-    });
-  }
-
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden relative">
       <AnimatePresence mode="wait">
@@ -244,9 +234,6 @@ export default function MoreView({
               )}
               {activeSubTab === 'admin-panel' && (
                 <AdminPanelView token={token} currentUserId={user?.id || ''} />
-              )}
-              {activeSubTab === 'prompts-settings' && (
-                <SettingsView token={token} />
               )}
             </div>
           </motion.div>
