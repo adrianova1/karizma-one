@@ -74,6 +74,11 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [resetPasswordError, setResetPasswordError] = useState('');
 
+  // Confirmation Modals State (to replace window.confirm for iframe safety)
+  const [confirmDeleteUser, setConfirmDeleteUser] = useState<{ id: string; username: string } | null>(null);
+  const [confirmDeclineReceiptId, setConfirmDeclineReceiptId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   // Actions state
   const [loading, setLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
@@ -151,9 +156,8 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
     }
   };
 
-  // Decline Receipt
-  const handleDeclineReceipt = async (receiptId: string) => {
-    if (!window.confirm('آیا از رد این فیش واریزی اطمینان دارید؟')) return;
+  // Decline Receipt Execution
+  const executeDeclineReceipt = async (receiptId: string) => {
     setActionLoadingId(receiptId);
     setStatusMsg('');
     setStatusError('');
@@ -173,6 +177,7 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
       setStatusError(err.message || 'خطا در ارتباط با سرور');
     } finally {
       setActionLoadingId(null);
+      setConfirmDeclineReceiptId(null);
     }
   };
 
@@ -357,25 +362,27 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
     }
   };
 
-  // Admin Delete User
-  const handleDeleteUser = async (userId: string, username: string) => {
-    if (!window.confirm(`آیا از حذف کامل کاربر "${username}" و لغو تمامی اشتراک‌های او اطمینان دارید؟`)) {
-      return;
-    }
+  // Admin Delete User Execution
+  const executeDeleteUser = async () => {
+    if (!confirmDeleteUser) return;
+    setDeleteLoading(true);
     try {
-      const res = await fetch(`/api/admin/users/${userId}`, {
+      const res = await fetch(`/api/admin/users/${confirmDeleteUser.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await parseSafeJson(res);
       if (res.ok) {
-        setStatusMsg(data.message || `کاربر ${username} با موفقیت حذف شد.`);
+        setStatusMsg(data.message || `کاربر ${confirmDeleteUser.username} با موفقیت حذف شد.`);
+        setConfirmDeleteUser(null);
         loadData();
       } else {
         setStatusError(data.error || 'خطا در حذف کاربر');
       }
     } catch (err: any) {
       setStatusError(err.message || 'خطا در ارتباط با سرور');
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -488,18 +495,18 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
       </div>
 
       {/* 4. Tab Navigation Menu */}
-      <div className="flex gap-1.5 border-b border-slate-800 pb-2 overflow-x-auto no-scrollbar">
+      <div className="flex gap-1.5 p-1 bg-[#0b0f19] border border-slate-800/90 rounded-2xl overflow-x-auto no-scrollbar shadow-inner">
         <button
           type="button"
           onClick={() => setActiveTab('receipts')}
-          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === 'receipts' 
-              ? 'bg-emerald-500 text-slate-950 shadow-md' 
-              : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800/80'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-md shadow-emerald-500/20' 
+              : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
           }`}
         >
           <CreditCard className="w-3.5 h-3.5" />
-          <span>مدیریت فیش‌ها و پرداختی‌ها</span>
+          <span>فیش‌ها و واریزها</span>
           {pendingReceiptsCount > 0 && (
             <span className="px-1.5 py-0.2 bg-amber-400 text-slate-950 font-black text-[9px] rounded-full">
               {pendingReceiptsCount}
@@ -510,36 +517,36 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
         <button
           type="button"
           onClick={() => setActiveTab('card_settings')}
-          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === 'card_settings' 
-              ? 'bg-emerald-500 text-slate-950 shadow-md' 
-              : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800/80'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-md shadow-emerald-500/20' 
+              : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
           }`}
         >
           <CreditCard className="w-3.5 h-3.5" />
-          <span>تنظیمات شماره کارت بانکی</span>
+          <span>تنظیمات کارت بانکی</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('bank_deposits')}
-          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === 'bank_deposits' 
-              ? 'bg-emerald-500 text-slate-950 shadow-md' 
-              : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800/80'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-md shadow-emerald-500/20' 
+              : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
           }`}
         >
           <ArrowDownLeft className="w-3.5 h-3.5" />
-          <span>ثبت پیامک واریز و تطابق خودکار</span>
+          <span>تطابق پیامک بانک</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('users')}
-          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === 'users' 
-              ? 'bg-emerald-500 text-slate-950 shadow-md' 
-              : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800/80'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-md shadow-emerald-500/20' 
+              : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
           }`}
         >
           <Users className="w-3.5 h-3.5" />
@@ -549,23 +556,23 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
         <button
           type="button"
           onClick={() => setActiveTab('scenarios')}
-          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === 'scenarios' 
-              ? 'bg-emerald-500 text-slate-950 shadow-md' 
-              : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800/80'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-md shadow-emerald-500/20' 
+              : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
-          <span>مدیریت سناریوها و اکسل</span>
+          <span>سناریوها و اکسل</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab('audits')}
-          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+          className={`px-3 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 cursor-pointer shrink-0 ${
             activeTab === 'audits' 
-              ? 'bg-emerald-500 text-slate-950 shadow-md' 
-              : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800/80'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black shadow-md shadow-emerald-500/20' 
+              : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
           }`}
         >
           <Activity className="w-3.5 h-3.5" />
@@ -708,7 +715,7 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
                           <button
                             type="button"
                             disabled={isProcessingThis}
-                            onClick={() => handleDeclineReceipt(r.id)}
+                            onClick={() => setConfirmDeclineReceiptId(r.id)}
                             className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl font-bold transition cursor-pointer active:scale-95"
                           >
                             رد فیش
@@ -1074,7 +1081,7 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
                       {u.id !== currentUserId && (
                         <button
                           type="button"
-                          onClick={() => handleDeleteUser(u.id, u.username)}
+                          onClick={() => setConfirmDeleteUser({ id: u.id, username: u.username })}
                           title="حذف کاربر"
                           className="p-1 text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg transition cursor-pointer border border-transparent hover:border-rose-400/20"
                         >
@@ -1280,6 +1287,74 @@ export default function AdminPanelView({ token, currentUserId }: AdminPanelViewP
               </div>
             ))
           )}
+        </div>
+      )}
+
+      {/* ================= CONFIRM DELETE USER MODAL ================= */}
+      {confirmDeleteUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in" style={{ direction: 'rtl' }}>
+          <div className="bg-[#0b0f19] border border-rose-500/40 rounded-3xl p-5 w-full max-w-sm shadow-2xl space-y-4">
+            <div className="flex items-center gap-2.5 text-rose-400 border-b border-slate-800/80 pb-3">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              <h3 className="text-sm font-bold text-white">تایید حذف کاربر</h3>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              آیا از حذف کامل حساب کاربری <span className="text-rose-400 font-bold">«{confirmDeleteUser.username}»</span> و لغو تمامی دسترسی‌ها و سوابق آن اطمینان دارید؟ این عملیات غیرقابل بازگشت است.
+            </p>
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-800/80">
+              <button
+                type="button"
+                disabled={deleteLoading}
+                onClick={() => setConfirmDeleteUser(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition cursor-pointer"
+              >
+                انصراف
+              </button>
+              <button
+                type="button"
+                disabled={deleteLoading}
+                onClick={executeDeleteUser}
+                className="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-white rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-rose-950/40"
+              >
+                {deleteLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                <span>{deleteLoading ? 'در حال حذف...' : 'بله، حذف شود'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= CONFIRM DECLINE RECEIPT MODAL ================= */}
+      {confirmDeclineReceiptId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in" style={{ direction: 'rtl' }}>
+          <div className="bg-[#0b0f19] border border-rose-500/40 rounded-3xl p-5 w-full max-w-sm shadow-2xl space-y-4">
+            <div className="flex items-center gap-2.5 text-rose-400 border-b border-slate-800/80 pb-3">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              <h3 className="text-sm font-bold text-white">تایید رد فیش پرداختی</h3>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              آیا از رد کردن این فیش واریزی اطمینان دارید؟ وضعیت فیش به «رد شده» تغییر یافته و اشتراک کاربر فعال نخواهد شد.
+            </p>
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-800/80">
+              <button
+                type="button"
+                disabled={actionLoadingId === confirmDeclineReceiptId}
+                onClick={() => setConfirmDeclineReceiptId(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition cursor-pointer"
+              >
+                انصراف
+              </button>
+              <button
+                type="button"
+                disabled={actionLoadingId === confirmDeclineReceiptId}
+                onClick={() => executeDeclineReceipt(confirmDeclineReceiptId)}
+                className="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-white rounded-xl text-xs font-black transition cursor-pointer flex items-center gap-1.5 shadow-md shadow-rose-950/40"
+              >
+                {actionLoadingId === confirmDeclineReceiptId && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                <span>{actionLoadingId === confirmDeclineReceiptId ? 'در حال رد فیش...' : 'رد فیش واریزی'}</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
